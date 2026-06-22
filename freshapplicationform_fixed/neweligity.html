@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NSF Eligibility Submission</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f6f8;
+      color: #111;
+      min-height: 100vh;
+    }
+
+    .top-header {
+      min-height: 72px;
+      background: #ffffff;
+      padding: 0 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 3px 14px rgba(52, 116, 99, 0.25);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      color: #347463;
+    }
+
+    .home-btn {
+      background: #347463;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 9px 22px;
+      border-radius: 7px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .page-wrapper {
+      padding: 35px 18px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .form-card {
+      width: 100%;
+      max-width: 900px;
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.07);
+      overflow: hidden;
+    }
+
+    .form-header {
+      padding: 25px 30px;
+      border-bottom: 1px solid #eeeeee;
+      text-align: center;
+    }
+
+    .form-header h1 {
+      color: #347463;
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .form-header p {
+      color: #555;
+      font-size: 14px;
+    }
+
+    .form-body {
+      padding: 30px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      color: #347463;
+      margin: 25px 0 18px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .section-title:first-child {
+      margin-top: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px 22px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: span 2;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111;
+    }
+
+    input,
+    select {
+      height: 46px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 0 13px;
+      font-size: 15px;
+      outline: none;
+      background: #fafafa;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #347463;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(52, 116, 99, 0.12);
+    }
+
+    input[readonly] {
+      background: #f1f5f4;
+      cursor: not-allowed;
+    }
+
+    .btn-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .primary-btn {
+      background: #347463;
+      color: white;
+    }
+
+    .primary-btn:hover {
+      background: #2a5e50;
+    }
+
+    .secondary-btn {
+      background: #e8f1ee;
+      color: #347463;
+      border: 1px solid #347463;
+    }
+
+    .secondary-btn:hover {
+      background: #d8ebe5;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .income-box {
+      margin-top: 16px;
+      background: #eef7f4;
+      border-left: 4px solid #347463;
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 15px;
+      color: #1f4f43;
+      font-weight: 600;
+    }
+
+    .preview-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(17, 24, 39, 0.55);
+      padding: 24px 16px;
+      overflow-y: auto;
+    }
+
+    .preview-page {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #dfe7e4;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.22);
+      overflow: hidden;
+    }
+
+    .preview-header {
+      padding: 24px 30px;
+      background: #f5faf8;
+      border-bottom: 1px solid #dfe7e4;
+      text-align: center;
+    }
+
+    .preview-header h2 {
+      color: #347463;
+      font-size: 26px;
+      margin-bottom: 6px;
+    }
+
+    .preview-header p {
+      color: #555;
+      font-size: 14px;
+    }
+
+    .preview-content {
+      padding: 28px 30px;
+    }
+
+    .preview-section-title {
+      color: #347463;
+      font-size: 18px;
+      margin: 22px 0 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .preview-section-title:first-child {
+      margin-top: 0;
+    }
+
+    .preview-row {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      padding: 10px 0;
+      border-bottom: 1px solid #eeeeee;
+      font-size: 14px;
+      gap: 14px;
+    }
+
+    .preview-row strong {
+      color: #111;
+    }
+
+    .preview-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 20px 30px 28px;
+      border-top: 1px solid #eeeeee;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 700px) {
+      .top-header {
+        padding: 0 18px;
+      }
+
+      .logo {
+        font-size: 18px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field.full {
+        grid-column: span 1;
+      }
+
+      .form-body,
+      .preview-content {
+        padding: 22px;
+      }
+
+      .form-header h1,
+      .preview-header h2 {
+        font-size: 24px;
+      }
+
+      .btn-row,
+      .preview-actions {
+        justify-content: stretch;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .preview-row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="top-header">
+    <div class="logo">North South Foundation</div>
+    <a href="index.html" class="home-btn">Home</a>
+  </header>
+
+  <main class="page-wrapper">
+    <section class="form-card">
+      <div class="form-header">
+        <h1>Eligibility Submission</h1>
+        <p>Fill the details and submit your eligibility information</p>
+      </div>
+
+      <div class="form-body">
+        <form id="eligibilityForm">
+          <h2 class="section-title">Basic Details</h2>
+
+          <div class="grid">
+            <div class="field">
+              <label for="course">Course *</label>
+              <select id="course" required>
+                <option value="">Select Course</option>
+                <option value="Diploma">Diploma</option>
+                <option value="B.Tech">Engineering / B.Tech</option>
+                <option value="MBBS">MBBS</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="admissionYear">Year of Admission *</label>
+              <select id="admissionYear" required>
+                <option value="">Select Year</option>
+                <option>2024</option>
+                <option>2025</option>
+                <option>2026</option>
+                <option>2027</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="state">State *</label>
+              <select id="state" required>
+                <option value="">Select State</option>
+                <option>Andhra Pradesh</option>
+                <option>Telangana</option>
+                <option>Karnataka</option>
+                <option>Tamil Nadu</option>
+                <option>Maharashtra</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="income">Annual Family Income *</label>
+              <input type="number" id="income" placeholder="Enter income in rupees" required />
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button type="button" class="primary-btn" onclick="convertIncomeToWords()">
+              Convert to Words
+            </button>
+          </div>
+
+          <div id="incomeWordsBox" class="income-box hidden"></div>
+
+          <div id="submitIncomeArea" class="btn-row hidden">
+            <button type="button" class="secondary-btn" onclick="submitIncome()">
+              Submit Income
+            </button>
+          </div>
+
+          <div id="academicSection" class="hidden">
+            <h2 class="section-title">SSC Details</h2>
+
+            <div class="grid">
+              <div class="field">
+                <label for="sscTotal">Total Marks *</label>
+                <input type="number" id="sscTotal" placeholder="e.g. 600" oninput="calculatePercentage('ssc')" />
+              </div>
+
+              <div class="field">
+                <label for="sscObtained">Obtained Marks *</label>
+                <input type="number" id="sscObtained" placeholder="e.g. 540" oninput="calculatePercentage('ssc')" />
+              </div>
+
+              <div class="field">
+                <label for="sscPercentage">Percentage</label>
+                <input type="text" id="sscPercentage" placeholder="Auto calculated" readonly />
+              </div>
+
+              <div class="field">
+                <label for="sscYear">Year of Passing *</label>
+                <select id="sscYear">
+                  <option value="">Select Year</option>
+                  <option>2021</option>
+                  <option>2022</option>
+                  <option>2023</option>
+                  <option>2024</option>
+                  <option>2025</option>
+                  <option>2026</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="interSection">
+              <h2 class="section-title">Inter / 12th Details</h2>
+
+              <div class="grid">
+                <div class="field">
+                  <label for="interTotal">Total Marks *</label>
+                  <input type="number" id="interTotal" placeholder="e.g. 1000" oninput="calculatePercentage('inter')" />
+                </div>
+
+                <div class="field">
+                  <label for="interObtained">Obtained Marks *</label>
+                  <input type="number" id="interObtained" placeholder="e.g. 920" oninput="calculatePercentage('inter')" />
+                </div>
+
+                <div class="field">
+                  <label for="interPercentage">Percentage</label>
+                  <input type="text" id="interPercentage" placeholder="Auto calculated" readonly />
+                </div>
+
+                <div class="field">
+                  <label for="interYear">Year of Passing *</label>
+                  <select id="interYear">
+                    <option value="">Select Year</option>
+                    <option>2021</option>
+                    <option>2022</option>
+                    <option>2023</option>
+                    <option>2024</option>
+                    <option>2025</option>
+                    <option>2026</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <h2 class="section-title">Entrance Test Details</h2>
+
+            <div class="grid">
+              <div class="field">
+                <label for="hasEntrance">Do you have entrance test?</label>
+                <select id="hasEntrance" onchange="toggleEntranceFields()">
+                  <option value="">Select</option>
+                  <option value="No">No</option>
+                  <option value="Yes">Yes</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="entranceFields" class="grid hidden" style="margin-top: 18px;">
+              <div class="field">
+                <label for="entranceType">Entrance Test Type</label>
+                <select id="entranceType">
+                  <option value="">Select Type</option>
+                  <option>State Level</option>
+                  <option>National Level</option>
+                </select> 
+              </div>
+
+              <div class="field">
+                <label for="entranceName">Entrance Test Name</label>
+                 <select id="entranceName">
+                    <option value="">Select Type</option>
+                  <option >EAMCET</option>
+                  <option>JEE</option>
+                  <option>NEET</option>
+                </select>
+                <!-- <input type="text" id="entranceName" placeholder="e.g. EAMCET / JEE / NEET" /> -->
+              </div>
+
+              <div class="field">
+                <label for="entranceScore">Entrance Rank / Score</label>
+                <input type="text" id="entranceScore" placeholder="Enter rank or score" />
+              </div>
+            </div>
+
+            <div class="btn-row">
+              <button type="button" class="secondary-btn" onclick="showPreview()">Preview</button>
+              <button type="button" class="primary-btn" onclick="submitEligibility()">Submit Eligibility</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <div id="previewOverlay" class="preview-overlay hidden">
+    <section class="preview-page">
+      <div class="preview-header">
+        <h2>Eligibility Preview</h2>
+        <p>Review your details before submitting eligibility</p>
+      </div>
+
+      <div id="previewContent" class="preview-content"></div>
+
+      <div class="preview-actions">
+        <button type="button" class="secondary-btn" onclick="closePreview()">Back to Edit</button>
+        <button type="button" class="primary-btn" onclick="submitEligibility()">Submit Eligibility</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const course = document.getElementById("course");
+    const academicSection = document.getElementById("academicSection");
+    const incomeWordsBox = document.getElementById("incomeWordsBox");
+    const submitIncomeArea = document.getElementById("submitIncomeArea");
+
+    course.addEventListener("change", function () {
+      updateCourseBasedSections();
+    });
+
+    function convertIncomeToWords() {
+      const income = document.getElementById("income").value;
+      const selectedCourse = document.getElementById("course").value;
+      const admissionYear = document.getElementById("admissionYear").value;
+      const state = document.getElementById("state").value;
+
+      if (!selectedCourse || !admissionYear || !state || !income) {
+        alert("Please fill Course, Year of Admission, State and Income first.");
+        return;
+      }
+
+      if (Number(income) <= 0) {
+        alert("Please enter valid income.");
+        return;
+      }
+
+      const words = numberToIndianWords(Number(income));
+
+      incomeWordsBox.innerHTML = `<strong>Income in Words:</strong> ${words} Rupees Only`;
+      incomeWordsBox.classList.remove("hidden");
+      submitIncomeArea.classList.remove("hidden");
+      academicSection.classList.add("hidden");
+    }
+
+    function submitIncome() {
+      academicSection.classList.remove("hidden");
+      updateCourseBasedSections();
+      academicSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function updateCourseBasedSections() {
+      const selectedCourse = course.value;
+      const interSection = document.getElementById("interSection");
+
+      if (selectedCourse === "Diploma") {
+        interSection.classList.add("hidden");
+      } else if (selectedCourse === "B.Tech" || selectedCourse === "MBBS") {
+        interSection.classList.remove("hidden");
+      } else {
+        interSection.classList.add("hidden");
+      }
+    }
+
+    function calculatePercentage(type) {
+      const total = Number(document.getElementById(type + "Total").value);
+      const obtained = Number(document.getElementById(type + "Obtained").value);
+      const percentageInput = document.getElementById(type + "Percentage");
+
+      if (total > 0 && obtained >= 0 && obtained <= total) {
+        const percentage = ((obtained / total) * 100).toFixed(2);
+        percentageInput.value = percentage + "%";
+      } else {
+        percentageInput.value = "";
+      }
+    }
+
+    function toggleEntranceFields() {
+      const hasEntrance = document.getElementById("hasEntrance").value;
+      const entranceFields = document.getElementById("entranceFields");
+
+      if (hasEntrance === "Yes") {
+        entranceFields.classList.remove("hidden");
+      } else {
+        entranceFields.classList.add("hidden");
+      }
+    }
+
+    function showPreview() {
+      if (!validateAcademicFields()) return;
+
+      const previewContent = document.getElementById("previewContent");
+
+      previewContent.innerHTML = `
+        <h3 class="preview-section-title">Basic Details</h3>
+        ${previewRow("Course", value("course"))}
+        ${previewRow("Year of Admission", value("admissionYear"))}
+        ${previewRow("State", value("state"))}
+        ${previewRow("Annual Family Income", "₹" + value("income"))}
+        ${previewRow("Income in Words", incomeWordsBox.innerText.replace("Income in Words:", "").trim())}
+
+        <h3 class="preview-section-title">SSC Details</h3>
+        ${previewRow("SSC Total Marks", value("sscTotal"))}
+        ${previewRow("SSC Obtained Marks", value("sscObtained"))}
+        ${previewRow("SSC Percentage", value("sscPercentage"))}
+        ${previewRow("SSC Year of Passing", value("sscYear"))}
+
+        ${getInterPreview()}
+
+        <h3 class="preview-section-title">Entrance Test Details</h3>
+        ${previewRow("Entrance Test", value("hasEntrance") || "Not selected")}
+        ${getEntrancePreview()}
+      `;
+
+      document.getElementById("previewOverlay").classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closePreview() {
+      document.getElementById("previewOverlay").classList.add("hidden");
+      document.body.style.overflow = "auto";
+    }
+
+    function submitEligibility() {
+      if (!validateAcademicFields()) return;
+      window.location.href = "freshapplicationindex.html";
+    }
+
+    function validateAcademicFields() {
+      const selectedCourse = value("course");
+
+      if (!value("course") || !value("admissionYear") || !value("state") || !value("income")) {
+        alert("Please fill Course, Year of Admission, State and Income.");
+        return false;
+      }
+
+      if (incomeWordsBox.classList.contains("hidden")) {
+        alert("Please convert income to words first.");
+        return false;
+      }
+
+      if (academicSection.classList.contains("hidden")) {
+        alert("Please submit income first.");
+        return false;
+      }
+
+      if (!value("sscTotal") || !value("sscObtained") || !value("sscPercentage") || !value("sscYear")) {
+        alert("Please fill all SSC details.");
+        return false;
+      }
+
+      if (selectedCourse === "B.Tech" || selectedCourse === "MBBS") {
+        if (!value("interTotal") || !value("interObtained") || !value("interPercentage") || !value("interYear")) {
+          alert("Please fill Inter / 12th details.");
+          return false;
+        }
+      }
+
+      if (value("hasEntrance") === "Yes") {
+        if (!value("entranceType") || !value("entranceName") || !value("entranceScore")) {
+          alert("Please fill all entrance test details.");
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    function value(id) {
+      return document.getElementById(id).value;
+    }
+
+    function previewRow(label, data) {
+      return `
+        <div class="preview-row">
+          <strong>${label}</strong>
+          <span>${data || "-"}</span>
+        </div>
+      `;
+    }
+
+    function getInterPreview() {
+      if (course.value === "Diploma") return "";
+
+      return `
+        <h3 class="preview-section-title">Inter / 12th Details</h3>
+        ${previewRow("Inter Total Marks", value("interTotal"))}
+        ${previewRow("Inter Obtained Marks", value("interObtained"))}
+        ${previewRow("Inter Percentage", value("interPercentage"))}
+        ${previewRow("Inter Year of Passing", value("interYear"))}
+      `;
+    }
+
+    function getEntrancePreview() {
+      if (value("hasEntrance") !== "Yes") return "";
+
+      return `
+        ${previewRow("Entrance Type", value("entranceType"))}
+        ${previewRow("Entrance Name", value("entranceName"))}
+        ${previewRow("Entrance Rank / Score", value("entranceScore"))}
+      `;
+    }
+
+    function numberToIndianWords(num) {
+      if (num === 0) return "Zero";
+
+      const ones = [
+        "",
+        "One",
+        "Two",
+        "Three",
+        "Four",
+        "Five",
+        "Six",
+        "Seven",
+        "Eight",
+        "Nine",
+        "Ten",
+        "Eleven",
+        "Twelve",
+        "Thirteen",
+        "Fourteen",
+        "Fifteen",
+        "Sixteen",
+        "Seventeen",
+        "Eighteen",
+        "Nineteen"
+      ];
+
+      const tens = [
+        "",
+        "",
+        "Twenty",
+        "Thirty",
+        "Forty",
+        "Fifty",
+        "Sixty",
+        "Seventy",
+        "Eighty",
+        "Ninety"
+      ];
+
+      function twoDigit(n) {
+        if (n < 20) return ones[n];
+        return tens[Math.floor(n / 10)] + (n % 10 ? " " + ones[n % 10] : "");
+      }
+
+      function threeDigit(n) {
+        let word = "";
+
+        if (n >= 100) {
+          word += ones[Math.floor(n / 100)] + " Hundred";
+          n %= 100;
+          if (n > 0) word += " ";
+        }
+
+        if (n > 0) word += twoDigit(n);
+        return word;
+      }
+
+      let result = "";
+
+      const crore = Math.floor(num / 10000000);
+      num %= 10000000;
+
+      const lakh = Math.floor(num / 100000);
+      num %= 100000;
+
+      const thousand = Math.floor(num / 1000);
+      num %= 1000;
+
+      if (crore > 0) result += threeDigit(crore) + " Crore ";
+      if (lakh > 0) result += threeDigit(lakh) + " Lakh ";
+      if (thousand > 0) result += threeDigit(thousand) + " Thousand ";
+      if (num > 0) result += threeDigit(num);
+
+      return result.trim();
+    }
+  </script>
+</body>
+</html>

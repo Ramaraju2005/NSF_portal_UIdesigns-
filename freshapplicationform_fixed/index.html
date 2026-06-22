@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>North South Foundation</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f4f6f8;
+      color: #111111;
+    }
+
+    .top-header {
+      min-height: 72px;
+      background: #ffffff;
+      padding: 0 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 3px 14px rgba(52, 116, 99, 0.28);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-img {
+      width: 200px;
+      height: 58px;
+      object-fit: contain;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 5px;
+      flex-shrink: 0;
+    }
+
+    .login-btn,
+    .apply-btn {
+      background: #347463;
+      color: #ffffff;
+      border: none;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 700;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .login-btn {
+      padding: 9px 22px;
+      font-size: 14px;
+    }
+
+    .login-btn:hover,
+    .apply-btn:hover {
+      background: #2a5e50;
+    }
+
+    .home-wrapper {
+      min-height: calc(100vh - 72px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 35px 18px;
+    }
+
+    .home-card {
+      width: 100%;
+      max-width: 760px;
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 14px;
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.07);
+      padding: 46px 34px;
+      text-align: center;
+    }
+
+    .home-card h1 {
+      color: #347463;
+      font-size: 34px;
+      margin-bottom: 12px;
+    }
+
+    .home-card p {
+      color: #555555;
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .apply-btn {
+      padding: 14px 42px;
+      font-size: 16px;
+    }
+
+    @media (max-width: 600px) {
+      .top-header {
+        padding: 0 18px;
+      }
+
+      .logo-img {
+        width: 155px;
+        height: 52px;
+      }
+
+      .login-btn {
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+
+      .home-card {
+        padding: 34px 22px;
+      }
+
+      .home-card h1 {
+        font-size: 26px;
+      }
+
+      .apply-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="top-header">
+    <div class="brand">
+      <img src="nsf-logov1.png" alt="NSF Logo" class="logo-img" />
+    </div>
+
+    <a href="login.html" class="login-btn">Login</a>
+  </header>
+
+  <main class="home-wrapper">
+    <section class="home-card">
+      <h1>North South Foundation Scholarship</h1>
+      <p>Apply for fresh scholarship application and continue through eligibility, application form and status tracking.</p>
+      <a href="signup.html" class="apply-btn">Apply</a>
+    </section>
+  </main>
+</body>
+</html>

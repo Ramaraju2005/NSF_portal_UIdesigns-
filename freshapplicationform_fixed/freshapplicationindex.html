@@ -1,0 +1,2590 @@
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Scholarship Application</title>
+        <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  background: #f4f6f8;
+  color: #111111;
+}
+
+/* HEADER */
+.top-header {
+  min-height: 72px;
+  background: white;
+  padding: 0 6%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 3px 14px rgba(52, 116, 99, 0.28);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-img {
+  width: 200px;
+  height: 58px;
+  object-fit: contain;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 5px;
+  flex-shrink: 0;
+}
+
+/* .brand h2 {
+  color: #ffffff;
+  font-size: 21px;
+  line-height: 1.15;
+  letter-spacing: 0.4px;
+  font-weight: 700;
+} */
+
+/* .brand p {
+  display: block;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12px;
+  margin-top: 2px;
+  letter-spacing: 0.3px;
+} */
+
+.home-btn {
+  background: #347463 ;
+  color: white;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  padding: 9px 22px;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.home-btn:hover {
+  background:  #347463;
+}
+
+/* STEP NAV */
+.step-nav {
+  background: #347463;
+  min-height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 0 28px;
+  border-bottom: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 72px;
+  z-index: 99;
+}
+
+.step-nav::-webkit-scrollbar {
+  height: 4px;
+}
+
+.step-nav::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 20px;
+}
+
+.step {
+  min-height: 84px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  position: relative;
+  cursor: pointer;
+  padding: 0 6px;
+}
+
+/* remove connector lines */
+.step::before,
+.step:not(:first-child)::before {
+  display: none;
+  content: none;
+}
+
+.step span {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: transparent;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  transition: 0.25s ease;
+  flex-shrink: 0;
+}
+
+.step p {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.2px;
+  transition: 0.25s ease;
+}
+
+/* completed step */
+.step.completed span {
+  background: #ffffff;
+  color: #347463;
+  border-color: #ffffff;
+}
+
+.step.completed p {
+  color: #ffffff;
+}
+
+/* current active step */
+.step.active span {
+  background: #d97706;
+  color: #ffffff;
+  border-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.18);
+}
+
+.step.active p {
+  color: #ffffff;
+}
+
+/* current stage bottom bar - orange */
+.step.active::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 0;
+  height: 4px;
+  background: #d97706;
+  border-radius: 10px 10px 0 0;
+}
+
+/* CONTAINER */
+.container {
+  max-width: 1200px;
+  margin: 32px auto;
+  padding: 0 28px;
+}
+
+.form-stage {
+  display: none;
+}
+
+.form-stage.active {
+  display: block;
+}
+
+.page-title {
+  font-size: 28px;
+  letter-spacing: 1px;
+  margin-bottom: 22px;
+  color: #347463;
+  font-weight: 700;
+}
+
+/* CARD */
+.card {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  margin-bottom: 22px;
+  overflow: hidden;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card h3 {
+  padding: 20px 26px 10px;
+  color: #347463;
+  font-size: 17px;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 4px;
+}
+
+/* FORM GRID */
+.grid {
+  padding: 22px 26px 26px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field.full {
+  grid-column: span 2;
+}
+
+.same-address-box {
+  padding: 18px 26px;
+  max-width: 360px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #000000;
+  letter-spacing: 0.3px;
+}
+
+/* INPUTS */
+input,
+select,
+textarea {
+  height: 48px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0 14px;
+  font-size: 15px;
+  background: #fafafa;
+  outline: none;
+  color: #000000;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+textarea {
+  height: 96px;
+  padding-top: 11px;
+  resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #347463;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(52, 116, 99, 0.12);
+}
+
+input:disabled {
+  background: #f3f4f6;
+  color: #000000;
+  border-color: #e5e7eb;
+  cursor: not-allowed;
+}
+
+.disability-field {
+  display: none;
+}
+
+.communication-address {
+  display: none;
+}
+
+/* NOTE */
+.note {
+  margin: 0 26px 18px;
+  padding: 12px 16px;
+  background: #fff7ed;
+  border-left: 4px solid #d97706;
+  color: #000000;
+  font-weight: 600;
+  font-size: 13.5px;
+  border-radius: 0 6px 6px 0;
+}
+
+/* DISABILITY UPLOAD */
+.disability-upload-box {
+  border: 1px solid #e0e0e0;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+}
+
+.disability-upload-box p {
+  font-size: 14px;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 3px;
+}
+
+.disability-upload-box small {
+  font-size: 12px;
+  color: #000000;
+}
+
+.disability-upload-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#disabilityFile {
+  display: none;
+}
+
+/* FAMILY MEMBERS */
+.member-cards {
+  padding: 0 26px 18px;
+  display: grid;
+  background-color: white;
+  gap: 18px;
+}
+
+.member-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 20px;
+  background: #ffffff;
+}
+
+.member-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.member-card h4 {
+  color: #347463;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.delete-member-btn {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  padding: 8px 14px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.delete-member-btn:hover {
+  background: #fecaca;
+}
+
+.member-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.family-actions {
+  padding: 0 26px 26px;
+}
+
+#addMemberBtn {
+  background: #347463;
+  color: #ffffff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#addMemberBtn:hover {
+  background: #2a5e50;
+}
+
+/* EXPENSES */
+.expense-list {
+  padding: 26px;
+}
+
+.expense-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.expense-row label {
+  font-size: 14.5px;
+  color: #000000;
+}
+
+.expense-row input {
+  width: 220px;
+  text-align: right;
+}
+
+.total-box {
+  margin-top: 18px;
+  background: #347463;
+  color: white;
+  padding: 18px 22px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-box span,
+.total-box strong {
+  color: #ffffff;
+}
+
+.total-box span {
+  font-size: 15px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.total-box strong {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.bottom-space {
+  padding-top: 0;
+}
+
+/* DOCUMENTS HEADER */
+.documents-header {
+  padding: 20px 26px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.documents-header h3 {
+  padding: 0;
+  border-bottom: none;
+  margin-bottom: 4px;
+}
+
+.documents-header p {
+  font-size: 13px;
+  color: #000000;
+}
+
+.upload-counter-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f9fafb;
+  border: 1px solid #e0e0e0;
+  padding: 12px 16px;
+  border-radius: 14px;
+  min-width: 220px;
+}
+
+.upload-counter-box.completed {
+  background: #eef7f4;
+  border-color: #347463;
+}
+
+/* .upload-counter-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  color: #000000;
+  display: grid;
+  place-items: center;
+  font-size: 17px;
+  font-weight: 800;
+  flex-shrink: 0;
+} */
+
+/* .upload-counter-icon.completed {
+  background: #347463;
+  color: #ffffff;
+  font-size: 24px;
+} */
+
+.upload-counter-box strong,
+.upload-counter-box span {
+  color: #000000;
+}
+
+.upload-counter-box strong {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.upload-counter-box span {
+  font-size: 12px;
+}
+
+/* DOCUMENT LIST */
+.document-list {
+  padding: 24px 26px;
+  display: grid;
+  gap: 14px;
+}
+
+.document-item {
+  border: 1px solid #e0e0e0;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 18px;
+  align-items: center;
+  transition: 0.2s ease;
+}
+
+.document-item:hover {
+  border-color: #347463;
+  box-shadow: 0 4px 14px rgba(52, 116, 99, 0.1);
+}
+
+.document-item.uploaded {
+  background: #ffffff;
+  border-color: #e0e0e0;
+}
+
+.doc-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.doc-number {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #cfd0d3;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.document-item.uploaded .doc-number {
+  background: #347463;
+  color: #ffffff;
+  font-size: 22px;
+}
+
+.doc-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.doc-info p {
+  font-size: 15px;
+  font-weight: 700;
+  color: #000000;
+  line-height: 1.4;
+}
+
+.doc-file-name {
+  font-size: 12.5px;
+  color: #000000;
+  font-weight: 500;
+}
+
+.document-item.uploaded .doc-file-name {
+  color: #347463;
+  font-weight: 600;
+}
+
+.doc-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.doc-file {
+  display: none;
+}
+
+/* BUTTONS */
+.choose-file-btn {
+  background: #f3f4f6;
+  color: black;
+  
+  padding: 11px 18px;
+  border-radius: 9px;
+  border: 1.5px  solid #9ca3af ;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.choose-file-btn:hover {
+  background: #9ca3af;
+}
+
+.view-btn {
+  background: #f3f4f6;
+  color: #9ca3af;
+  border: 1.5px solid #d1d5db;
+  padding: 10px 17px;
+  border-radius: 9px;
+  cursor: not-allowed;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.view-btn.enabled {
+  background: #347463;
+  color: #ffffff;
+  border-color: #347463;
+  cursor: pointer;
+}
+
+.view-btn.enabled:hover {
+  background: #2a5e50;
+}
+
+.view-btn:disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  border-color: #d1d5db;
+  cursor: not-allowed;
+}
+
+/* FORM ACTIONS */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin: 28px 0 40px;
+  gap: 12px;
+}
+
+.form-actions button {
+  border: none;
+  background: #347463;
+  color: white;
+  padding: 13px 32px;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  letter-spacing: 0.3px;
+}
+
+.form-actions button:hover {
+  background: #2a5e50;
+}
+
+.form-actions button:active {
+  transform: scale(0.98);
+}
+
+.form-actions button:first-child {
+  background: white;
+  color: #347463;
+  border: 1.5px solid #347463;
+}
+
+.form-actions button:first-child:hover {
+  background: #eef7f4;
+}
+
+/* TABLET */
+@media (max-width: 900px) {
+  .top-header {
+    padding: 0 20px;
+  }
+
+  .brand h2 {
+    font-size: 17px;
+  }
+
+  .home-btn {
+    padding: 8px 18px;
+    font-size: 13px;
+  }
+
+  .step-nav {
+    justify-content: flex-start;
+    gap: 24px;
+    min-height: 80px;
+    top: 72px;
+  }
+
+  .step {
+    min-height: 80px;
+    gap: 8px;
+    padding: 0 4px;
+  }
+
+  .step span {
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+  }
+
+  .step p {
+    font-size: 12px;
+  }
+
+  .grid,
+  .member-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .field.full {
+    grid-column: span 1;
+  }
+
+  .expense-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .expense-row input {
+    width: 100%;
+    text-align: left;
+  }
+
+  .documents-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .upload-counter-box {
+    width: 100%;
+  }
+
+  .document-item {
+    grid-template-columns: 1fr;
+  }
+
+  .doc-actions,
+  .disability-upload-actions {
+    flex-wrap: wrap;
+  }
+
+  .choose-file-btn,
+  .view-btn {
+    flex: 1;
+    text-align: center;
+  }
+
+  .disability-upload-box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .disability-upload-actions {
+    width: 100%;
+  }
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .top-header {
+    min-height: 60px;
+  }
+
+  .logo-img {
+    width: 44px;
+    height: 44px;
+    padding: 4px;
+  }
+
+  .brand {
+    gap: 9px;
+  }
+
+  .brand h2 {
+    font-size: 15px;
+  }
+
+  .brand p {
+    font-size: 11px;
+  }
+
+  .home-btn {
+    padding: 7px 13px;
+    font-size: 12px;
+  }
+
+  .step-nav {
+    gap: 22px;
+    min-height: 70px;
+    top: 60px;
+  }
+
+  .step {
+    min-height: 70px;
+    padding: 0 4px;
+  }
+
+  .step span {
+    width: 27px;
+    height: 27px;
+    font-size: 12px;
+  }
+
+  .step p {
+    font-size: 11px;
+  }
+
+  .container {
+    margin: 20px auto;
+    padding: 0 14px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .card h3 {
+    font-size: 15px;
+    padding: 16px 16px 8px;
+  }
+
+  .grid,
+  .expense-list,
+  .document-list,
+  .member-cards {
+    padding: 14px 16px;
+  }
+
+  .documents-header {
+    padding: 16px;
+  }
+
+  .doc-left {
+    align-items: flex-start;
+  }
+
+  .doc-actions,
+  .disability-upload-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .choose-file-btn,
+  .view-btn {
+    width: 100%;
+  }
+
+  .family-actions {
+    padding: 0 16px 18px;
+  }
+
+  .member-card {
+    padding: 16px;
+  }
+
+  .member-card-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  #addMemberBtn {
+    width: 100%;
+  }
+
+  .form-actions {
+    gap: 10px;
+  }
+
+  .form-actions button {
+    flex: 1;
+    padding: 13px 10px;
+  }
+}
+
+.education-subtitle {
+  font-size: 17px;
+  font-weight: 700;
+  color: #000000;
+  padding: 20px 26px 0;
+  margin: 0;
+}
+
+
+.required-star {
+  color: #dc2626 !important;
+  font-weight: 800;
+  margin-left: 4px;
+}
+
+
+/* keep your existing CSS and add this at the end */
+/* PREVIEW MODAL */
+.preview-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.65);
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
+  z-index: 9999;
+  overflow-y: auto;
+}
+
+.preview-modal.show {
+  display: flex;
+}
+
+.preview-modal-box {
+  width: 100%;
+  max-width: 1000px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  animation: previewFade 0.2s ease;
+}
+
+@keyframes previewFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.preview-modal-header {
+  background: #347463;
+  color: #ffffff;
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.preview-modal-header h3 {
+  color: #ffffff;
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.preview-modal-header p {
+  color: #ffffff;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.preview-close-btn {
+  background: #ffffff;
+  color: #347463;
+  border: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.preview-content {
+  padding: 22px 24px;
+  display: grid;
+  gap: 18px;
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.preview-section {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 18px;
+}
+
+.preview-section h4 {
+  color: #347463;
+  font-size: 16px;
+  margin-bottom: 14px;
+}
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.preview-item {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.preview-item span {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 4px;
+}
+
+.preview-item strong {
+  font-size: 14px;
+  color: #000000;
+  font-weight: 600;
+}
+
+.preview-doc-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.preview-doc-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #000000;
+}
+
+.preview-doc-uploaded {
+  color: #347463;
+  font-weight: 700;
+}
+
+.preview-doc-pending {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.preview-modal-actions {
+  padding: 16px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.preview-edit-btn {
+  background: #ffffff;
+  color: #347463;
+  border: 1.5px solid #347463;
+  padding: 11px 22px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.preview-submit-btn {
+  background: #347463;
+  color: #ffffff;
+  border: none;
+  padding: 11px 22px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.preview-submit-btn:hover {
+  background: #2a5e50;
+}
+
+@media (max-width: 700px) {
+  .preview-modal {
+    padding: 20px 12px;
+  }
+
+  .preview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-doc-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .preview-modal-actions {
+    flex-direction: column;
+  }
+
+  .preview-edit-btn,
+  .preview-submit-btn {
+    width: 100%;
+  }
+}
+
+
+#scholarshipNameField {
+  display: none;
+}
+
+/* DOCUMENT DELETE BUTTON */
+.delete-doc-btn {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1.5px solid #fecaca;
+  padding: 10px 17px;
+  border-radius: 9px;
+  cursor: not-allowed;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.delete-doc-btn.enabled {
+  cursor: pointer;
+}
+
+.delete-doc-btn.enabled:hover {
+  background: #fecaca;
+}
+
+.delete-doc-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+  .delete-doc-btn {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .delete-doc-btn {
+    width: 100%;
+  }
+}
+
+        </style>
+    </head>
+
+    <body>
+
+        <header class="top-header">
+            <div class="brand">
+                <img class="logo-img" src="nsf-logov1.png" alt="NSF Logo" />
+            </div>
+
+            <div>
+                <button class="home-btn" onclick="window.location.href='index.html'">Home</button>
+                <button class="home-btn" onclick="window.location.href='login.html'">Logout</button>
+            </div>
+        </header>
+
+        <nav class="step-nav">
+            <div class="step active" data-step="0">
+                <span>1</span>
+                <p>Basic & Guardian</p>
+            </div>
+
+            <div class="step" data-step="1">
+                <span>2</span>
+                <p>Address</p>
+            </div>
+
+            <div class="step" data-step="2">
+                <span>3</span>
+                <p>Family Details</p>
+            </div>
+
+            <div class="step" data-step="3">
+                <span>4</span>
+                <p>Education</p>
+            </div>
+
+            <div class="step" data-step="4">
+                <span>5</span>
+                <p>Expenses</p>
+            </div>
+
+            <div class="step" data-step="5">
+                <span>6</span>
+                <p>Documents</p>
+            </div>
+        </nav>
+
+        <main class="container">
+            <h1 class="page-title">Scholarship Application</h1>
+
+            <form id="applicationForm">
+
+                <!-- STAGE 1 -->
+                <section class="form-stage active">
+                    <div class="card">
+                        <h3>Basic Information</h3>
+
+                        <div class="grid">
+                            <div class="field">
+                                <label>Choose your near chapter STATE</label>
+                                <select>
+                                    <option>Andhra Pradesh</option>
+                                    <option>Telangana</option>
+                                    <option>Tamil Nadu</option>
+                                    <option>Karnataka</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label>Choose your near chapter</label>
+                                <select>
+                                    <option>Visakhapatnam,AP</option>
+                                    <option>Vijayawada,AP</option>
+                                    <!-- <option>AP,</option> -->
+                                    <!-- <option>kakinada</option> -->
+                                    <option>Hyderabad,TG</option>
+
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label>Student Name</label>
+                                <input type="text" value="RUPPA VISHNU VARDHAN" disabled />
+                            </div>
+
+                            <div class="field">
+                                <label>Family Annual Income</label>
+                                <input type="text" value="₹ 80,000.00" disabled />
+                            </div>
+
+                            <div class="field">
+                                <label>Gender</label>
+                                <select>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>other</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label>Email Address</label>
+                                <input type="email" value="vs@gmail.com" disabled />
+                            </div>
+
+                            <!-- <div class="field">
+                                <label>Date of Birth</label>
+                                <input type="date" />
+                            </div> -->
+
+                            <div class="field">
+                                <label>Date of Birth (dd/mm/yyyy)</label>
+                                <input type="text" placeholder="dd/mm/yyyy"
+                                    pattern="^(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[0-2])/[0-9]{4}$" maxlength="10" />
+                            </div>
+
+                            <div class="field">
+                                <label>Aadhaar Number</label>
+                                <input type="text" value="XXXXXXXXXXXX" disabled />
+                            </div>
+
+                            <div class="field">
+                                <label>Mobile Number</label>
+                                <input type="text" value="XXXXXXXXXX" disabled />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Additional Details</h3>
+
+                        <div class="grid">
+                            <div class="field">
+                                <label>Are you physically disabled?</label>
+                                <select id="disabledSelect">
+                                    <option value="no">No</option>
+                                    <option value="yes">Yes</option>
+                                </select>
+                            </div>
+
+                            <div class="field disability-field">
+                                <label>Disability Type</label>
+                                <select>
+                                    <option>Physical Disability</option>
+                                    <option>Visual Disability</option>
+                                    <option>Hearing Disability</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+
+                            <div class="field disability-field">
+                                <label>Disability Percentage</label>
+                                <input type="number" placeholder="Enter percentage" />
+                            </div>
+
+
+
+                            <div class="field full disability-field">
+                                <label>Disability Details</label>
+                                <textarea placeholder="Enter disability details"></textarea>
+                            </div>
+
+                            <div class="field full disability-field">
+                                <label>Upload Disability Certificate</label>
+
+                                <div class="disability-upload-box">
+                                    <div>
+                                        <p id="disabilityFileName">No file selected</p>
+                                        <small>Accepted: PDF, JPG, JPEG, PNG</small>
+                                    </div>
+
+                                    <div class="disability-upload-actions">
+                                        <input type="file" id="disabilityFile" accept=".pdf,.jpg,.jpeg,.png" />
+
+                                        <label for="disabilityFile" class="choose-file-btn">
+                                            Upload
+                                        </label>
+
+                                        <button type="button" id="disabilityViewBtn" class="view-btn" disabled>
+                                            View
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="field">
+                                <label>Any family member receiving NSF scholarship?</label>
+                                <select>
+                                    <option>No</option>
+                                    <option>Yes</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label>Eligible for Private Scholarships?</label>
+                                <select id="privateScholarshipSelect">
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+
+                            <div class="field" id="scholarshipNameField">
+                                <label>Scholarship Name</label>
+                                <input type="text" id="scholarshipName" placeholder="Enter scholarship name" />
+                            </div>
+
+                            <!-- <div class="field">
+                                <label>First Graduate in Your Family?</label>
+                                <select>
+                                    <option>No</option>
+                                    <option>Yes</option>
+                                </select>
+                            </div> -->
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Parent / Guardian Details</h3>
+
+                        <div class="grid">
+                            <div class="field">
+                                <label>Relationship Type</label>
+                                <select>
+                                    <option>Parent</option>
+                                    <option>Guardian</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label>Name of Parent / Guardian</label>
+                                <input type="text" placeholder="Enter name" />
+                            </div>
+
+                            <div class="field">
+                                <label>Contact Number</label>
+                                <input type="text" placeholder="Enter contact number" />
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STAGE 2 -->
+                <section class="form-stage">
+                    <div class="card">
+
+                        <h3>Address for Communication</h3>
+
+                        <div class="grid">
+                            <div class="field">
+                                <label>State</label>
+                                <input type="text" value="Andhra Pradesh" disabled />
+                            </div>
+
+                            <div class="field">
+                                <label>District</label>
+                                <input type="text" placeholder="Enter district" />
+                            </div>
+
+                            <div class="field">
+                                <label>Rural / Urban</label>
+                                <select>
+                                    <option>Rural</option>
+                                    <option>Urban</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label>Street Address 1</label>
+                                <input type="text" placeholder="Enter street address 1" />
+                            </div>
+
+                            <div class="field">
+                                <label>Street Address 2</label>
+                                <input type="text" placeholder="Enter street address 2" />
+                            </div>
+
+                            <div class="field">
+                                <label>Village / Town / City</label>
+                                <input type="text" placeholder="Enter village/town/city" />
+                            </div>
+
+                            <div class="field">
+                                <label>Other Village / Town / City</label>
+                                <input type="text" placeholder="Enter other place" />
+                            </div>
+
+                            <div class="field">
+                                <label>Pincode</label>
+                                <input type="text" placeholder="Enter pincode" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Permanent Address</h3>
+
+                        <div class="field same-address-box">
+                            <label>Same as Address for Communication?</label>
+                            <select id="sameAddress">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+
+                        <div class="grid communication-address">
+                            <div class="field">
+                                <label>State</label>
+                                <select>
+                                    <option>Andhra Pradesh</option>
+                                    <option>Telangana</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label>District</label>
+                                <input type="text" placeholder="Enter district" />
+                            </div>
+                            <div class="field">
+                                <label>Rural / Urban</label>
+                                <select>
+                                    <option>Rural</option>
+                                    <option>Urban</option>
+                                </select>
+                            </div>
+                            <div class="field">
+                                <label>Street Address 1</label>
+                                <input type="text" placeholder="Enter street address 1" />
+                            </div>
+
+                            <div class="field">
+                                <label>Street Address 2</label>
+                                <input type="text" placeholder="Enter street address 2" />
+                            </div>
+
+                            <div class="field">
+                                <label>Village / Town / City</label>
+                                <input type="text" placeholder="Enter village/town/city" />
+                            </div>
+
+                            <div class="field">
+                                <label>Other Village / Town / City</label>
+                                <input type="text" placeholder="Enter other place" />
+                            </div>
+
+                            <div class="field">
+                                <label>Pincode</label>
+                                <input type="text" placeholder="Enter pincode" />
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STAGE 3 -->
+                <section class="form-stage">
+                    <div class="card">
+                        <h3>Family Details</h3>
+
+                        <div class="grid">
+                            <div class="field">
+                                <label>Parental Status</label>
+                                <select>
+                                    <option>Both Alive</option>
+                                    <option>Orphan</option>
+                                    <option>Single Parent</option>
+                                    <option>Separated</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label>No. of Family Members</label>
+                                <input type="number" id="memberCount" min="1" max="10" placeholder="Maximum 10" />
+                            </div>
+                        </div>
+
+                        <p class="note">Include every family member details or else your application is not considered.
+                            Add grandparents only if they are living in the same house.</p>
+
+                        <div id="memberCards" class="member-cards"></div>
+
+                        <div class="family-actions">
+                            <button type="button" id="addMemberBtn">+ Add One More Family Member</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STAGE 4 -->
+                <section class="form-stage">
+                    <div class="card">
+                        <h3>Past Education</h3>
+
+                        <div class="education-box">
+                            <h4 class="education-subtitle">SSC Details</h4>
+
+                            <div class="grid">
+                                <div class="field">
+                                    <label>Class</label>
+                                    <input type="text" value="SSC" disabled />
+                                </div>
+
+                                <div class="field">
+                                    <label>Institution Name</label>
+                                    <input type="text" placeholder="Enter institution name" />
+                                </div>
+
+                                <div class="field">
+                                    <label>SSC School Address</label>
+                                    <textarea class="ssc-school-address"
+                                        placeholder="Enter school address / village / town / city"></textarea>
+                                </div>
+
+                                <div class="field">
+                                    <label>Institution Type</label>
+                                    <select>
+                                        <option>Private</option>
+                                        <option>Govt</option>
+                                        <option>Aided</option>
+                                    </select>
+                                </div>
+
+                                <div class="field">
+                                    <label>Year of Passing</label>
+                                    <input type="text" value="2024" disabled />
+                                </div>
+
+                                <div class="field">
+                                    <label>Tuition Fees</label>
+                                    <input type="number"
+                                        placeholder="Enter fees,ask the tution fee only for the prev education" />
+                                </div>
+
+                                <div class="field">
+                                    <label>Percentage</label>
+                                    <input type="text" value="Auto Fetch" disabled />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="education-box">
+                            <h4 class="education-subtitle">Intermediate / Diploma Details</h4>
+
+                            <div class="grid">
+                                <div class="field">
+                                    <label>Class</label>
+                                    <input type="text" value="inter/diploma" disabled />
+                                </div>
+
+                                <div class="field">
+                                    <label>Institution Name</label>
+                                    <input type="text" placeholder="Enter institution name" />
+                                </div>
+
+                                <div class="field">
+                                    <label>Intermediate/ Diploma School Address</label>
+                                    <textarea class="ssc-school-address"
+                                        placeholder="Enter school address / village / town / city"></textarea>
+                                </div>
+
+                                <div class="field">
+                                    <label>Institution Type</label>
+                                    <select>
+                                        <option>Private</option>
+                                        <option>Govt</option>
+                                        <option>Aided</option>
+                                    </select>
+                                </div>
+
+                                <div class="field">
+                                    <label>Year of Passing</label>
+                                    <input type="text" value="2024" disabled />
+                                </div>
+
+                                <div class="field">
+                                    <label>Tuition Fees</label>
+                                    <input type="number" placeholder="Enter fees" />
+                                </div>
+
+                                <div class="field">
+                                    <label>Percentage</label>
+                                    <input type="text" value="Auto Fetch" disabled />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Competitive Exam Details(comes only if selected)</h3>
+
+                        <div class="grid">
+                            <div class="field">
+                                <label>Exam Name</label>
+                                <input type="text" value="ECET" disabled />
+                            </div>
+
+                            <div class="field">
+                                <label>Level</label>
+                                <input type="text" value="STATE/NATIONAL" disabled />
+                            </div>
+
+                            <div class="field">
+                                <label>Rank</label>
+                                <input type="number" value="10" disabled />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Current Education</h3>
+
+                        <div class="grid">
+                            <div class="field">
+                                <label>Course</label>
+                                <input type="text" value="Btech" disabled />
+                            </div>
+
+                            <div class="field">
+                                <label>Branch</label>
+                                <input type="text" placeholder="Enter branch" />
+                            </div>
+
+                            <div class="field">
+                                <label> select Institution Name</label>
+                                <input type="text" placeholder="Enter institution name" />
+                            </div>
+
+                            <!-- <div class="field">
+                                <label>ente</label>
+                                <input type="text" placeholder="Enter place" />
+                            </div> -->
+
+                            <div class="field">
+                                <label>Institution Type</label>
+                                <select>
+                                    <option>Private</option>
+                                    <option>Govt</option>
+                                    <option>Aided</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label>Tuition Fees</label>
+                                <input type="number" placeholder="Enter fees" />
+                            </div>
+
+                            <div class="field">
+                                <label>Year of Joining</label>
+                                <input type="text" value="2025" disabled />
+                            </div>
+
+                            <div class="field">
+                                <label>Year of Passout</label>
+                                <input type="text" value="2029" disabled />
+                            </div>
+                        </div>
+                    </div>
+
+
+                </section>
+
+                <!-- STAGE 5 -->
+                <section class="form-stage">
+                    <div class="card">
+                        <h3>Expenses Per Year</h3>
+
+                        <div class="expense-list">
+                            <div class="expense-row">
+                                <label>College Fees</label>
+                                <input type="number" class="expense" placeholder="₹" />
+                            </div>
+
+                            <div class="expense-row">
+                                <label>Room & Boarding</label>
+                                <input type="number" class="expense" placeholder="₹" />
+                            </div>
+
+                            <div class="expense-row">
+                                <label>Books</label>
+                                <input type="number" class="expense" placeholder="₹" />
+                            </div>
+
+                            <div class="expense-row">
+                                <label>Other Fees</label>
+                                <input type="number" class="expense" placeholder="₹" />
+                            </div>
+
+                            <div class="expense-row">
+                                <label>Other Family Expenses</label>
+                                <input type="number" class="expense" placeholder="₹" />
+                            </div>
+
+                            <div class="total-box">
+                                <span>Total Annual Expenses</span>
+                                <strong id="totalAmount">₹ 0</strong>
+                            </div>
+                        </div>
+
+                        <div class="grid bottom-space">
+                            <div class="field">
+                                <label>Eligible for Tuition Reimbursement?</label>
+                                <select>
+                                    <option>Yes</option>
+                                    <option>No</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label>Where would you reside while in College?</label>
+                                <select>
+                                    <option>Campus Hostel</option>
+                                    <option>Private Hostel</option>
+                                    <option>Room</option>
+                                    <option>Home</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STAGE 6 -->
+                <section class="form-stage">
+                    <div class="card">
+                        <div class="documents-header">
+                            <div>
+                                <h3>Documents to Upload</h3>
+                                <p>Upload all required documents to complete this section.</p>
+                            </div>
+
+                            <div class="upload-counter-box">
+                                <div>
+                                    <strong id="uploadedCountText" style="color: red;">0 of 0 uploaded</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="document-list" id="documentList"></div>
+                    </div>
+                </section>
+
+                <!-- PREVIEW STAGE
+        <section class="form-stage preview-stage">
+            <div class="card">
+            <h3>Application Preview</h3>
+            <p class="preview-note">Review your application details before final submission.</p>
+
+            <div id="previewContent" class="preview-content"></div>
+            </div>
+        </section> -->
+
+                <div class="form-actions">
+                    <button type="button" id="prevBtn">Previous</button>
+                    <button type="button" id="nextBtn">Next Section</button>
+                </div>
+
+            </form>
+        </main>
+
+        <!-- PREVIEW MODAL -->
+        <div class="preview-modal" id="previewModal">
+            <div class="preview-modal-box">
+                <div class="preview-modal-header">
+                    <div>
+                        <h3>Application Preview</h3>
+                        <p>Review your application details before final submission.</p>
+                    </div>
+
+                    <button type="button" id="closePreviewBtn" class="preview-close-btn">
+                        ×
+                    </button>
+                </div>
+
+                <div id="previewContent" class="preview-content"></div>
+
+                <div class="preview-modal-actions">
+                    <button type="button" id="editPreviewBtn" class="preview-edit-btn">
+                        Edit
+                    </button>
+
+                    <button type="button" id="finalSubmitBtn" class="preview-submit-btn">
+                        Submit Application
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+const stages = document.querySelectorAll(".form-stage");
+const steps = document.querySelectorAll(".step");
+const nextBtn = document.getElementById("nextBtn");
+const prevBtn = document.getElementById("prevBtn");
+
+const previewModal = document.getElementById("previewModal");
+const closePreviewBtn = document.getElementById("closePreviewBtn");
+const editPreviewBtn = document.getElementById("editPreviewBtn");
+const finalSubmitBtn = document.getElementById("finalSubmitBtn");
+
+let currentStage = 0;
+const completedStages = new Set();
+
+const documentsStageIndex = stages.length - 1;
+
+function showStage(index) {
+  stages.forEach((stage, i) => {
+    stage.classList.toggle("active", i === index);
+  });
+
+  steps.forEach((step, i) => {
+    step.classList.toggle("active", i === index);
+    step.classList.toggle("completed", completedStages.has(i));
+  });
+
+  prevBtn.style.visibility = index === 0 ? "hidden" : "visible";
+
+  if (index === documentsStageIndex) {
+    nextBtn.textContent = "Preview & Submit";
+  } else {
+    nextBtn.textContent = "Next Section";
+  }
+}
+
+function isStageFilled(stageIndex) {
+  const stage = stages[stageIndex];
+  const inputs = stage.querySelectorAll("input, select, textarea");
+
+  for (let input of inputs) {
+    if (
+      input.type !== "file" &&
+      !input.disabled &&
+      input.offsetParent !== null &&
+      input.value.trim() === ""
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+nextBtn.addEventListener("click", () => {
+  if (isStageFilled(currentStage)) {
+    completedStages.add(currentStage);
+  } else {
+    completedStages.delete(currentStage);
+  }
+
+  if (currentStage === documentsStageIndex) {
+    generatePreview();
+    previewModal.classList.add("show");
+    document.body.style.overflow = "hidden";
+    return;
+  }
+
+  currentStage++;
+  showStage(currentStage);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+prevBtn.addEventListener("click", () => {
+  if (currentStage > 0) {
+    currentStage--;
+    showStage(currentStage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+});
+
+steps.forEach((step) => {
+  step.addEventListener("click", () => {
+    if (isStageFilled(currentStage)) {
+      completedStages.add(currentStage);
+    } else {
+      completedStages.delete(currentStage);
+    }
+
+    currentStage = Number(step.dataset.step);
+    showStage(currentStage);
+  });
+});
+
+document.addEventListener("input", () => {
+  if (isStageFilled(currentStage)) {
+    completedStages.add(currentStage);
+  } else {
+    completedStages.delete(currentStage);
+  }
+
+  showStage(currentStage);
+});
+
+document.addEventListener("change", () => {
+  if (isStageFilled(currentStage)) {
+    completedStages.add(currentStage);
+  } else {
+    completedStages.delete(currentStage);
+  }
+
+  showStage(currentStage);
+});
+
+closePreviewBtn.addEventListener("click", () => {
+  previewModal.classList.remove("show");
+  document.body.style.overflow = "auto";
+});
+
+editPreviewBtn.addEventListener("click", () => {
+  previewModal.classList.remove("show");
+  document.body.style.overflow = "auto";
+});
+
+finalSubmitBtn.addEventListener("click", () => {
+  alert("Application submitted successfully.");
+  window.location.href = "myapplication status/indexfinal.html";
+});
+
+previewModal.addEventListener("click", (e) => {
+  if (e.target === previewModal) {
+    previewModal.classList.remove("show");
+    document.body.style.overflow = "auto";
+  }
+});
+
+showStage(currentStage);
+
+/* DISABILITY TOGGLE */
+const disabledSelect = document.getElementById("disabledSelect");
+const disabilityFields = document.querySelectorAll(".disability-field");
+
+disabledSelect.addEventListener("change", () => {
+  disabilityFields.forEach((field) => {
+    field.style.display = disabledSelect.value === "yes" ? "flex" : "none";
+  });
+});
+
+/* DISABILITY FILE UPLOAD + VIEW */
+const disabilityFile = document.getElementById("disabilityFile");
+const disabilityFileName = document.getElementById("disabilityFileName");
+const disabilityViewBtn = document.getElementById("disabilityViewBtn");
+
+let disabilityFileUrl = "";
+
+disabilityFile.addEventListener("change", () => {
+  const file = disabilityFile.files[0];
+
+  if (!file) {
+    disabilityFileUrl = "";
+    disabilityFileName.textContent = "No file selected";
+    disabilityViewBtn.disabled = true;
+    disabilityViewBtn.classList.remove("enabled");
+    return;
+  }
+
+  disabilityFileUrl = URL.createObjectURL(file);
+  disabilityFileName.textContent = file.name;
+  disabilityViewBtn.disabled = false;
+  disabilityViewBtn.classList.add("enabled");
+});
+
+disabilityViewBtn.addEventListener("click", () => {
+  if (disabilityFileUrl) {
+    window.open(disabilityFileUrl, "_blank");
+  }
+});
+
+/* SAME ADDRESS TOGGLE */
+const sameAddress = document.getElementById("sameAddress");
+const communicationAddress = document.querySelector(".communication-address");
+
+sameAddress.addEventListener("change", () => {
+  communicationAddress.style.display =
+    sameAddress.value === "no" ? "grid" : "none";
+});
+
+/* FAMILY MEMBER CARDS */
+const memberCount = document.getElementById("memberCount");
+const memberCards = document.getElementById("memberCards");
+const addMemberBtn = document.getElementById("addMemberBtn");
+
+let familyMembers = [];
+
+function createEmptyMember() {
+  return {
+    relationship: "",
+    name: "",
+    age: "",
+    education: "",
+    occupation: "",
+    isAlive: ""
+  };
+}
+
+function saveFamilyDataFromDOM() {
+  const cards = document.querySelectorAll(".member-card");
+
+  cards.forEach((card, index) => {
+    if (!familyMembers[index]) return;
+
+    familyMembers[index].relationship = card.querySelector(".relationship").value;
+    familyMembers[index].isAlive = card.querySelector(".is-alive").value;
+    familyMembers[index].name = card.querySelector(".member-name").value;
+    familyMembers[index].age = card.querySelector(".member-age").value;
+    familyMembers[index].education = card.querySelector(".education").value;
+    familyMembers[index].occupation = card.querySelector(".occupation").value;
+
+  });
+}
+
+function updateMemberCount() {
+  memberCount.value = familyMembers.length;
+}
+
+function renderFamilyMembers() {
+  memberCards.innerHTML = "";
+
+  familyMembers.forEach((member, index) => {
+    const card = document.createElement("div");
+    card.className = "member-card";
+
+    card.innerHTML = `
+      <div class="member-card-header">
+        <h4>Family Member ${index + 1}</h4>
+        <button type="button" class="delete-member-btn" data-index="${index}">
+          Delete
+        </button>
+      </div>
+
+      <div class="member-grid">
+        <div class="field">
+          <label>Relationship Type</label>
+          <select class="relationship">
+            <option value="">Select Relationship</option>
+            <option ${member.relationship === "Father" ? "selected" : ""}>Father</option>
+            <option ${member.relationship === "Mother" ? "selected" : ""}>Mother</option>
+            <option ${member.relationship === "Brother" ? "selected" : ""}>Brother</option>
+            <option ${member.relationship === "Sister" ? "selected" : ""}>Sister</option>
+            <option ${member.relationship === "Grandfather" ? "selected" : ""}>Grandfather</option>
+            <option ${member.relationship === "Grandmother" ? "selected" : ""}>Grandmother</option>
+            <option ${member.relationship === "Guardian" ? "selected" : ""}>Guardian</option>
+          </select>
+        </div>
+
+      
+
+        <div class="field">
+  <label>Is Alive?</label>
+  <select class="is-alive">
+    <option value="">Select</option>
+    <option value="Yes" ${member.isAlive === "Yes" ? "selected" : ""}>Yes</option>
+    <option value="No" ${member.isAlive === "No" ? "selected" : ""}>No</option>
+  </select> 
+</div>
+
+        <div class="field">
+          <label>Name</label>
+          <input type="text" class="member-name" placeholder="Enter name" value="${member.name}" />
+        </div>
+
+        <div class="field">
+          <label>Age</label>
+          <input type="number" class="member-age" placeholder="Enter age" value="${member.age}" />
+        </div>
+
+       
+
+         <div class="field">
+  <label>Education</label>
+  <select class="education">
+    <option value="">Select Education</option>
+
+    <option value="No education" ${member.education === "No education" ? "selected" : ""}>
+      No Education
+    </option>
+
+    <option value="Primary" ${member.education === "Primary" ? "selected" : ""}>
+      Primary School / 1st to 5th Class
+    </option>
+
+    <option value="Secondary" ${member.education === "Secondary" ? "selected" : ""}>
+      Secondary School / 6th to 10th Class
+    </option>
+
+    <option value="Higher Secondary" ${member.education === "Higher Secondary" ? "selected" : ""}>
+      Intermediate / 11th to 12th Class
+    </option>
+
+    <option value="Diploma" ${member.education === "Diploma" ? "selected" : ""}>
+      Diploma
+    </option>
+
+    <option value="Undergraduate" ${member.education === "Undergraduate" ? "selected" : ""}>
+      Undergraduate / Degree
+    </option>
+
+    <option value="Post Graduate" ${member.education === "Post Graduate" ? "selected" : ""}>
+      Post Graduate / PG
+    </option>
+  </select>
+</div>
+
+        <div class="field">
+          <label>Occupation</label>
+          <select class="occupation">
+            <option value="">Select Occupation</option>
+            <option ${member.occupation === "Farmer" ? "selected" : ""}>Farmer</option>
+            <option ${member.occupation === "Daily Wage Worker" ? "selected" : ""}>Daily Wage Worker</option>
+            <option ${member.occupation === "Private Employee" ? "selected" : ""}>Private Employee</option>
+            <option ${member.occupation === "Government Employee" ? "selected" : ""}>Government Employee</option>
+            <option ${member.occupation === "Self‑Employed/Shopkeeper" ? "selected" : ""}>Self‑Employed/Shopkeeper</option>
+            <option ${member.occupation === "Student" ? "selected" : ""}>Student</option>
+            <option ${member.occupation === "Unemployed" ? "selected" : ""}>Unemployed</option>
+            <option ${member.occupation === "Home Maker" ? "selected" : ""}>Home Maker</option>
+            <option ${member.occupation === "carpenter/goldsmith/mason" ? "selected" : ""}>carpenter/goldsmith/mason</option>
+          </select>
+        </div>
+      </div>
+    `;
+
+    memberCards.appendChild(card);
+  });
+
+  updateMemberCount();
+}
+
+memberCount.addEventListener("change", () => {
+  let count = Number(memberCount.value);
+
+  if (count > 10) {
+    alert("Maximum 10 family members allowed.");
+    count = 10;
+  }
+
+  if (count < 1) {
+    count = 1;
+  }
+
+  familyMembers = [];
+
+  for (let i = 0; i < count; i++) {
+    familyMembers.push(createEmptyMember());
+  }
+
+  memberCount.value = count;
+  memberCount.disabled = true;
+
+  renderFamilyMembers();
+});
+
+addMemberBtn.addEventListener("click", () => {
+  saveFamilyDataFromDOM();
+
+  if (familyMembers.length >= 10) {
+    alert("Maximum 10 family members allowed.");
+    return;
+  }
+
+  familyMembers.push(createEmptyMember());
+  memberCount.disabled = true;
+
+  renderFamilyMembers();
+});
+
+memberCards.addEventListener("click", (e) => {
+  if (e.target.classList.contains("delete-member-btn")) {
+    saveFamilyDataFromDOM();
+
+    const index = Number(e.target.dataset.index);
+    familyMembers.splice(index, 1);
+
+    if (familyMembers.length === 0) {
+      memberCount.disabled = false;
+      memberCount.value = "";
+      memberCards.innerHTML = "";
+      return;
+    }
+
+    renderFamilyMembers();
+  }
+});
+
+/* EXPENSE TOTAL */
+const expenseInputs = document.querySelectorAll(".expense");
+const totalAmount = document.getElementById("totalAmount");
+
+expenseInputs.forEach((input) => {
+  input.addEventListener("input", calculateTotal);
+});
+
+function calculateTotal() {
+  let total = 0;
+
+  expenseInputs.forEach((input) => {
+    total += Number(input.value) || 0;
+  });
+
+  totalAmount.textContent = `₹ ${total.toLocaleString("en-IN")}`;
+}
+
+/* DOCUMENTS UPLOAD + VIEW */
+const documents = [
+  "Allotment Order attested",
+  "Rank Card from entrance examination attested",
+  "10th class marks certificate attested by Head of Institution",
+  "12th / Diploma marks certificate attested by Head of Institution",
+  "Receipts / proof of tuition fee paid in X Class and XII Class / Diploma",
+  "Proof of tuition fee paid/payable per annum certified by college authorities",
+  "Government Income Certificate",
+  "Room and Board Expense Receipt",
+  "Ration Card / BPL Card / Equivalent poverty proof",
+  "Bonafide Certificate from college",
+  "Passport size photograph of applicant",
+  "Aadhaar Card"
+];
+
+const documentList = document.getElementById("documentList");
+const uploadedCountText = document.getElementById("uploadedCountText");
+const uploadCounterBox = document.querySelector(".upload-counter-box");
+
+const uploadedFiles = {};
+
+function updateUploadCounter() {
+  const uploadedCount = Object.keys(uploadedFiles).length;
+  const totalCount = documents.length;
+
+  uploadedCountText.textContent = `${uploadedCount} of ${totalCount} uploaded`;
+
+  if (uploadedCount === totalCount && totalCount > 0) {
+    uploadCounterBox.classList.add("completed");
+  } else {
+    uploadCounterBox.classList.remove("completed");
+  }
+}
+
+function markDocumentUploaded(index, fileName, fileUrl) {
+  uploadedFiles[index] = fileUrl;
+
+  const item = document.querySelector(`.document-item[data-index="${index}"]`);
+  const docNumber = document.getElementById(`docNumber${index}`);
+  const fileNameText = document.getElementById(`fileName${index}`);
+  const viewBtn = document.querySelector(`.view-btn[data-index="${index}"]`);
+  const deleteBtn = document.querySelector(`.delete-doc-btn[data-index="${index}"]`);
+
+  item.classList.add("uploaded");
+  docNumber.textContent = "✓";
+  fileNameText.textContent = fileName;
+
+  viewBtn.disabled = false;
+  viewBtn.classList.add("enabled");
+
+  deleteBtn.disabled = false;
+  deleteBtn.classList.add("enabled");
+
+  updateUploadCounter();
+}
+
+function markDocumentPending(index) {
+  if (uploadedFiles[index]) {
+    URL.revokeObjectURL(uploadedFiles[index]);
+  }
+
+  delete uploadedFiles[index];
+
+  const item = document.querySelector(`.document-item[data-index="${index}"]`);
+  const docNumber = document.getElementById(`docNumber${index}`);
+  const fileNameText = document.getElementById(`fileName${index}`);
+  const fileInput = document.getElementById(`docFile${index}`);
+  const viewBtn = document.querySelector(`.view-btn[data-index="${index}"]`);
+  const deleteBtn = document.querySelector(`.delete-doc-btn[data-index="${index}"]`);
+
+  item.classList.remove("uploaded");
+  docNumber.textContent = Number(index) + 1;
+  fileNameText.textContent = "No file selected";
+
+  if (fileInput) {
+    fileInput.value = "";
+  }
+
+  viewBtn.disabled = true;
+  viewBtn.classList.remove("enabled");
+
+  deleteBtn.disabled = true;
+  deleteBtn.classList.remove("enabled");
+
+  updateUploadCounter();
+}
+
+documents.forEach((doc, idx) => {
+  const item = document.createElement("div");
+  item.className = "document-item";
+  item.dataset.index = idx;
+
+  item.innerHTML = `
+    <div class="doc-left">
+      <span class="doc-number" id="docNumber${idx}">${idx + 1}</span>
+
+      <div class="doc-info">
+        <p>${doc} <span class="required-star">*</span></p>
+        <span class="doc-file-name" id="fileName${idx}">
+          No file selected
+        </span>
+      </div>
+    </div>
+
+    <div class="doc-actions">
+      <input 
+        type="file" 
+        class="doc-file" 
+        id="docFile${idx}" 
+        data-index="${idx}" 
+        accept=".pdf,.jpg,.jpeg,.png" 
+      />
+
+      <label for="docFile${idx}" class="choose-file-btn">
+        Upload
+      </label>
+
+      <button type="button" class="view-btn" data-index="${idx}" disabled>
+        View
+      </button>
+
+      <button type="button" class="delete-doc-btn" data-index="${idx}" disabled>
+        Delete
+      </button>
+    </div>
+  `;
+
+  documentList.appendChild(item);
+});
+
+updateUploadCounter();
+
+documentList.addEventListener("change", async (e) => {
+  if (e.target.classList.contains("doc-file")) {
+    const index = e.target.dataset.index;
+    const file = e.target.files[0];
+
+    if (!file) {
+      markDocumentPending(index);
+      return;
+    }
+
+    if (uploadedFiles[index]) {
+      URL.revokeObjectURL(uploadedFiles[index]);
+    }
+
+    const localFileUrl = URL.createObjectURL(file);
+    markDocumentUploaded(index, file.name, localFileUrl);
+  }
+});
+
+documentList.addEventListener("click", (e) => {
+  if (e.target.classList.contains("view-btn")) {
+    const index = e.target.dataset.index;
+
+    if (uploadedFiles[index]) {
+      window.open(uploadedFiles[index], "_blank");
+    }
+  }
+
+  if (e.target.classList.contains("delete-doc-btn")) {
+    const index = e.target.dataset.index;
+    markDocumentPending(index);
+  }
+});
+
+/* PREVIEW SCREEN */
+function getFieldValue(labelText) {
+  const labels = document.querySelectorAll("label");
+
+  for (let label of labels) {
+    if (label.textContent.trim().toLowerCase() === labelText.toLowerCase()) {
+      const field = label.parentElement;
+      const input = field.querySelector("input, select, textarea");
+
+      if (input) {
+        return input.value || "-";
+      }
+    }
+  }
+
+  return "-";
+}
+
+function previewItem(label, value) {
+  return `
+    <div class="preview-item">
+      <span>${label}</span>
+      <strong>${value || "-"}</strong>
+    </div>
+  `;
+}
+
+function generatePreview() {
+  const previewContent = document.getElementById("previewContent");
+
+  if (!previewContent) {
+    alert("Preview section missing in HTML.");
+    return;
+  }
+
+  const uploadedDocsCount = Object.keys(uploadedFiles).length;
+  const totalDocsCount = documents.length;
+
+  const documentPreview = documents.map((doc, index) => {
+    const isUploaded = uploadedFiles[index];
+
+    return `
+      <div class="preview-doc-item">
+        <span>${index + 1}. ${doc}</span>
+        <strong class="${isUploaded ? "preview-doc-uploaded" : "preview-doc-pending"}">
+          ${isUploaded ? "Uploaded" : "Pending"}
+        </strong>
+      </div>
+    `;
+  }).join("");
+
+  previewContent.innerHTML = `
+    <div class="preview-section">
+      <h4>Basic Information</h4>
+      <div class="preview-grid">
+        ${previewItem("Student Name", getFieldValue("Student Name"))}
+        ${previewItem("Family Annual Income", getFieldValue("Family Annual Income"))}
+        ${previewItem("Gender", getFieldValue("Gender"))}
+        ${previewItem("Email Address", getFieldValue("Email Address"))}
+        ${previewItem("Date of Birth", getFieldValue("Date of Birth"))}
+        ${previewItem("Aadhaar Number", getFieldValue("Aadhaar Number"))}
+        ${previewItem("Mobile Number", getFieldValue("Mobile Number"))}
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <h4>Additional Details</h4>
+      <div class="preview-grid">
+        ${previewItem("Physically Disabled", getFieldValue("Are you physically disabled?"))}
+        ${previewItem("Disability Type", getFieldValue("Disability Type"))}
+        ${previewItem("Disability Percentage", getFieldValue("Disability Percentage"))}
+        ${previewItem("Rural / Urban", getFieldValue("Rural / Urban"))}
+        ${previewItem("First Graduate", getFieldValue("First Graduate in Your Family?"))}
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <h4>Family Details</h4>
+      <div class="preview-grid">
+        ${previewItem("Parental Status", getFieldValue("Parental Status"))}
+        ${previewItem("No. of Family Members", memberCount.value)}
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <h4>Education Details</h4>
+      <div class="preview-grid">
+        ${previewItem("Course", getFieldValue("Course"))}
+        ${previewItem("Branch", getFieldValue("Branch"))}
+        ${previewItem("Institution Name", getFieldValue("Institution Name"))}
+        ${previewItem("Year of Joining", getFieldValue("Year of Joining"))}
+        ${previewItem("Year of Passout", getFieldValue("Year of Passout"))}
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <h4>Expenses</h4>
+      <div class="preview-grid">
+        ${previewItem("Total Annual Expenses", totalAmount.textContent)}
+        ${previewItem("Residence While in College", getFieldValue("Where would you reside while in College?"))}
+        ${previewItem("Eligible for Tuition Reimbursement", getFieldValue("Eligible for Tuition Reimbursement?"))}
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <h4>Documents</h4>
+      <div class="preview-grid">
+        ${previewItem("Uploaded Documents", `${uploadedDocsCount} of ${totalDocsCount}`)}
+      </div>
+
+      <div class="preview-doc-list">
+        ${documentPreview}
+      </div>
+    </div>
+  `;
+}
+
+
+const privateScholarshipSelect = document.getElementById("privateScholarshipSelect");
+const scholarshipNameField = document.getElementById("scholarshipNameField");
+const scholarshipName = document.getElementById("scholarshipName");
+
+privateScholarshipSelect.addEventListener("change", () => {
+  if (privateScholarshipSelect.value === "Yes") {
+    scholarshipNameField.style.display = "flex";
+  } else {
+    scholarshipNameField.style.display = "none";
+    scholarshipName.value = "";
+  }
+});
+        </script>
+    </body>
+
+    </html>

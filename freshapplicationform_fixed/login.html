@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NSF Login</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f6f8;
+      color: #111111;
+      min-height: 100vh;
+    }
+
+    .top-header {
+      min-height: 72px;
+      background: #ffffff;
+      padding: 0 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 3px 14px rgba(52, 116, 99, 0.28);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-img {
+      width: 200px;
+      height: 58px;
+      object-fit: contain;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 5px;
+      flex-shrink: 0;
+    }
+
+    .home-btn {
+      background: #347463;
+      color: #ffffff;
+      border: none;
+      padding: 9px 22px;
+      border-radius: 7px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .home-btn:hover {
+      background: #2a5e50;
+    }
+
+    .auth-wrapper {
+      min-height: calc(100vh - 72px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 35px 18px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 430px;
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.07);
+      overflow: hidden;
+    }
+
+    .auth-title {
+      padding: 24px 28px 12px;
+      text-align: center;
+      color: #347463;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+
+    }
+
+
+    .auth-form {
+      padding: 26px 28px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #000000;
+      letter-spacing: 0.3px;
+    }
+
+    input {
+      height: 48px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      padding: 0 14px;
+      font-size: 15px;
+      background: #fafafa;
+      outline: none;
+      color: #000000;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus {
+      border-color: #347463;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(52, 116, 99, 0.12);
+    }
+
+    .submit-btn {
+      height: 48px;
+      background: #347463;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+
+    .submit-btn:hover {
+      background: #2a5e50;
+    }
+
+    .bottom-link {
+      text-align: center;
+      font-size: 14px;
+      color: #333333;
+      margin-top: 2px;
+    }
+
+    .bottom-link a {
+      color: #347463;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .bottom-link a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .top-header {
+        padding: 0 18px;
+      }
+
+      .logo-img {
+        width: 155px;
+        height: 52px;
+      }
+
+      .home-btn {
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+
+      .auth-wrapper {
+        align-items: flex-start;
+        padding-top: 30px;
+      }
+
+      .auth-title {
+        font-size: 24px;
+      }
+
+      .auth-form {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="top-header">
+    <div class="brand">
+      <img src="nsf-logov1.png" alt="NSF Logo" class="logo-img" />
+    </div>
+
+    <a href="index.html" class="home-btn">Home</a>
+  </header>
+
+  <main class="auth-wrapper">
+    <section class="auth-card">
+      <h1 class="auth-title">Login</h1>
+
+      <form class="auth-form" onsubmit="goToEligibility(event)">
+        <div class="field">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="Enter email address" required />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter password" required />
+        </div>
+
+        <button type="submit" class="submit-btn">Submit</button>
+
+        <p class="bottom-link">
+          Don't have an account?
+          <a href="signup.html">Create Account</a>
+        </p>
+      </form>
+    </section>
+  </main>
+  <script>
+    function goToEligibility(event) {
+      event.preventDefault();
+      window.location.href = "neweligity.html";
+    }
+  </script>
+</body>
+</html>
