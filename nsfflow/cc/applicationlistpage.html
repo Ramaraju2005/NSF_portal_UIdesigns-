@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NSF – Application Review Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary:       #347463;
+    --primary-dark:  #2A5F51;
+    --primary-light: #E8F1EE;
+    --mint-bg:       #F0F4F8;
+    --mint-border:   #C9DDD6;
+    --row-selected:  #DCECE6;
+    --text-dark:     #1F2D29;
+    --text-mid:      #4A5C56;
+    --text-muted:    #7A8B85;
+    --white:         #FFFFFF;
+    --header-h:      60px;
+  }
+
+  body {
+    font-family: 'Roboto', system-ui, sans-serif;
+    background: var(--mint-bg);
+    color: var(--text-dark);
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  button { font-family: inherit; cursor: pointer; }
+
+  /* ═══════════ HEADER ═══════════ */
+  #header {
+    background: var(--primary);
+    height: var(--header-h);
+    display: flex; align-items: center;
+    padding: 0 28px; gap: 14px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+  }
+  #header .logo {
+    width: 38px; height: 38px;
+    background: var(--white); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; color: var(--primary);
+  }
+  #header .hd-title  { color: var(--white); font-size: 17px; font-weight: 500; }
+  #header .hd-sub    { color: rgba(255,255,255,0.72); font-size: 12.5px; }
+  #header .hd-role   {
+    margin-left: auto;
+    background: rgba(255,255,255,0.15);
+    border-radius: 16px; padding: 5px 14px;
+    color: var(--white); font-size: 13px;
+  }
+
+  /* ═══════════ MAIN ═══════════ */
+  #main { max-width: 1400px; margin: 0 auto; padding: 24px 20px 80px; }
+  .page-heading { margin-bottom: 20px; }
+  .page-heading h1 { font-size: 22px; font-weight: 500; color: var(--text-dark); }
+  .page-heading p  { color: var(--text-muted); font-size: 14px; margin-top: 3px; }
+
+  /* ═══════════ SEARCH PANEL ═══════════ */
+  #search-panel {
+    background: var(--white);
+    border: 1px solid var(--mint-border);
+    border-radius: 12px; padding: 22px 24px;
+    margin-bottom: 20px;
+  }
+  .fields-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+    gap: 16px; align-items: end;
+  }
+  .field-group label {
+    display: block; font-size: 12.5px; font-weight: 500;
+    color: var(--text-mid); margin-bottom: 5px;
+  }
+  .field-group label .badge {
+    margin-left: 6px; font-size: 11px; font-weight: 500;
+    padding: 1px 7px; border-radius: 10px;
+  }
+  .badge-edit { background: var(--primary-light); color: var(--primary); }
+  .badge-lock { background: #EEE; color: #9E9E9E; }
+
+  .field-group select,
+  .field-group input[type="date"] {
+    width: 100%; height: 42px;
+    padding: 10px 12px; border-radius: 8px;
+    border: 1px solid var(--mint-border);
+    font-size: 14.5px; color: var(--text-dark);
+    background: var(--white); font-family: inherit;
+    outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  .field-group select:focus,
+  .field-group input[type="date"]:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(52,116,99,.15);
+  }
+  .field-group select:disabled { background: #F5F5F5; color: #9E9E9E; }
+
+  .btn-primary {
+    background: var(--primary); color: var(--white);
+    border: none; height: 42px; padding: 0 28px;
+    border-radius: 8px; font-size: 14.5px; font-weight: 500;
+    transition: background .15s; white-space: nowrap;
+  }
+  .btn-primary:hover { background: var(--primary-dark); }
+
+  /* ═══════════ RESULTS ═══════════ */
+  #results { display: none; }
+
+  /* ═══════════ STATUS TABS ═══════════ */
+  #status-tabs {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px; margin-bottom: 16px;
+  }
+  .status-tab {
+    border-radius: 10px; padding: 14px 16px;
+    text-align: center; transition: all .15s;
+    background: var(--white);
+    border: 1.5px solid #E0E0E0;
+    color: var(--text-muted);
+  }
+  .status-tab .tab-label { font-size: 13px; font-weight: 500; }
+  .status-tab .tab-count { font-size: 28px; font-weight: 700; margin-top: 3px; line-height: 1; }
+
+  /* Per-tab hover & active colors matching the image */
+  .tab-rec                       { border-color: #C8E6C9; }
+  .tab-rec:hover, .tab-rec.active { background: #E8F5E9; border-color: #A5D6A7; color: #2E7D32; }
+  .tab-rec .tab-count             { color: #2E7D32; }
+
+  .tab-review                          { border-color: #FFE0B2; }
+  .tab-review:hover, .tab-review.active { background: #FFF3E0; border-color: #FFCC80; color: #E65100; }
+  .tab-review .tab-count               { color: #E65100; }
+
+  .tab-dec                       { border-color: #FFCDD2; }
+  .tab-dec:hover, .tab-dec.active { background: #FFEBEE; border-color: #EF9A9A; color: #C62828; }
+  .tab-dec .tab-count             { color: #C62828; }
+
+  .tab-notrev                          { border-color: #CFD8DC; }
+  .tab-notrev:hover, .tab-notrev.active { background: #ECEFF1; border-color: #B0BEC5; color: #455A64; }
+  .tab-notrev .tab-count               { color: #455A64; }
+
+  .tab-total                         { border-color: #B3E5FC; }
+  .tab-total:hover, .tab-total.active { background: #E1F5FE; border-color: #81D4FA; color: #0277BD; }
+  .tab-total .tab-count               { color: #0277BD; }
+
+  /* Inactive tab count stays muted */
+  .status-tab:not(:hover):not(.active) .tab-count { color: var(--text-dark); }
+
+  /* ═══════════ STICKY ZONE ═══════════ */
+  #sticky-zone {
+    position: sticky;
+    top: var(--header-h);
+    z-index: 60;
+    background: var(--mint-bg);
+    padding-top: 4px;
+    padding-bottom: 2px;
+  }
+
+  /* Eligibility section */
+  #elig-section {
+    display: flex; align-items: center; gap: 16px;
+    background: var(--white);
+    border: 1px solid var(--mint-border);
+    border-radius: 10px; padding: 14px 20px;
+    margin-bottom: 10px;
+  }
+  #elig-card { flex: 1; min-width: 0; }
+  #elig-card .elig-title {
+    font-size: 14.5px; font-weight: 700;
+    color: red; margin-bottom: 4px;
+  }
+  #elig-card .elig-details {
+    font-size: 13.5px; color: var(--text-mid);
+    display: flex; flex-wrap: wrap; gap: 4px 20px;
+  }
+  #elig-card .elig-details b { color: var(--text-dark); font-weight: 500; }
+
+  /* Show All Criteria button — warm orange tint */
+  #btn-criteria {
+    background: #FBF0E6;
+    border: 1px solid #E8C49A;
+    color: #8B4513;
+    padding: 9px 18px; border-radius: 8px;
+    font-size: 14px; font-weight: 500;
+    white-space: nowrap; transition: background .15s;
+  }
+  #btn-criteria:hover { background: #F5DFC0; }
+
+  /* Actions bar */
+  #actions-bar {
+    display: none; align-items: center;
+    gap: 12px; flex-wrap: wrap;
+    background: #F7F9FC;
+    border: 1px solid #D5E0EC;
+    border-radius: 10px; padding: 10px 20px;
+    margin-bottom: 10px;
+  }
+  #actions-bar .sel-info { font-size: 14px; font-weight: 500; color: var(--primary-dark); }
+  #select-all-label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14px; color: var(--text-mid);
+    cursor: pointer; user-select: none;
+  }
+  #select-all-label input {
+    width: 17px; height: 17px;
+    accent-color: var(--primary); cursor: pointer;
+  }
+  .act-divider { width: 1px; height: 22px; background: #D0DCE8; }
+
+  .action-btn {
+    background: var(--white);
+    border: 1px solid #D0DCE8;
+    border-radius: 8px; padding: 8px 20px;
+    font-size: 14px; font-weight: 500;
+    transition: all .15s;
+  }
+  .action-btn.rec  { color: #2E7D32; }
+  .action-btn.rec:hover  { background: #E8F5E9; border-color: #A5D6A7; }
+  .action-btn.dec  { color: #C62828; }
+  .action-btn.dec:hover  { background: #FFEBEE; border-color: #EF9A9A; }
+  .action-btn.rev  { color: #E65100; }
+  .action-btn.rev:hover  { background: #FFF3E0; border-color: #FFCC80; }
+
+  #clear-sel-btn {
+    margin-left: auto; background: none; border: none;
+    color: var(--text-muted); font-size: 13px;
+    text-decoration: underline;
+  }
+  #clear-sel-btn:hover { color: var(--text-dark); }
+
+  /* ═══════════ TABLE CARD ═══════════ */
+  #table-card {
+    background: var(--white);
+    border: 1px solid var(--mint-border);
+    border-radius: 12px; overflow: hidden;
+  }
+  #table-topbar {
+    padding: 11px 18px;
+    border-bottom: 1px solid #E4EDF0;
+    display: flex; align-items: center; gap: 10px;
+  }
+  #tbl-count { color: var(--text-muted); font-size: 13.5px; }
+  #tbl-count strong { color: var(--text-dark); font-weight: 500; }
+  #table-topbar .spacer { flex: 1; }
+
+  /* Choose columns button — soft indigo tint */
+  #btn-choose-cols {
+    display: flex; align-items: center; gap: 7px;
+    background: #EEF0FB;
+    border: 1px solid #C5CAF0;
+    color: #3949AB;
+    padding: 8px 16px; border-radius: 8px;
+    font-size: 13.5px; font-weight: 500;
+    transition: background .15s; white-space: nowrap;
+  }
+  #btn-choose-cols:hover { background: #DDE0F7; }
+  #btn-choose-cols svg { flex-shrink: 0; }
+
+  /* Export button — soft purple tint */
+  #btn-export {
+    display: flex; align-items: center; gap: 7px;
+    background: #F3EEF8;
+    border: 1px solid #D0BEE8;
+    color: #6A1B9A;
+    padding: 8px 16px; border-radius: 8px;
+    font-size: 13.5px; font-weight: 500;
+    transition: background .15s; white-space: nowrap;
+  }
+  #btn-export:hover { background: #E8DCF4; }
+  #btn-export svg { flex-shrink: 0; }
+
+  /* ═══════════ TABLE ═══════════ */
+  #table-scroll { overflow-x: auto; }
+  #app-table {
+    width: 100%; border-collapse: collapse;
+    min-width: 1100px;
+    border-spacing: 0;
+  }
+
+  /* Thead */
+  #app-table thead tr { background: var(--primary); }
+  #app-table thead th {
+    background: var(--primary);
+    color: var(--white);
+    padding: 11px 12px;
+    text-align: left;
+    font-size: 12.5px; font-weight: 500;
+    white-space: nowrap;
+    user-select: none;
+    /* vertical border between columns */
+    border-right: 1px solid rgba(255,255,255,0.18);
+    position: sticky; top: 0; z-index: 5;
+  }
+  #app-table thead th:last-child { border-right: none; }
+  th.sel-col, td.sel-col { width: 44px; text-align: center; }
+
+  .th-inner {
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 6px;
+  }
+  .th-label { flex: 1; }
+
+  /* Filter button — always visible */
+  .filter-btn {
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.30);
+    border-radius: 4px;
+    width: 22px; height: 20px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--white);
+    font-size: 9px;
+    line-height: 1;
+    transition: background .15s;
+  }
+  .filter-btn:hover { background: rgba(255,255,255,0.38); }
+  .filter-btn.sorted {
+    background: var(--white);
+    color: var(--primary);
+    border-color: var(--white);
+  }
+
+  /* Filter dropdown */
+  #filter-menu {
+    position: fixed;
+    background: var(--white);
+    border: 1px solid var(--mint-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.14);
+    z-index: 500; display: none;
+    min-width: 168px; overflow: hidden;
+  }
+  #filter-menu button {
+    display: block; width: 100%; text-align: left;
+    background: none; border: none;
+    padding: 10px 16px;
+    font-size: 13.5px; color: var(--text-dark);
+  }
+  #filter-menu button:hover { background: var(--primary-light); }
+
+  /* Tbody */
+  #app-table tbody tr { border-bottom: 1px solid #EBF2EF; transition: background .1s; }
+  /* vertical borders between body cells */
+  #app-table tbody td {
+    border-right: 1px solid #E4EDF0;
+    padding: 11px 12px;
+    font-size: 13.5px; color: var(--text-mid);
+    max-width: 190px; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }
+  #app-table tbody td:last-child { border-right: none; }
+
+  #app-table tbody tr.even { background: #FAFCFB; }
+  #app-table tbody tr.odd  { background: var(--white); }
+  #app-table tbody tr:hover { background: #F0F7F4; }
+  #app-table tbody tr.selected {
+    background: var(--row-selected) !important;
+    box-shadow: inset 3px 0 0 var(--primary);
+  }
+
+  .row-check {
+    width: 16px; height: 16px;
+    accent-color: var(--primary); cursor: pointer;
+  }
+  .cell-sno   { color: var(--text-muted); font-size: 13px; }
+  .cell-appid { color: var(--primary); font-weight: 500; }
+  .cell-name  { color: var(--text-dark); font-weight: 500; }
+  .cell-empty { color: #CBD5D0; }
+
+  /* Status pills */
+  .status-pill {
+    display: inline-block;
+    padding: 3px 10px; border-radius: 12px;
+    font-size: 12px; font-weight: 500; white-space: nowrap;
+  }
+  .pill-ccreview   { background: #ECEFF1; color: #455A64; }
+  .pill-decline    { background: #FFEBEE; color: #C62828; }
+  .pill-underview  { background: #FFF3E0; color: #E65100; }
+  .pill-interview  { background: #E8EAF6; color: #3949AB; }
+  .pill-housevisit { background: #F3E5F5; color: #7B1FA2; }
+  .pill-ccrec      { background: #E8F5E9; color: #2E7D32; }
+  .pill-ncrec      { background: #E0F2F1; color: #00695C; }
+  .pill-usarec     { background: #E1F5FE; color: #0277BD; }
+
+  /* ═══════════ PAGINATION ═══════════ */
+  #pagination {
+    padding: 12px 18px;
+    border-top: 1px solid #E4EDF0;
+    display: flex; align-items: center;
+    justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  }
+  .pag-btn {
+    padding: 9px 20px; border-radius: 8px;
+    border: 1px solid #D0DCE8;
+    background: var(--white); color: var(--text-dark);
+    font-size: 14px; font-weight: 500; transition: background .15s;
+  }
+  .pag-btn:hover:not(:disabled) { background: #EEF2F5; }
+  .pag-btn:disabled { color: #B0BEC5; cursor: default; }
+  #page-nums { display: flex; gap: 5px; flex-wrap: wrap; }
+  .pag-num {
+    width: 34px; height: 34px; border-radius: 8px;
+    border: 1px solid transparent;
+    background: none; color: var(--text-mid);
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .pag-num:hover:not(.active) { background: #EEF2F5; }
+  .pag-num.active { background: var(--primary); color: var(--white); }
+
+  /* ═══════════ DIALOGS ═══════════ */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(20,40,35,0.42);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; padding: 16px;
+    opacity: 0; pointer-events: none; transition: opacity .18s;
+  }
+  .overlay.open { opacity: 1; pointer-events: all; }
+  .dialog {
+    background: var(--white);
+    border-radius: 14px;
+    width: min(660px, 100%);
+    max-height: 88vh; overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+    transform: translateY(12px); transition: transform .18s;
+  }
+  .overlay.open .dialog { transform: translateY(0); }
+  .dialog-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 24px; border-bottom: 1px solid #EBF2EF;
+    position: sticky; top: 0; background: var(--white); z-index: 2;
+  }
+  .dialog-header h2 { font-size: 17px; font-weight: 500; color: var(--text-dark); }
+  .dialog-close {
+    background: none; border: none;
+    font-size: 24px; color: var(--text-muted); line-height: 1; padding: 0 4px;
+  }
+  .dialog-close:hover { color: var(--text-dark); }
+  .dialog-body { padding: 20px 24px; }
+  .dialog-footer {
+    padding: 0 24px 20px;
+    display: flex; justify-content: flex-end; gap: 10px;
+  }
+
+  /* Criteria dialog */
+  .criteria-card {
+    background: #F8FAFA;
+    border: 1px solid var(--mint-border);
+    border-radius: 10px; padding: 14px 18px; margin-bottom: 10px;
+  }
+  .criteria-card .cr-region {
+    font-size: 14.5px; font-weight: 700;
+    color: var(--primary); margin-bottom: 6px;
+  }
+  .criteria-card .cr-details {
+    font-size: 13.5px; color: var(--text-mid);
+    display: flex; flex-wrap: wrap; gap: 4px 20px;
+  }
+  .criteria-card .cr-details b { color: var(--text-dark); font-weight: 500; }
+
+  /* Choose columns */
+  .cols-section-title {
+    font-size: 12px; font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: .05em;
+    margin: 0 0 12px;
+  }
+  .cols-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 4px 12px;
+  }
+  .col-check {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 13.5px; color: var(--text-dark);
+    cursor: pointer;
+    padding: 7px 8px; border-radius: 6px;
+    user-select: none;
+    transition: background .12s;
+  }
+  .col-check:hover { background: #F2F7F5; }
+  .col-check input {
+    width: 16px; height: 16px;
+    accent-color: var(--primary); cursor: pointer; flex-shrink: 0;
+  }
+  .cols-divider { border-top: 1px solid #EBF2EF; margin: 16px 0; }
+  .col-check.wide { grid-column: span 2; }
+
+  /* Confirm dialog */
+  #confirm-dialog { width: min(400px, 100%); text-align: center; }
+  #confirm-dialog .dialog-body { padding: 28px 28px 8px; }
+  #confirm-msg { font-size: 15.5px; color: var(--text-dark); font-weight: 500; }
+  #confirm-dialog .dialog-footer { justify-content: center; padding: 20px 24px 26px; }
+  .btn-cancel {
+    background: var(--white); border: 1px solid var(--mint-border);
+    color: var(--text-mid); padding: 10px 24px;
+    border-radius: 8px; font-size: 14px; font-weight: 500;
+  }
+  .btn-cancel:hover { background: #F2F5F7; }
+
+  /* Toast */
+  #toast {
+    position: fixed; bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(14px);
+    background: #263238; color: var(--white);
+    padding: 12px 24px; border-radius: 8px;
+    font-size: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.25);
+    opacity: 0; transition: all .25s;
+    pointer-events: none; z-index: 2000; white-space: nowrap;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    #status-tabs { grid-template-columns: repeat(3, 1fr); }
+    #elig-section { flex-direction: column; align-items: flex-start; }
+    .col-check.wide { grid-column: span 1; }
+  }
+  @media (max-width: 600px) {
+    #status-tabs { grid-template-columns: repeat(2, 1fr); }
+    #main { padding: 14px 10px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════ HEADER ═══════ -->
+<div id="header">
+  <div class="logo">NSF</div>
+  <div>
+    <div class="hd-title">National Scholarship Foundation</div>
+    <div class="hd-sub">Application Review Portal</div>
+  </div>
+  <div class="hd-role">Role: <span id="role-display">NC</span></div>
+</div>
+
+<div id="main">
+  <div class="page-heading">
+    <h1>Application List</h1>
+    <p>Search and review scholarship applications by chapter and course</p>
+  </div>
+
+  <!-- ═══════ SEARCH PANEL ═══════ -->
+  <div id="search-panel">
+    <div class="fields-grid">
+      <div class="field-group">
+        <label>Chapter <span class="badge" id="chapter-badge"></span></label>
+        <select id="sel-chapter"></select>
+      </div>
+      <div class="field-group">
+        <label>Course</label>
+        <select id="sel-course">
+          <option value="">Select course</option>
+          <option>B.Tech</option>
+          <option>B.Sc</option>
+          <option>B.Com</option>
+          <option>BA</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>From date</label>
+        <input type="date" id="from-date" />
+      </div>
+      <div class="field-group">
+        <label>End date</label>
+        <input type="date" id="to-date" />
+      </div>
+      <div class="field-group">
+        <button class="btn-primary" id="search-btn" style="width:100%">Search</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ RESULTS ═══════ -->
+  <div id="results">
+
+    <!-- Status Tabs -->
+    <div id="status-tabs"></div>
+
+    <!-- Sticky Zone -->
+    <div id="sticky-zone">
+
+      <!-- Eligibility -->
+      <div id="elig-section">
+        <div id="elig-card">
+          <div class="elig-title" id="elig-title">Eligibility criteria</div>
+          <div class="elig-details" id="elig-details"></div>
+        </div>
+        <button id="btn-criteria">Show all criteria</button>
+      </div>
+
+      <!-- Actions Bar -->
+      <div id="actions-bar">
+        <label id="select-all-label">
+          <input type="checkbox" id="select-all-cb" />
+          Select all in this section
+        </label>
+        <div class="act-divider"></div>
+        <span class="sel-info" id="sel-info">0 selected</span>
+        <div class="act-divider"></div>
+        <button class="action-btn rec" data-action="Recommended">Recommend</button>
+        <button class="action-btn dec" data-action="Decline">Decline</button>
+        <button class="action-btn rev" data-action="Under Review">Under Review</button>
+        <button id="clear-sel-btn">Clear selection</button>
+      </div>
+
+    </div>
+
+    <!-- Table -->
+    <div id="table-card">
+      <div id="table-topbar">
+        <div id="tbl-count">Showing <strong>0–0</strong> of <strong>0</strong></div>
+        <div class="spacer"></div>
+        <button id="btn-choose-cols">
+          <!-- cog icon -->
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Choose columns
+        </button>
+        <button id="btn-export">
+          <!-- download icon -->
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Export to Excel
+        </button>
+      </div>
+
+      <div id="table-scroll">
+        <table id="app-table">
+          <thead><tr id="tbl-head-row"></tr></thead>
+          <tbody id="tbl-body"></tbody>
+        </table>
+      </div>
+
+      <div id="pagination">
+        <button class="pag-btn" id="prev-btn">&#8592; Previous</button>
+        <div id="page-nums"></div>
+        <button class="pag-btn" id="next-btn">Next &#8594;</button>
+      </div>
+    </div>
+
+  </div><!-- /results -->
+</div><!-- /main -->
+
+<!-- Filter dropdown -->
+<div id="filter-menu">
+  <button data-sort="asc">&#8593; Sort ascending</button>
+  <button data-sort="desc">&#8595; Sort descending</button>
+  <button data-sort="clear">&#215; Clear filter</button>
+</div>
+
+<!-- Criteria Dialog -->
+<div class="overlay" id="criteria-overlay">
+  <div class="dialog">
+    <div class="dialog-header">
+      <h2 id="criteria-title">All eligibility criteria</h2>
+      <button class="dialog-close" data-close="criteria-overlay">&times;</button>
+    </div>
+    <div class="dialog-body" id="criteria-body"></div>
+  </div>
+</div>
+
+<!-- Choose Columns Dialog -->
+<div class="overlay" id="cols-overlay">
+  <div class="dialog">
+    <div class="dialog-header">
+      <h2>Choose columns</h2>
+      <button class="dialog-close" data-close="cols-overlay">&times;</button>
+    </div>
+    <div class="dialog-body">
+      <div class="cols-section-title">All columns — tick to show, untick to hide</div>
+      <div class="cols-grid" id="all-cols-grid"></div>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn-cancel" data-close="cols-overlay">Cancel</button>
+      <button class="btn-primary" id="apply-cols-btn" style="height:auto;padding:10px 28px;">Apply</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Dialog -->
+<div class="overlay" id="confirm-overlay">
+  <div class="dialog" id="confirm-dialog">
+    <div class="dialog-body">
+      <div id="confirm-msg">Are you sure?</div>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn-cancel" id="confirm-cancel">Cancel</button>
+      <button class="btn-primary" id="confirm-ok" style="height:auto;padding:10px 28px;">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ═══════════════════ JAVASCRIPT ═══════════════════ -->
+<script>
+"use strict";
+
+/* ── Config ─────────────────────────────────────── */
+const USER_ROLE    = "NC";
+const ALL_CHAPTERS = "All Chapters";
+const CHAPTERS     = ["Hyderabad, TS","Vijayawada, AP","Warangal, TS","Vizag, AP"];
+
+const CRITERIA_DATA = {
+  "B.Tech": [
+    { region:"Hyderabad, TS",  minSSC:75, minDiploma:70, maxIncome:200000, maxRank:500 },
+    { region:"Vijayawada, AP", minSSC:72, minDiploma:68, maxIncome:180000, maxRank:450 },
+    { region:"Warangal, TS",   minSSC:73, minDiploma:69, maxIncome:190000, maxRank:480 },
+    { region:"Vizag, AP",      minSSC:74, minDiploma:70, maxIncome:195000, maxRank:490 },
+  ],
+  "B.Sc": [
+    { region:"Hyderabad, TS",  minSSC:70, minDiploma:65, maxIncome:150000, maxRank:600 },
+    { region:"Vijayawada, AP", minSSC:68, minDiploma:63, maxIncome:140000, maxRank:580 },
+    { region:"Warangal, TS",   minSSC:69, minDiploma:64, maxIncome:145000, maxRank:590 },
+    { region:"Vizag, AP",      minSSC:71, minDiploma:66, maxIncome:148000, maxRank:570 },
+  ],
+  "B.Com": [
+    { region:"Hyderabad, TS",  minSSC:68, minDiploma:62, maxIncome:130000, maxRank:700 },
+    { region:"Vijayawada, AP", minSSC:65, minDiploma:60, maxIncome:120000, maxRank:680 },
+  ],
+  "BA": [
+    { region:"Hyderabad, TS",  minSSC:65, minDiploma:60, maxIncome:120000, maxRank:800 },
+    { region:"Warangal, TS",   minSSC:63, minDiploma:58, maxIncome:110000, maxRank:780 },
+  ]
+};
+
+const STAGES = [
+  { key:"CC Review",           pill:"pill-ccreview"  },
+  { key:"Decline",             pill:"pill-decline"   },
+  { key:"Under Review",        pill:"pill-underview" },
+  { key:"Interview Shortlist", pill:"pill-interview" },
+  { key:"House Visit",         pill:"pill-housevisit"},
+  { key:"CC Recommended",      pill:"pill-ccrec"     },
+  { key:"NC Recommended",      pill:"pill-ncrec"     },
+  { key:"USA Recommended",     pill:"pill-usarec"    },
+];
+
+function tabBucket(status) {
+  if (["CC Recommended","NC Recommended","USA Recommended"].includes(status)) return "Recommended";
+  if (status === "Decline") return "Declined";
+  if (["Under Review","Interview Shortlist","House Visit"].includes(status)) return "Under Review";
+  return "Not Reviewed";
+}
+
+const NAMES = ["Ravi Kumar","Sita Devi","Arjun Reddy","Priya Sharma","Kiran Babu",
+               "Lakshmi Rao","Suresh Nair","Anitha Varma","Mohan Das","Deepa Iyer"];
+
+function mkApps(n) {
+  return Array.from({ length: n }, (_, i) => ({
+    id: i + 1,
+    chapter:            CHAPTERS[i % CHAPTERS.length],
+    appId:              "APP" + String(i+1).padStart(3,"0"),
+    name:               NAMES[i % NAMES.length],
+    gender:             i % 2 === 0 ? "Male" : "Female",
+    ssc:                (75 + (i*3) % 20).toFixed(1),
+    diploma:            (72 + (i*4) % 22).toFixed(1),
+    rank:               50 + i * 7,
+    income:             80000 + i * 5000,
+    parentalStatus:     ["Both Parents","Single Parent","Orphan"][i % 3],
+    physicallyDisabled: i % 5 === 0 ? "Yes" : "No",
+    ccComments:         i % 3 === 0 ? "Eligible" : i % 3 === 1 ? "Review needed" : "",
+    ncComments:         i % 4 === 0 ? "Strong candidate" : "",
+    eligibleTuition:    i % 3 !== 2 ? "Yes" : "No",
+    eligiblePrivate:    i % 4 === 0 ? "Yes" : "No",
+    familyNSF:          i % 6 === 0 ? "Yes" : "No",
+    educationGap:       i % 7 === 0 ? "1 year" : "",
+    sscGovt:            i % 2 === 0 ? "Yes" : "No",
+    diplomaGovt:        i % 3 === 0 ? "Yes" : "No",
+    sscPrivate:         i % 2 !== 0 ? "Yes" : "No",
+    diplomaPrivate:     i % 3 !== 0 ? "Yes" : "No",
+    currentStatus:      STAGES[i % STAGES.length].key,
+  }));
+}
+
+/* All column definitions — no division, all toggleable */
+const ALL_COLS = [
+  { key:"sno",                label:"S.No",                           sortable:false, defaultOn:true  },
+  { key:"chapter",            label:"Chapter",                        sortable:true,  defaultOn:true  },
+  { key:"appId",              label:"Application ID",                 sortable:true,  defaultOn:true  },
+  { key:"name",               label:"Name",                           sortable:true,  defaultOn:true  },
+  { key:"gender",             label:"Gender",                         sortable:true,  defaultOn:true  },
+  { key:"ssc",                label:"SSC %",                          sortable:true,  defaultOn:true  },
+  { key:"diploma",            label:"Diploma/Inter %",                sortable:true,  defaultOn:true  },
+  { key:"rank",               label:"Rank",                           sortable:true,  defaultOn:true  },
+  { key:"income",             label:"Income",                         sortable:true,  defaultOn:true  },
+  { key:"parentalStatus",     label:"Parental Status",                sortable:true,  defaultOn:true  },
+  { key:"physicallyDisabled", label:"Physically Disabled",            sortable:true,  defaultOn:true  },
+  { key:"currentStatus",      label:"Current Status",                 sortable:true,  defaultOn:true  },
+  { key:"ccComments",         label:"CC Comments",                    sortable:false, defaultOn:true  },
+  { key:"ncComments",         label:"NC Comments",                    sortable:false, defaultOn:true  },
+  { key:"eligibleTuition",    label:"Eligible – Tuition Reimbursement?", sortable:true, defaultOn:false, wide:true },
+  { key:"eligiblePrivate",    label:"Eligible – Private Scholarships?",  sortable:true, defaultOn:false, wide:true },
+  { key:"familyNSF",          label:"Family Member Receiving NSF?",      sortable:true, defaultOn:false, wide:true },
+  { key:"educationGap",       label:"Education Gap",                  sortable:true,  defaultOn:false },
+  { key:"sscGovt",            label:"SSC Government",                 sortable:true,  defaultOn:false },
+  { key:"diplomaGovt",        label:"Diploma/Inter Government",       sortable:true,  defaultOn:false },
+  { key:"sscPrivate",         label:"SSC Private",                    sortable:true,  defaultOn:false },
+  { key:"diplomaPrivate",     label:"Diploma/Inter Private",          sortable:true,  defaultOn:false },
+];
+
+const TABS = ["Not Reviewed","Under Review","Recommended","Declined","Total"];
+const TAB_CLASSES = {
+  "Recommended":"tab-rec","Declined":"tab-dec",
+  "Under Review":"tab-review","Not Reviewed":"tab-notrev","Total":"tab-total"
+};
+
+/* ── State ────────────────────────────────────── */
+const memStore = {};
+function lsGet(k) {
+  try { return localStorage ? localStorage.getItem(k) : memStore[k]; } catch(e) { return memStore[k]; }
+}
+function lsSet(k,v) {
+  try { if (localStorage) { localStorage.setItem(k,v); return; } } catch(e){}
+  memStore[k]=v;
+}
+
+const state = {
+  apps:          mkApps(80),
+  searchChapter: null,
+  activeTab:     lsGet("nsf_tab") || "Total",
+  sortKey:       null,
+  sortDir:       "asc",
+  page:          1,
+  rowsPerPage:   10,
+  selected:      new Set(),
+  visColKeys:    new Set(ALL_COLS.filter(c=>c.defaultOn).map(c=>c.key)),
+  pendingColKeys:new Set(),
+  confirmAction: null,
+  filterMenuCol: null,
+};
+
+/* ── Helpers ──────────────────────────────────── */
+const $ = id => document.getElementById(id);
+const fmtIncome = v => "₹" + Number(v).toLocaleString("en-IN");
+
+function showToast(msg) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove("show"), 2400);
+}
+function openOverlay(id)  { $(id).classList.add("open"); }
+function closeOverlay(id) { $(id).classList.remove("open"); }
+
+function getFilteredApps() {
+  let d = state.apps;
+  if (state.searchChapter && state.searchChapter !== ALL_CHAPTERS)
+    d = d.filter(a => a.chapter === state.searchChapter);
+  if (state.activeTab !== "Total")
+    d = d.filter(a => tabBucket(a.currentStatus) === state.activeTab);
+  return d;
+}
+function getSorted() {
+  let d = [...getFilteredApps()];
+  if (state.sortKey) {
+    d.sort((a,b) => {
+      let av = a[state.sortKey], bv = b[state.sortKey];
+      if (!isNaN(parseFloat(av)) && !isNaN(parseFloat(bv))) { av=parseFloat(av); bv=parseFloat(bv); }
+      else { av=String(av).toLowerCase(); bv=String(bv).toLowerCase(); }
+      return state.sortDir==="asc" ? (av>bv?1:-1) : (av<bv?1:-1);
+    });
+  }
+  return d;
+}
+function getVisCols() {
+  return ALL_COLS.filter(c => state.visColKeys.has(c.key));
+}
+
+/* ── Tabs ─────────────────────────────────────── */
+function renderTabs() {
+  let base = state.apps;
+  if (state.searchChapter && state.searchChapter !== ALL_CHAPTERS)
+    base = base.filter(a => a.chapter === state.searchChapter);
+  const counts = {
+    "Recommended":  base.filter(a=>tabBucket(a.currentStatus)==="Recommended").length,
+    "Declined":     base.filter(a=>tabBucket(a.currentStatus)==="Declined").length,
+    "Under Review": base.filter(a=>tabBucket(a.currentStatus)==="Under Review").length,
+    "Not Reviewed": base.filter(a=>tabBucket(a.currentStatus)==="Not Reviewed").length,
+    "Total":        base.length,
+  };
+  const wrap = $("status-tabs");
+  wrap.innerHTML = "";
+  TABS.forEach(tab => {
+    const btn = document.createElement("button");
+    btn.className = "status-tab " + TAB_CLASSES[tab] + (state.activeTab===tab ? " active" : "");
+    btn.innerHTML = `<div class="tab-label">${tab}</div><div class="tab-count">${counts[tab]}</div>`;
+    btn.addEventListener("click", () => {
+      state.activeTab = tab;
+      lsSet("nsf_tab", tab);
+      state.page = 1;
+      state.selected.clear();
+      renderAll();
+    });
+    wrap.appendChild(btn);
+  });
+}
+
+/* ── Eligibility ──────────────────────────────── */
+function renderEligibility() {
+  const ch = state.searchChapter;
+  const course = $("sel-course").value;
+  if (ch === ALL_CHAPTERS) {
+    $("elig-card").style.display = "none";
+    return;
+  }
+  $("elig-card").style.display = "block";
+  $("elig-title").textContent =
+    `Eligibility criteria — ${ch}${course ? " · "+course : ""}`;
+  const list = course && CRITERIA_DATA[course] ? CRITERIA_DATA[course] : null;
+  const crit = list ? list.find(c => c.region === ch) : null;
+  $("elig-details").innerHTML = crit
+    ? `<span>Min SSC <b>${crit.minSSC}%</b></span>
+       <span>Min Diploma/Inter <b>${crit.minDiploma}%</b></span>
+       <span>Max Annual Income <b>${fmtIncome(crit.maxIncome)}</b></span>
+       <span>Max Rank <b>${crit.maxRank}</b></span>`
+    : `<span>Select a course to view eligibility criteria.</span>`;
+}
+
+/* ── Filter Menu ──────────────────────────────── */
+function openFilterMenu(anchorEl, colKey) {
+  state.filterMenuCol = colKey;
+  const menu = $("filter-menu");
+  const r    = anchorEl.getBoundingClientRect();
+  menu.style.display = "block";
+  let left = r.left;
+  if (left + 172 > window.innerWidth) left = window.innerWidth - 180;
+  menu.style.left = left + "px";
+  menu.style.top  = (r.bottom + 4) + "px";
+}
+function closeFilterMenu() {
+  $("filter-menu").style.display = "none";
+  state.filterMenuCol = null;
+}
+
+/* ── Table Header ─────────────────────────────── */
+function renderHeader() {
+  const row = $("tbl-head-row");
+  row.innerHTML = "";
+
+  const selTh = document.createElement("th");
+  selTh.className = "sel-col";
+  row.appendChild(selTh);
+
+  getVisCols().forEach(col => {
+    const th    = document.createElement("th");
+    const inner = document.createElement("div");
+    inner.className = "th-inner";
+
+    const lbl = document.createElement("span");
+    lbl.className = "th-label";
+    lbl.textContent = col.label;
+    inner.appendChild(lbl);
+
+    if (col.sortable) {
+      const btn = document.createElement("button");
+      const active = state.sortKey === col.key;
+      btn.className = "filter-btn" + (active ? " sorted" : "");
+      // Always visible funnel-style icon
+      btn.innerHTML = active
+        ? (state.sortDir === "asc" ? "&#9650;" : "&#9660;")
+        : "&#9663;";
+      btn.title = "Sort / Filter";
+      btn.addEventListener("click", e => {
+        e.stopPropagation();
+        openFilterMenu(btn, col.key);
+      });
+      inner.appendChild(btn);
+    }
+    th.appendChild(inner);
+    row.appendChild(th);
+  });
+}
+
+/* ── Table Body ───────────────────────────────── */
+function renderTable() {
+  renderHeader();
+  const sorted = getSorted();
+  const total  = sorted.length;
+  const start  = (state.page - 1) * state.rowsPerPage;
+  const end    = Math.min(start + state.rowsPerPage, total);
+  const pageRows = sorted.slice(start, end);
+  const cols   = getVisCols();
+  const tbody  = $("tbl-body");
+  tbody.innerHTML = "";
+
+  pageRows.forEach((row, i) => {
+    const tr  = document.createElement("tr");
+    const sel = state.selected.has(row.id);
+    tr.className = (i%2===0?"even":"odd") + (sel?" selected":"");
+
+    // Checkbox cell
+    const selTd = document.createElement("td");
+    selTd.className = "sel-col";
+    const cb = document.createElement("input");
+    cb.type = "checkbox"; cb.className = "row-check"; cb.checked = sel;
+    cb.addEventListener("change", () => {
+      cb.checked ? state.selected.add(row.id) : state.selected.delete(row.id);
+      renderTable(); updateActions();
+    });
+    selTd.appendChild(cb);
+    tr.appendChild(selTd);
+
+    cols.forEach(col => {
+      const td = document.createElement("td");
+      if (col.key === "sno") {
+        td.innerHTML = `<span class="cell-sno">${start+i+1}</span>`;
+      } else if (col.key === "appId") {
+        td.innerHTML = `
+    <a href="applicationreviewfresh.html?appId=${row.appId}"
+       class="cell-appid">
+       ${row.appId}
+    </a>`;
+      } else if (col.key === "name") {
+        td.innerHTML = `<span class="cell-name">${row.name}</span>`;
+      } else if (col.key === "income") {
+        td.textContent = fmtIncome(row.income);
+      } else if (col.key === "currentStatus") {
+        const stage = STAGES.find(s => s.key === row.currentStatus);
+        td.innerHTML = `<span class="status-pill ${stage?stage.pill:""}">${row.currentStatus}</span>`;
+      } else {
+        const v = row[col.key];
+        td.innerHTML = (v===""||v==null)
+          ? `<span class="cell-empty">—</span>` : v;
+      }
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+
+  $("tbl-count").innerHTML =
+    `Showing <strong>${total===0?0:start+1}–${end}</strong> of <strong>${total}</strong>`;
+  renderPagination(total);
+}
+
+/* ── Pagination ───────────────────────────────── */
+function renderPagination(total) {
+  const totalPages = Math.max(1, Math.ceil(total / state.rowsPerPage));
+  if (state.page > totalPages) state.page = totalPages;
+  const nums = $("page-nums");
+  nums.innerHTML = "";
+  for (let p = 1; p <= totalPages; p++) {
+    const b = document.createElement("button");
+    b.className = "pag-num" + (p===state.page?" active":"");
+    b.textContent = p;
+    b.addEventListener("click", () => { state.page=p; renderTable(); });
+    nums.appendChild(b);
+  }
+  $("prev-btn").disabled = state.page === 1;
+  $("next-btn").disabled = state.page === totalPages;
+}
+
+/* ── Actions Bar ──────────────────────────────── */
+function updateActions() {
+  const n = state.selected.size;
+  if (n > 0) {
+    $("actions-bar").style.display = "flex";
+    $("sel-info").textContent = `${n} selected`;
+    const ids = getFilteredApps().map(a=>a.id);
+    $("select-all-cb").checked = ids.length>0 && ids.every(id=>state.selected.has(id));
+  } else {
+    $("actions-bar").style.display = "none";
+    $("select-all-cb").checked = false;
+  }
+}
+
+/* ── Criteria Dialog ──────────────────────────── */
+function renderCriteriaDialog() {
+  const course = $("sel-course").value;
+  const rows = course && CRITERIA_DATA[course]
+    ? CRITERIA_DATA[course]
+    : Object.entries(CRITERIA_DATA).flatMap(([c,list]) => list.map(x=>({...x,course:c})));
+  $("criteria-title").textContent =
+    `All eligibility criteria${course ? " — "+course : ""}`;
+  const body = $("criteria-body");
+  body.innerHTML = "";
+  rows.forEach(c => {
+    const card = document.createElement("div");
+    card.className = "criteria-card";
+    card.innerHTML = `
+      <div class="cr-region">${c.region}${c.course?" · "+c.course:""}</div>
+      <div class="cr-details">
+        <span>Min SSC <b>${c.minSSC}%</b></span>
+        <span>Min Diploma/Inter <b>${c.minDiploma}%</b></span>
+        <span>Max Annual Income <b>${fmtIncome(c.maxIncome)}</b></span>
+        <span>Max Rank <b>${c.maxRank}</b></span>
+      </div>`;
+    body.appendChild(card);
+  });
+}
+
+/* ── Choose Columns Dialog ────────────────────── */
+function renderColsDialog() {
+  state.pendingColKeys = new Set(state.visColKeys);
+  const grid = $("all-cols-grid");
+  grid.innerHTML = "";
+  ALL_COLS.forEach(col => {
+    const lbl = document.createElement("label");
+    lbl.className = "col-check" + (col.wide ? " wide" : "");
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = state.pendingColKeys.has(col.key);
+    cb.addEventListener("change", () => {
+      cb.checked ? state.pendingColKeys.add(col.key) : state.pendingColKeys.delete(col.key);
+    });
+    lbl.appendChild(cb);
+    lbl.appendChild(document.createTextNode(col.label));
+    grid.appendChild(lbl);
+  });
+}
+
+/* ── Export ───────────────────────────────────── */
+function exportExcel() {
+  const cols = getVisCols().filter(c => c.key !== "sno");
+  const rows = getSorted();
+  const header = cols.map(c => c.label).join("\t");
+  const body   = rows.map(r =>
+    cols.map(c => {
+      if (c.key==="income") return r.income;
+      const v = r[c.key];
+      return (v===""||v==null) ? "" : v;
+    }).join("\t")
+  ).join("\n");
+  const blob = new Blob([header+"\n"+body],{type:"application/vnd.ms-excel;charset=utf-8;"});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href=url; a.download="applications.xls";
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast("Exported to Excel");
+}
+
+/* ── Render All ───────────────────────────────── */
+function renderAll() {
+  renderTabs();
+  renderEligibility();
+  renderTable();
+  updateActions();
+}
+
+/* ── Init ─────────────────────────────────────── */
+function init() {
+  $("role-display").textContent = USER_ROLE;
+
+  // Chapter dropdown
+  const selCh = $("sel-chapter");
+  [ALL_CHAPTERS, ...CHAPTERS].forEach(ch => {
+    const o = document.createElement("option");
+    o.textContent = ch;
+    selCh.appendChild(o);
+  });
+  selCh.value = CHAPTERS[0];
+
+  const badge = $("chapter-badge");
+  if (USER_ROLE === "NC") {
+    badge.textContent = "Editable"; badge.classList.add("badge-edit");
+  } else {
+    badge.textContent = "Locked"; badge.classList.add("badge-lock");
+    selCh.disabled = true;
+  }
+
+  // Search
+  $("search-btn").addEventListener("click", () => {
+    state.searchChapter = selCh.value;
+    state.page = 1; state.selected.clear();
+    $("results").style.display = "block";
+    renderAll();
+  });
+
+  // Prev / Next
+  $("prev-btn").addEventListener("click", () => {
+    if (state.page > 1) { state.page--; renderTable(); }
+  });
+  $("next-btn").addEventListener("click", () => {
+    const tp = Math.ceil(getSorted().length / state.rowsPerPage);
+    if (state.page < tp) { state.page++; renderTable(); }
+  });
+
+  // Select all
+  $("select-all-cb").addEventListener("change", e => {
+    const ids = getFilteredApps().map(a=>a.id);
+    e.target.checked ? ids.forEach(id=>state.selected.add(id)) : ids.forEach(id=>state.selected.delete(id));
+    renderTable(); updateActions();
+  });
+
+  // Clear selection
+  $("clear-sel-btn").addEventListener("click", () => {
+    state.selected.clear(); renderTable(); updateActions();
+  });
+
+  // Bulk action buttons
+  document.querySelectorAll(".action-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const action = btn.dataset.action;
+      const n = state.selected.size;
+      $("confirm-msg").textContent =
+        `Mark ${n} selected application${n>1?"s":""} as "${action}"?`;
+      state.confirmAction = action;
+      openOverlay("confirm-overlay");
+    });
+  });
+
+  // Confirm OK
+  $("confirm-ok").addEventListener("click", () => {
+    if (!state.confirmAction) return;
+    const map = { "Recommended":"CC Recommended", "Decline":"Decline", "Under Review":"Under Review" };
+    const ns  = map[state.confirmAction] || state.confirmAction;
+    state.apps = state.apps.map(a =>
+      state.selected.has(a.id) ? {...a, currentStatus:ns} : a
+    );
+    const n = state.selected.size;
+    showToast(`${n} application${n>1?"s":""} marked as ${state.confirmAction}`);
+    state.selected.clear(); state.confirmAction = null;
+    closeOverlay("confirm-overlay");
+    renderAll();
+  });
+  $("confirm-cancel").addEventListener("click", () => {
+    state.confirmAction = null; closeOverlay("confirm-overlay");
+  });
+
+  // Criteria dialog
+  $("btn-criteria").addEventListener("click", () => {
+    renderCriteriaDialog(); openOverlay("criteria-overlay");
+  });
+
+  // Choose columns dialog
+  $("btn-choose-cols").addEventListener("click", () => {
+    renderColsDialog(); openOverlay("cols-overlay");
+  });
+  $("apply-cols-btn").addEventListener("click", () => {
+    state.visColKeys = new Set(state.pendingColKeys);
+    closeOverlay("cols-overlay");
+    renderTable();
+    showToast("Columns updated");
+  });
+
+  // Export
+  $("btn-export").addEventListener("click", exportExcel);
+
+  // Filter menu
+  $("filter-menu").querySelectorAll("button").forEach(b => {
+    b.addEventListener("click", () => {
+      const mode = b.dataset.sort;
+      if (mode === "clear") { state.sortKey = null; }
+      else { state.sortKey = state.filterMenuCol; state.sortDir = mode; }
+      state.page = 1; closeFilterMenu(); renderTable();
+    });
+  });
+  document.addEventListener("click", e => {
+    if (!$("filter-menu").contains(e.target)) closeFilterMenu();
+  });
+  window.addEventListener("scroll", closeFilterMenu, true);
+  window.addEventListener("resize", closeFilterMenu);
+
+  // Generic close buttons & backdrop
+  document.querySelectorAll("[data-close]").forEach(btn => {
+    btn.addEventListener("click", () => closeOverlay(btn.dataset.close));
+  });
+  ["criteria-overlay","cols-overlay","confirm-overlay"].forEach(id => {
+    $(id).addEventListener("click", e => { if (e.target===$(id)) closeOverlay(id); });
+  });
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>

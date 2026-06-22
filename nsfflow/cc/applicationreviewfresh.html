@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Application Review — Ruppa Vishnu Vardhan</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f3f4f6;
+    min-height: 100vh;
+    color: #1f2937;
+  }
+
+  /* ── Layout ── */
+  .page { max-width: 1200px; margin: 0 auto; padding: 16px 40px 96px; }
+
+  /* ── Nav ── */
+  .nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .btn-nav {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600; color: #2d5a45;
+    background: #fff; border: 1px solid #d1d5db;
+    padding: 6px 14px; border-radius: 6px;
+    cursor: pointer; text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .btn-nav:hover { background: #edf4f0; border-color: #c2d9cd; }
+  .btn-nav:disabled, .btn-nav.disabled { opacity: 0.4; cursor: not-allowed; }
+  .nav-center { display: flex; align-items: center; gap: 10px; }
+  .nav-count {
+    font-size: 11px; font-weight: 500; color: #6b7280;
+    background: #fff; border: 1px solid #e5e7eb;
+    padding: 4px 12px; border-radius: 6px;
+  }
+
+  /* ── Header strip ── */
+  .header-strip {
+    background: #fff; border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 12px 16px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.05);
+  }
+  .header-fields { display: flex; align-items: flex-start; gap: 32px; flex-wrap: wrap; }
+  .header-field .hf-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; margin-bottom: 2px; }
+  .header-field .hf-value { font-size: 13.5px; font-weight: 600; color: #111827; }
+
+  /* Status badges */
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 9999px; border: 1px solid;
+  }
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+  .badge-green  { background: #ecfdf5; color: #065f46; border-color: #a7f3d0; }
+  .badge-green .badge-dot  { background: #10b981; }
+  .badge-amber  { background: #fffbeb; color: #92400e; border-color: #fcd34d; }
+  .badge-amber .badge-dot  { background: #f59e0b; }
+  .badge-red    { background: #fef2f2; color: #dc2626; border-color: #fca5a5; }
+  .badge-red .badge-dot    { background: #ef4444; }
+
+  /* ── Section Label ── */
+  .section-label { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .section-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: #347463; color: #fff;
+    font-size: 12px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .section-title { font-size: 13px; font-weight: 700; color: #2d5a45; text-transform: uppercase; letter-spacing: .07em; }
+  .section-rule { flex: 1; height: 1px; background: #c2d9cd; }
+
+  /* ── Cards ── */
+  .card {
+    background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06); overflow: hidden; margin-bottom: 16px;
+  }
+
+  /* ── Field ── */
+  .f-label {
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .06em; color: #6b7280; margin-bottom: 2px;
+  }
+  .f-label.req { color: #ef4444; }
+  .f-value { font-size: 13px; line-height: 1.4; font-weight: 500; color: #374151; }
+  .f-value.req { font-weight: 600; color: #111827; }
+
+  /* ── DocRow ── */
+  .doc-row {
+    display: flex; align-items: center; gap: 8px;
+    background: #f9fafb; border: 1px solid #e5e7eb;
+    border-radius: 8px; padding: 8px 10px;
+  }
+  .doc-row svg { flex-shrink: 0; color: #6b7280; }
+  .doc-info { flex: 1; min-width: 0; }
+  .doc-name { font-size: 12px; font-weight: 600; color: #1f2937; line-height: 1.3; }
+  .doc-date { font-size: 11px; color: #6b7280; margin-top: 2px; }
+  .doc-missing { display: flex; align-items: center; gap: 4px; margin-top: 2px; }
+  .doc-missing-dot { width: 6px; height: 6px; border-radius: 50%; background: #ef4444; flex-shrink: 0; }
+  .doc-missing-text { font-size: 11px; font-weight: 600; color: #dc2626; }
+  .doc-actions { display: flex; gap: 4px; flex-shrink: 0; }
+  .btn-view {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #347463; color: #fff;
+    font-size: 10px; font-weight: 700;
+    padding: 4px 8px; border-radius: 4px; border: none; cursor: pointer;
+  }
+  .btn-dl {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #fff; color: #2d5a45;
+    border: 1px solid #c2d9cd;
+    font-size: 10px; font-weight: 700;
+    padding: 4px 8px; border-radius: 4px; cursor: pointer;
+  }
+  .doc-group-label {
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .05em; color: #4b5563; margin-bottom: 6px;
+  }
+  .doc-group { display: flex; flex-direction: column; gap: 6px; }
+
+  /* ────────────── SECTION 1 ────────────── */
+  .s1-layout { display: flex; }
+  .s1-main { flex: 1; min-width: 0; border-right: 1px solid #e5e7eb; padding: 16px; }
+  .s1-docs { width: 320px; flex-shrink: 0; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+  .s1-docs-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; }
+  .s1-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 24px; margin-bottom: 12px; }
+  .s1-photo { grid-row: span 2; }
+  .s1-photo img { width: 100%; height: 128px; object-fit: cover; border-radius: 6px; border: 1px solid #e5e7eb; }
+  .disability-box { background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 12px; }
+  .disability-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #92400e; margin-bottom: 6px; }
+  .disability-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 24px; }
+
+  /* ────────────── SECTION 2 ────────────── */
+  .edu-stages { display: flex; flex-direction: column; gap: 12px; padding: 16px; }
+  .edu-stage { display: flex; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+  .edu-main { flex: 7; border-right: 1px solid #e5e7eb; }
+  .edu-docs-panel { flex: 4; }
+  .edu-stage-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 16px 8px; border-bottom: 1px solid #f3f4f6;
+  }
+  .edu-stage-num {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: #edf4f0; color: #2d5a45;
+    font-size: 13px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .edu-stage-title { font-size: 15px; font-weight: 700; color: #1f2937; }
+  .edu-exam-bar {
+    padding: 10px 16px 8px; border-bottom: 1px solid #f3f4f6;
+  }
+  .edu-exam-heading { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; margin-bottom: 8px; }
+  .edu-exam-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 24px; }
+  .edu-fields-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 24px; padding: 16px; }
+  .col-span-2 { grid-column: span 2; }
+  .edu-docs-header { padding: 10px 14px 8px; border-bottom: 1px solid #f3f4f6; }
+  .edu-docs-header span { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; }
+  .edu-docs-body { padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+
+  /* ────────────── SECTION 3 ────────────── */
+  .sub-header {
+    background: #f0f4f2; color: #347463;
+    font-size: 13px; font-weight: 700;
+    padding: 8px 16px; border-bottom: 1px solid #e5e7eb;
+  }
+  .guardian-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid #e5e7eb; }
+  .guardian-cell {
+    padding: 8px 14px; border-right: 1px solid #f3f4f6;
+  }
+  .guardian-cell:last-child { border-right: none; }
+  .g-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #6b7280; margin-bottom: 2px; }
+  .g-value { font-size: 13.5px; font-weight: 500; color: #1f2937; }
+
+  .address-layout { display: flex; border-bottom: 1px solid #e5e7eb; }
+  .addr-col { flex: 1; min-width: 0; border-right: 1px solid #e5e7eb; }
+  .addr-col:last-child { border-right: none; }
+  .addr-col-header { background: #347463; color: #fff; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 8px 14px; }
+  .addr-grid { display: grid; grid-template-columns: 1fr 1fr; }
+  .addr-cell {
+    padding: 8px 14px; border-bottom: 1px solid #f3f4f6; border-right: 1px solid #f3f4f6;
+  }
+  .addr-cell:nth-child(even) { border-right: none; }
+  .addr-cell:last-child { border-bottom: none; }
+  .addr-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #6b7280; margin-bottom: 2px; }
+  .addr-value { font-size: 13.5px; font-weight: 500; color: #1f2937; }
+
+  /* Family table */
+  .family-table { width: 100%; border-collapse: collapse; font-size: 13px; border-bottom: 1px solid #e5e7eb; }
+  .family-table thead tr { background: #347463; color: #fff; }
+  .family-table th {
+    text-align: left; font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em;
+    padding: 10px 14px; border-right: 1px solid rgba(255,255,255,.1);
+  }
+  .family-table th:last-child { border-right: none; }
+  .family-table tbody tr:nth-child(even) { background: #f9fafb; }
+  .family-table td {
+    padding: 10px 14px; border-bottom: 1px solid #f3f4f6;
+    border-right: 1px solid #f3f4f6; color: #1f2937;
+  }
+  .family-table td:last-child { border-right: none; }
+  .family-table .td-num { font-size: 12px; font-weight: 700; color: #6b7280; text-align: center; }
+  .family-table .td-alive { font-weight: 600; color: #059669; }
+
+  /* Expenses */
+  .expenses-layout { display: flex; border-bottom: 1px solid #e5e7eb; }
+  .exp-main { flex: 7; border-right: 1px solid #e5e7eb; padding: 16px; }
+  .exp-docs { flex: 4; }
+  .exp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 24px; }
+  .exp-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #6b7280; margin-bottom: 2px; }
+  .exp-value { font-size: 13.5px; font-weight: 500; color: #1f2937; }
+  .exp-total { grid-column: span 3; padding-top: 8px; border-top: 1px solid #f3f4f6; margin-top: 4px; }
+  .exp-total .exp-label { color: #ef4444; }
+  .exp-total .exp-value { font-weight: 600; }
+  .exp-docs-header { padding: 10px 14px 8px; border-bottom: 1px solid #f3f4f6; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #6b7280; }
+  .exp-docs-body { padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+
+  /* ────────────── SECTION 4 — Review Trail ────────────── */
+  .review-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .review-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,.05); overflow: hidden; display: flex; flex-direction: column; }
+  .review-card-header { padding: 10px 16px 8px; border-bottom: 1px solid #f3f4f6; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #347463; }
+  .review-card-body { padding: 12px 16px; flex: 1; border-bottom: 1px solid #f3f4f6; font-size: 13px; color: #374151; line-height: 1.6; }
+  .review-card-footer { padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .rc-action-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #6b7280; }
+  .rc-action-value { font-size: 13px; font-weight: 700; }
+  .rc-action-value.recommend { color: #065f46; }
+  .rc-action-value.underreview { color: #92400e; }
+  .rc-action-value.decline { color: #dc2626; }
+  .rc-date { font-size: 13px; color: #374151; }
+
+  /* ────────────── Sticky Action Bar ────────────── */
+  .sticky-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
+    background: #fff; border-top: 1px solid #e5e7eb;
+    box-shadow: 0 -2px 8px rgba(0,0,0,.07);
+    padding: 12px 40px;
+    display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+  }
+  .bar-label { font-size: 11px; color: #6b7280; margin-right: 4px; }
+  .btn-action {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; font-weight: 700;
+    padding: 6px 16px; border-radius: 8px; border: 1px solid; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-decline  { color: #dc2626; background: #fff; border-color: #fca5a5; }
+  .btn-decline:hover  { background: #fef2f2; }
+  .btn-review   { color: #92400e; background: #fffbeb; border-color: #fcd34d; }
+  .btn-review:hover   { background: #fef3c7; }
+  .btn-recommend{ color: #fff; background: #2d6649; border-color: #2d6649; }
+  .btn-recommend:hover{ background: #245540; }
+
+  /* ────────────── Modal ────────────── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 50;
+    background: rgba(0,0,0,.45);
+    display: flex; align-items: center; justify-content: center; padding: 16px;
+  }
+  .modal-overlay.hidden { display: none; }
+  .modal-box {
+    background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    width: 100%; max-width: 440px; overflow: hidden;
+  }
+  .modal-head { padding: 24px 24px 16px; }
+  .modal-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .modal-icon {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .modal-icon.recommend { background: #d1fae5; color: #065f46; }
+  .modal-icon.underreview { background: #fef3c7; color: #92400e; }
+  .modal-icon.decline { background: #fee2e2; color: #dc2626; }
+  .modal-title { font-size: 15px; font-weight: 700; }
+  .modal-title.recommend { color: #065f46; }
+  .modal-title.underreview { color: #92400e; }
+  .modal-title.decline { color: #dc2626; }
+  .modal-subtitle { font-size: 11px; color: #6b7280; margin-top: 2px; }
+  .modal-divider { height: 1px; background: #f3f4f6; }
+  .modal-body { padding: 16px 24px; }
+  .modal-comment-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #6b7280; display: block; margin-bottom: 6px; }
+  .modal-comment-label span { font-weight: 400; text-transform: none; letter-spacing: 0; }
+  .modal-textarea {
+    width: 100%; border: 1px solid #e5e7eb; border-radius: 8px;
+    padding: 10px 12px; font-size: 13px; color: #1f2937;
+    resize: none; font-family: inherit;
+    outline: none; transition: border-color 0.15s;
+  }
+  .modal-textarea:focus { border-color: #6b7280; box-shadow: 0 0 0 2px #e5e7eb; }
+  .modal-footer { padding: 0 24px 24px; display: flex; justify-content: flex-end; gap: 10px; }
+  .btn-cancel {
+    padding: 8px 16px; font-size: 13px; font-weight: 600; color: #4b5563;
+    background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer;
+  }
+  .btn-cancel:hover { background: #f9fafb; }
+  .btn-confirm {
+    padding: 8px 20px; font-size: 13px; font-weight: 600; color: #fff;
+    border: none; border-radius: 8px; cursor: pointer; transition: background 0.15s;
+  }
+  .btn-confirm.recommend { background: #2d6649; }
+  .btn-confirm.recommend:hover { background: #245540; }
+  .btn-confirm.underreview { background: #f59e0b; }
+  .btn-confirm.underreview:hover { background: #d97706; }
+  .btn-confirm.decline { background: #dc2626; }
+  .btn-confirm.decline:hover { background: #b91c1c; }
+
+  /* ── Inline SVG helpers ── */
+  svg { vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Nav -->
+  <div class="nav">
+    <a href="#" class="btn-nav">← Back to Application List</a>
+    <div class="nav-center">
+      <button class="btn-nav disabled" disabled>← Prev Student</button>
+      <span class="nav-count">1 of 3</span>
+      <button class="btn-nav">Next Student →</button>
+    </div>
+  </div>
+
+  <!-- Header Strip -->
+  <div class="header-strip">
+    <div class="header-fields">
+      <div class="header-field">
+        <div class="hf-label">Student Name</div>
+        <div class="hf-value">Ruppa Vishnu Vardhan</div>
+      </div>
+      <div class="header-field">
+        <div class="hf-label">NSF ID</div>
+        <div class="hf-value">APP-AP-2024-0142</div>
+      </div>
+      <div class="header-field">
+        <div class="hf-label">State</div>
+        <div class="hf-value">HD</div>
+      </div>
+      <div class="header-field">
+        <div class="hf-label">Chapter</div>
+        <div class="hf-value">Visakhapatnam, AP</div>
+      </div>
+      <div class="header-field">
+        <div class="hf-label">Status</div>
+        <div id="status-badge">
+          <span class="badge badge-green">
+            <span class="badge-dot"></span> CC Review
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 1 -->
+  <div class="section-label">
+    <span class="section-num">1</span>
+    <span class="section-title">Basic &amp; Identity</span>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="s1-layout">
+      <!-- Left: fields -->
+      <div class="s1-main">
+        <div class="s1-grid">
+          <!-- Photo spans 2 rows -->
+          <div class="s1-photo">
+            <img src="image.png" alt="Passport photo" style="height:130px;width:130px; margin-left:5px" />
+          </div>
+          <!-- Row 1, cols 2-3 -->
+          <div>
+            <div class="f-label req">Family Annual Income *</div>
+            <div class="f-value req">₹ 80,000</div>
+          </div>
+          <div>
+            <div class="f-label">Gender</div>
+            <div class="f-value">Male</div>
+          </div>
+          <!-- Row 2, cols 2-3 -->
+          <div>
+            <div class="f-label req">Date of Birth *</div>
+            <div class="f-value req">14/03/2006</div>
+          </div>
+          <div>
+            <div class="f-label">Email Address</div>
+            <div class="f-value">vs@gmail.com</div>
+          </div>
+          <!-- Row 3 -->
+          <div>
+            <div class="f-label">Mobile Number</div>
+            <div class="f-value">+91 98765 43210</div>
+          </div>
+          <div>
+            <div class="f-label req">Aadhaar Number *</div>
+            <div class="f-value req">XXXX-XXXX-9012</div>
+          </div>
+          <div>
+            <div class="f-label">Parental Status</div>
+            <div class="f-value">Both Alive</div>
+          </div>
+          <!-- Row 4 -->
+          <div>
+            <div class="f-label req">Physically Disabled *</div>
+            <div class="f-value req">Yes</div>
+          </div>
+          <div>
+            <div class="f-label">NSF Scholarship in Family</div>
+            <div class="f-value">No</div>
+          </div>
+          <div>
+            <div class="f-label">Private Scholarship Eligible</div>
+            <div class="f-value">No</div>
+          </div>
+        </div>
+
+        <!-- Disability box -->
+        <div class="disability-box">
+          <div class="disability-label">⚠ Disability Details</div>
+          <div class="disability-grid">
+            <div>
+              <div class="f-label req">Disability Type *</div>
+              <div class="f-value req">Physical Disability</div>
+            </div>
+            <div>
+              <div class="f-label req">Disability Percentage *</div>
+              <div class="f-value req">40%</div>
+            </div>
+            <div>
+              <div class="f-label">Disability Details</div>
+              <div class="f-value">Partial mobility impairment in left leg.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: documents -->
+      <div class="s1-docs">
+        <div class="s1-docs-title">Documents</div>
+        <div class="doc-group">
+          <div class="doc-group-label">Proof of Income</div>
+          <div class="doc-row">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+            <div class="doc-info">
+              <div class="doc-name">Government Income Certificate</div>
+              <div class="doc-date">12 Jan 2024</div>
+            </div>
+            <div class="doc-actions">
+              <button class="btn-view">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/></svg>
+                View
+              </button>
+              <button class="btn-dl">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="doc-group">
+          <div class="doc-group-label">Identity Proof</div>
+          <div class="doc-row">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+            <div class="doc-info">
+              <div class="doc-name">Aadhaar Card</div>
+              <div class="doc-date">12 Jan 2024</div>
+            </div>
+            <div class="doc-actions">
+              <button class="btn-view">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/></svg>
+                View
+              </button>
+              <button class="btn-dl">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="doc-group">
+          <div class="doc-group-label">Disability Certificate</div>
+          <div class="doc-row">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+            <div class="doc-info">
+              <div class="doc-name">Disability Certificate</div>
+              <div class="doc-date">12 Jan 2024</div>
+            </div>
+            <div class="doc-actions">
+              <button class="btn-view">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/></svg>
+                View
+              </button>
+              <button class="btn-dl">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2 -->
+  <div class="section-label">
+    <span class="section-num">2</span>
+    <span class="section-title">Education</span>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="edu-stages">
+
+      <!-- Stage 1: SSC -->
+      <div class="edu-stage">
+        <div class="edu-main">
+          <div class="edu-stage-header">
+            <span class="edu-stage-num">1</span>
+            <span class="edu-stage-title">SSC Details</span>
+          </div>
+          <div class="edu-fields-grid">
+            <div><div class="f-label">Class</div><div class="f-value">SSC</div></div>
+            <div><div class="f-label">Institution Type</div><div class="f-value">Government</div></div>
+            <div><div class="f-label">Tuition Fees</div><div class="f-value">₹ 5,000</div></div>
+            <div class="col-span-2"><div class="f-label">Institution Name</div><div class="f-value">Govt High School, Vizag</div></div>
+            <div><div class="f-label">School Address</div><div class="f-value">Daba Gardens, Visakhapatnam</div></div>
+            <div><div class="f-label">Year of Passing</div><div class="f-value">2022</div></div>
+            <div><div class="f-label req">Percentage *</div><div class="f-value req">89%</div></div>
+          </div>
+        </div>
+        <div class="edu-docs-panel">
+          <div class="edu-docs-header"><span>Documents</span></div>
+          <div class="edu-docs-body">
+            <div class="doc-group">
+              <div class="doc-group-label">10th Marks Certificate</div>
+              <div class="doc-row">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+                <div class="doc-info">
+                  <div class="doc-name">10th Class Marks Certificate</div>
+                  <div class="doc-date">12 Jan 2024</div>
+                </div>
+                <div class="doc-actions">
+                  <button class="btn-view"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/></svg> View</button>
+                  <button class="btn-dl"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>
+                </div>
+              </div>
+            </div>
+            <div class="doc-group">
+              <div class="doc-group-label">Tuition Fee Receipts</div>
+              <div class="doc-row">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+                <div class="doc-info">
+                  <div class="doc-name">Tuition Fee Receipts (X Class)</div>
+                  <div class="doc-date">12 Jan 2024</div>
+                </div>
+                <div class="doc-actions">
+                  <button class="btn-view"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/></svg> View</button>
+                  <button class="btn-dl"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stage 2: Intermediate -->
+      <div class="edu-stage">
+        <div class="edu-main">
+          <div class="edu-stage-header">
+            <span class="edu-stage-num">2</span>
+            <span class="edu-stage-title">Intermediate / Diploma Details</span>
+          </div>
+          <div class="edu-fields-grid">
+            <div><div class="f-label">Class</div><div class="f-value">Intermediate (MPC)</div></div>
+            <div><div class="f-label">Institution Type</div><div class="f-value">Government</div></div>
+            <div><div class="f-label">Tuition Fees</div><div class="f-value">₹ 8,000</div></div>
+            <div class="col-span-2"><div class="f-label">Institution Name</div><div class="f-value">Govt Junior College, Visakhapatnam</div></div>
+            <div><div class="f-label">School Address</div><div class="f-value">MVP Colony, Visakhapatnam</div></div>
+            <div><div class="f-label">Year of Passing</div><div class="f-value">2024</div></div>
+            <div><div class="f-label req">Percentage *</div><div class="f-value req">First Year — Ongoing</div></div>
+          </div>
+        </div>
+        <div class="edu-docs-panel">
+          <div class="edu-docs-header"><span>Documents</span></div>
+          <div class="edu-docs-body">
+            <div class="doc-group">
+              <div class="doc-group-label">12th / Diploma Certificate</div>
+              <div class="doc-row">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+                <div class="doc-info">
+                  <div class="doc-name">12th / Diploma Marks Certificate</div>
+                  <div class="doc-date">12 Jan 2024</div>
+                </div>
+                <div class="doc-actions">
+                  <button class="btn-view"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/></svg> View</button>
+                  <button class="btn-dl"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>
+                </div>
+              </div>
+            </div>
+            <div class="doc-group">
+              <div class="doc-group-label">Tuition Fee Receipts</div>
+              <div class="doc-row">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+                <div class="doc-info">
+                  <div class="doc-name">Tuition Fee Receipts (XII Class)</div>
+                  <div class="doc-date">12 Jan 2024</div>
+                </div>
+                <div class="doc-actions">
+                  <button class="btn-view"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/></svg> View</button>
+                  <button class="btn-dl"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stage 3: Current Education -->
+      <div class="edu-stage">
+        <div class="edu-main">
+          <div class="edu-stage-header">
+            <span class="edu-stage-num">3</span>
+            <span class="edu-stage-title">Current Education</span>
+          </div>
+          <!-- Exam bar -->
+          <div class="edu-exam-bar">
+            <div class="edu-exam-heading">🏆 Competitive Exam Details</div>
+            <div class="edu-exam-grid">
+              <div><div class="f-label">Exam Name</div><div class="f-value">ECET</div></div>
+              <div><div class="f-label">Level</div><div class="f-value">STATE / NATIONAL</div></div>
+              <div><div class="f-label req">Rank *</div><div class="f-value req">10</div></div>
+            </div>
+          </div>
+          <div class="edu-fields-grid">
+            <div><div class="f-label">Course</div><div class="f-value">Intermediate (MPC)</div></div>
+            <div><div class="f-label">Branch</div><div class="f-value">MPC</div></div>
+            <div><div class="f-label">Institution Type</div><div class="f-value">Government</div></div>
+            <div class="col-span-2"><div class="f-label">Institution Name</div><div class="f-value">Govt Junior College, Vizag</div></div>
+            <div><div class="f-label">Institution Address</div><div class="f-value">MVP Colony, Visakhapatnam</div></div>
+            <div><div class="f-label">Year of Joining</div><div class="f-value">2023</div></div>
+            <div><div class="f-label">Tuition Fees</div><div class="f-value">₹ 8,000</div></div>
+            <div><div class="f-label">Year of Passout</div><div class="f-value">2025</div></div>
+          </div>
+        </div>
+        <div class="edu-docs-panel">
+          <div class="edu-docs-header"><span>Documents</span></div>
+          <div class="edu-docs-body">
+            <div class="doc-group">
+              <div class="doc-group-label">Allotment Order</div>
+              <div class="doc-row">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+                <div class="doc-info"><div class="doc-name">Allotment Order</div><div class="doc-date">12 Jan 2024</div></div>
+                <div class="doc-actions">
+                  <button class="btn-view"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/></svg> View</button>
+                  <button class="btn-dl"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>
+                </div>
+              </div>
+            </div>
+            <div class="doc-group">
+              <div class="doc-group-label">Bonafide Certificate</div>
+              <div class="doc-row">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+                <div class="doc-info"><div class="doc-name">Bonafide Certificate</div><div class="doc-date">12 Jan 2024</div></div>
+                <div class="doc-actions">
+                  <button class="btn-view"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/></svg> View</button>
+                  <button class="btn-dl"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>
+                </div>
+              </div>
+            </div>
+            <div class="doc-group">
+              <div class="doc-group-label">Rank Card</div>
+              <div class="doc-row">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+                <div class="doc-info"><div class="doc-name">Rank Card</div><div class="doc-date">12 Jan 2024</div></div>
+                <div class="doc-actions">
+                  <button class="btn-view"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/></svg> View</button>
+                  <button class="btn-dl"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Section 3 -->
+  <div class="section-label">
+    <span class="section-num">3</span>
+    <span class="section-title">Additional Details</span>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;">
+
+    <!-- Guardian -->
+    <div class="sub-header">Guardian Details</div>
+    <div class="guardian-grid">
+      <div class="guardian-cell">
+        <div class="g-label">Guardian Name</div>
+        <div class="g-value">Ruppa Srinivas</div>
+      </div>
+      <div class="guardian-cell">
+        <div class="g-label">Guardian Relation</div>
+        <div class="g-value">Father</div>
+      </div>
+      <div class="guardian-cell">
+        <div class="g-label">Guardian Mobile Number</div>
+        <div class="g-value">8435874787</div>
+      </div>
+    </div>
+
+    <!-- Address -->
+    <div class="sub-header">Address</div>
+    <div class="address-layout">
+      <div class="addr-col">
+        <div class="addr-col-header">Communication Address</div>
+        <div class="addr-grid">
+          <div class="addr-cell"><div class="addr-label">State</div><div class="addr-value">Andhra Pradesh</div></div>
+          <div class="addr-cell"><div class="addr-label">District</div><div class="addr-value">Visakhapatnam</div></div>
+          <div class="addr-cell"><div class="addr-label">Rural / Urban</div><div class="addr-value">Urban</div></div>
+          <div class="addr-cell"><div class="addr-label">Street Address 1</div><div class="addr-value">12-4-7, Daba Gardens</div></div>
+          <div class="addr-cell"><div class="addr-label">Street Address 2</div><div class="addr-value">—</div></div>
+          <div class="addr-cell"><div class="addr-label">Village / Town / City</div><div class="addr-value">Visakhapatnam</div></div>
+          <div class="addr-cell" style="border-bottom:none;"><div class="addr-label">Pincode</div><div class="addr-value">530020</div></div>
+        </div>
+      </div>
+      <div class="addr-col">
+        <div class="addr-col-header">Permanent Address</div>
+        <div class="addr-grid">
+          <div class="addr-cell"><div class="addr-label">State</div><div class="addr-value">Andhra Pradesh</div></div>
+          <div class="addr-cell"><div class="addr-label">District</div><div class="addr-value">Visakhapatnam</div></div>
+          <div class="addr-cell"><div class="addr-label">Rural / Urban</div><div class="addr-value">Urban</div></div>
+          <div class="addr-cell"><div class="addr-label">Street Address 1</div><div class="addr-value">12-4-7, Daba Gardens</div></div>
+          <div class="addr-cell"><div class="addr-label">Street Address 2</div><div class="addr-value">—</div></div>
+          <div class="addr-cell"><div class="addr-label">Village / Town / City</div><div class="addr-value">Visakhapatnam</div></div>
+          <div class="addr-cell" style="border-bottom:none;"><div class="addr-label">Pincode</div><div class="addr-value">530020</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Family Members -->
+    <div class="sub-header">Family Members</div>
+    <table class="family-table">
+      <thead>
+        <tr>
+          <th>#</th><th>Relationship</th><th>Is Alive</th>
+          <th>Name</th><th>Age</th><th>Education</th><th>Occupation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-num">1</td>
+          <td>Father</td><td class="td-alive">Yes</td>
+          <td>Ruppa Srinivas</td><td>45</td>
+          <td>Primary School</td><td>Daily Wage Worker</td>
+        </tr>
+        <tr>
+          <td class="td-num">2</td>
+          <td>Mother</td><td class="td-alive">Yes</td>
+          <td>Ruppa Lakshmi</td><td>40</td>
+          <td>No Education</td><td>Homemaker</td>
+        </tr>
+        <tr>
+          <td class="td-num">3</td>
+          <td>Sibling</td><td class="td-alive">Yes</td>
+          <td>Ruppa Varsha</td><td>16</td>
+          <td>High School (10th)</td><td>Student</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Expenses -->
+    <div class="sub-header">Expenses</div>
+    <div class="expenses-layout">
+      <div class="exp-main">
+        <div class="exp-grid">
+          <div><div class="exp-label">College Fees</div><div class="exp-value">₹ 22,000</div></div>
+          <div><div class="exp-label">Room or Boarding Fees</div><div class="exp-value">₹ 22,000</div></div>
+          <div><div class="exp-label">Books &amp; Materials</div><div class="exp-value">₹ 6,000</div></div>
+          <div><div class="exp-label">Other Fees</div><div class="exp-value">₹ 22,000</div></div>
+          <div><div class="exp-label">Family Expenses</div><div class="exp-value">₹ 8,000</div></div>
+          <div></div>
+          <div class="exp-total">
+            <div class="exp-label" style="color:#ef4444;">Total Declared *</div>
+            <div class="exp-value" style="font-weight:600;">₹ 36,000</div>
+          </div>
+        </div>
+      </div>
+      <div class="exp-docs">
+        <div class="exp-docs-header">Documents</div>
+        <div class="exp-docs-body">
+          <div class="doc-group">
+            <div class="doc-group-label">Annual Tuition Fee Certificate</div>
+            <div class="doc-row">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+              <div class="doc-info">
+                <div class="doc-name">Annual Tuition Fee Certificate</div>
+                <div class="doc-date">12 Jan 2024</div>
+              </div>
+              <div class="doc-actions">
+                <button class="btn-view"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/></svg> View</button>
+                <button class="btn-dl"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download</button>
+              </div>
+            </div>
+          </div>
+          <div class="doc-group">
+            <div class="doc-group-label">Room and Board Expense Receipt</div>
+            <div class="doc-row">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path d="M14 3v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+              <div class="doc-info">
+                <div class="doc-name">Room and Board Expense Receipt</div>
+                <div class="doc-missing">
+                  <span class="doc-missing-dot"></span>
+                  <span class="doc-missing-text">Not uploaded</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Section 4 -->
+  <div class="section-label">
+    <span class="section-num">4</span>
+    <span class="section-title">Review Trail</span>
+    <div class="section-rule"></div>
+  </div>
+
+  <div class="review-grid">
+    <div class="review-card">
+      <div class="review-card-header">CC Interview</div>
+      <div class="review-card-body">Student seems genuinely needy. Family confirmed poor economic background. Father works as daily wage labour, mother is a homemaker. Student is physically disabled but highly motivated.</div>
+      <div class="review-card-footer">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="rc-action-label">Action Taken</span>
+          <span class="rc-action-value recommend">Recommended</span>
+        </div>
+        <span class="rc-date">14 Jan 2024</span>
+      </div>
+    </div>
+    <div class="review-card">
+      <div class="review-card-header">CC House Visit</div>
+      <div class="review-card-body">Visited the home. Single room dwelling in a low-income locality. Living conditions are modest. Disability observed firsthand — student uses support to walk. Household income matches stated ₹80,000.</div>
+      <div class="review-card-footer">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="rc-action-label">Action Taken</span>
+          <span class="rc-action-value recommend">Recommended</span>
+        </div>
+        <span class="rc-date">18 Jan 2024</span>
+      </div>
+    </div>
+    <div class="review-card">
+      <div class="review-card-header">NC Comment</div>
+      <div class="review-card-body">Verified the documents. Strong candidate. Family income and disability certificate are authentic. Recommend for scholarship.</div>
+      <div class="review-card-footer">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="rc-action-label">Action Taken</span>
+          <span class="rc-action-value recommend">Recommended</span>
+        </div>
+        <span class="rc-date">22 Jan 2024</span>
+      </div>
+    </div>
+    <div class="review-card">
+      <div class="review-card-header">USA Comment</div>
+      <div class="review-card-body">Reviewed and approved for full scholarship consideration. Background checks complete.</div>
+      <div class="review-card-footer">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="rc-action-label">Action Taken</span>
+          <span class="rc-action-value recommend">Recommended</span>
+        </div>
+        <span class="rc-date">22 Jan 2024</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- Sticky Action Bar -->
+<div class="sticky-bar">
+  <span class="bar-label">Take Action:</span>
+  <button class="btn-action btn-decline" onclick="openModal('decline')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    Decline
+  </button>
+  <button class="btn-action btn-review" onclick="openModal('underreview')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    Under Review
+  </button>
+  <button class="btn-action btn-recommend" onclick="openModal('recommend')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    Recommend
+  </button>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay hidden" id="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title-row">
+        <div class="modal-icon" id="modal-icon"></div>
+        <div>
+          <div class="modal-title" id="modal-title"></div>
+          <div class="modal-subtitle">Ruppa Vishnu Vardhan · APP-AP-2024-0142</div>
+        </div>
+      </div>
+      <div class="modal-divider"></div>
+    </div>
+    <div class="modal-body">
+      <label class="modal-comment-label">Comment <span>(optional)</span></label>
+      <textarea class="modal-textarea" id="modal-textarea" rows="4" placeholder=""></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-confirm" id="modal-confirm" onclick="confirmAction()"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const CONFIG = {
+    recommend: {
+      label: 'Recommend',
+      iconClass: 'recommend',
+      titleClass: 'recommend',
+      iconSvg: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+      placeholder: 'Add any supporting notes for recommending this application...',
+      badgeClass: 'badge-green',
+      badgeText: 'Recommended',
+    },
+    underreview: {
+      label: 'Under Review',
+      iconClass: 'underreview',
+      titleClass: 'underreview',
+      iconSvg: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+      placeholder: 'Describe what additional information or review is needed...',
+      badgeClass: 'badge-amber',
+      badgeText: 'Under Review',
+    },
+    decline: {
+      label: 'Decline',
+      iconClass: 'decline',
+      titleClass: 'decline',
+      iconSvg: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+      placeholder: 'Provide the reason for declining this application...',
+      badgeClass: 'badge-red',
+      badgeText: 'Declined',
+    },
+  };
+
+  let currentAction = null;
+
+  function openModal(action) {
+    currentAction = action;
+    const cfg = CONFIG[action];
+    const overlay = document.getElementById('modal-overlay');
+    const icon = document.getElementById('modal-icon');
+    const title = document.getElementById('modal-title');
+    const textarea = document.getElementById('modal-textarea');
+    const confirmBtn = document.getElementById('modal-confirm');
+
+    icon.className = 'modal-icon ' + cfg.iconClass;
+    icon.innerHTML = cfg.iconSvg;
+    title.className = 'modal-title ' + cfg.titleClass;
+    title.textContent = cfg.label + ' Application';
+    textarea.placeholder = cfg.placeholder;
+    textarea.value = '';
+    confirmBtn.className = 'btn-confirm ' + cfg.iconClass;
+    confirmBtn.textContent = 'Confirm ' + cfg.label;
+
+    overlay.classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.add('hidden');
+    currentAction = null;
+  }
+
+  function confirmAction() {
+    if (!currentAction) return;
+    const cfg = CONFIG[currentAction];
+    const badge = document.getElementById('status-badge');
+    badge.innerHTML = `<span class="badge ${cfg.badgeClass}"><span class="badge-dot"></span> ${cfg.badgeText}</span>`;
+    closeModal();
+  }
+
+  // Close on overlay click
+  document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+</script>
+
+</body>
+</html>

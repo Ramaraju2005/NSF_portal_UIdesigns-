@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NSF – Disbursement Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ═══ RESET & TOKENS ═══ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --brand:#347463;--brand-dark:#255447;--brand-mid:#3D8872;
+  --brand-light:#E6F2EE;--brand-xlight:#F2F9F6;
+  --orange:#F59E0B;--orange-light:#FEF3C7;--orange-dark:#92400E;
+  --green:#16A34A;--green-light:#DCFCE7;--green-dark:#14532D;
+  --red:#DC2626;--red-light:#FEE2E2;
+  --slate:#1E293B;--slate-mid:#475569;--slate-muted:#94A3B8;
+  --border:#C9DDD8;--bg:#EDF3F1;--white:#FFFFFF;
+  --mono:'JetBrains Mono',monospace;
+  --shadow:0 1px 4px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.05);
+  --radius:12px;--hh:58px;
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--slate);font-size:13px;line-height:1.5;min-height:100vh;}
+button,select,input{font-family:inherit;}
+button{cursor:pointer;}
+
+/* ═══ PAGES ═══ */
+.page{display:none;}
+.page.active{display:block;}
+
+/* ═══ HEADER ═══ */
+.hdr{background:linear-gradient(90deg,var(--brand-dark) 0%,var(--brand) 100%);height:var(--hh);display:flex;align-items:center;padding:0 28px;gap:14px;position:sticky;top:0;z-index:300;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+.hdr-logo{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;flex-shrink:0;}
+.hdr-t{color:#fff;font-size:15px;font-weight:700;}
+.hdr-s{color:rgba(255,255,255,.55);font-size:11.5px;margin-top:1px;}
+.hdr-sp{flex:1;}
+.hdr-role{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:5px 16px;color:#fff;font-size:12px;font-weight:500;}
+
+/* ═══ MAIN ═══ */
+.main{max-width:1500px;margin:0 auto;padding:22px 24px 80px;}
+.pg-head{margin-bottom:18px;}
+.pg-head h1{font-size:20px;font-weight:800;color:var(--slate);}
+.pg-head p{font-size:12.5px;color:var(--slate-muted);margin-top:3px;}
+
+/* ═══ SEARCH PANEL ═══ */
+.search-panel{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 22px;margin-bottom:12px;box-shadow:var(--shadow);}
+.sp-lbl{font-size:10px;font-weight:700;color:var(--slate-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:11px;}
+.sp-grid{display:grid;grid-template-columns:1.3fr 1fr 1.5fr 1fr 1fr auto;gap:12px;align-items:flex-end;}
+.fg{display:flex;flex-direction:column;gap:4px;}
+.fg label{font-size:11px;font-weight:600;color:var(--slate-mid);}
+.fg select,.fg input[type=date]{height:37px;border-radius:7px;border:1.5px solid var(--border);background:#F6FAFA;padding:0 11px;font-size:13px;color:var(--slate);outline:none;transition:border-color .15s,box-shadow .15s;}
+.fg select:focus,.fg input[type=date]:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(52,116,99,.1);}
+.multi-tag{font-size:9px;font-weight:700;background:var(--brand-light);color:var(--brand);padding:1px 5px;border-radius:3px;margin-left:5px;vertical-align:middle;}
+.btn-search{height:37px;padding:0 24px;border-radius:7px;background:var(--brand);color:#fff;border:none;font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;box-shadow:0 2px 6px rgba(52,116,99,.28);transition:background .15s;white-space:nowrap;}
+.btn-search:hover{background:var(--brand-dark);}
+
+/* ═══ UPLOAD CARD ═══ */
+.upload-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:13px 22px;margin-bottom:18px;display:flex;align-items:center;gap:16px;box-shadow:var(--shadow);}
+.uc-ico{width:42px;height:42px;border-radius:10px;background:var(--brand-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--brand);}
+.uc-t{font-size:13.5px;font-weight:700;color:var(--slate);}
+.uc-s{font-size:11.5px;color:var(--slate-muted);margin-top:2px;}
+.uc-div{width:1px;height:34px;background:var(--border);flex-shrink:0;}
+.uc-tip{font-size:11.5px;color:var(--slate-muted);display:flex;align-items:center;gap:6px;}
+.uc-sp{flex:1;}
+.btn-upload-main{display:flex;align-items:center;gap:7px;background:var(--brand);color:#fff;border:none;height:37px;padding:0 20px;border-radius:7px;font-size:13px;font-weight:600;box-shadow:0 2px 6px rgba(52,116,99,.25);transition:background .15s;}
+.btn-upload-main:hover{background:var(--brand-dark);}
+
+/* ═══ 5 TAB BUTTONS ═══ */
+.tab-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
+.tab-btn{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 16px;cursor:pointer;position:relative;overflow:hidden;transition:all .18s;text-align:left;box-shadow:var(--shadow);}
+.tab-btn::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:var(--radius) var(--radius) 0 0;background:var(--border);transition:background .18s;}
+.tab-btn:hover::before,.tab-btn.active::before{background:var(--brand);}
+.tab-btn.active{border-color:var(--brand);box-shadow:0 0 0 2.5px rgba(52,116,99,.15),0 4px 16px rgba(52,116,99,.1);}
+.tb-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:10px;background:var(--brand-light);color:var(--brand);transition:all .18s;}
+.tab-btn.active .tb-ico,.tab-btn:hover .tb-ico{background:var(--brand);color:#fff;}
+.tb-num{font-size:26px;font-weight:800;color:var(--slate);line-height:1;margin-bottom:3px;transition:color .18s;}
+.tab-btn.active .tb-num{color:var(--brand);}
+.tb-lbl{font-size:11.5px;font-weight:500;color:var(--slate-muted);}
+
+/* ═══ SECTION VIEWS ═══ */
+.sec-view{display:none;}
+.sec-view.active{display:block;}
+
+/* ═══ TABLE CARD ═══ */
+.tbl-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);}
+
+/* ─── ROW 1: count + tools ─── */
+.tbl-row1{padding:11px 18px;border-bottom:1.5px solid #E2EEEB;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:50px;}
+.tbl-count{font-size:12.5px;color:var(--slate-muted);}
+.tbl-count strong{color:var(--slate);font-weight:700;font-size:13px;}
+.tbl-tools{display:flex;align-items:center;gap:7px;}
+.btn-tool{display:flex;align-items:center;gap:6px;height:32px;padding:0 13px;border-radius:7px;border:1.5px solid var(--border);background:var(--white);color:var(--slate-mid);font-size:12px;font-weight:600;transition:all .15s;white-space:nowrap;}
+.btn-tool:hover{background:var(--brand-light);border-color:var(--brand);color:var(--brand);}
+
+/* ─── ROW 2: pill batch toggle ─── */
+.tbl-row2{padding:11px 18px;border-bottom:1.5px solid #E2EEEB;background:#F7FBFA;}
+.pill-scroll{display:flex;align-items:center;gap:5px;overflow-x:auto;padding-bottom:3px;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+.pill-scroll::-webkit-scrollbar{height:4px;}
+.pill-scroll::-webkit-scrollbar-track{background:transparent;}
+.pill-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+/* pill-wrap: no background container — just a flex row of individual buttons */
+.pill-wrap{display:flex;align-items:center;background:transparent;border-radius:0;padding:0;gap:7px;flex-shrink:0;}
+
+/* every batch button: clear visible border, white bg — looks like a real button */
+.p-item{
+  display:flex;align-items:center;gap:12px;
+  padding:9px 15px;border-radius:9px;cursor:pointer;
+  transition:all .16s;white-space:nowrap;flex-shrink:0;
+  background:var(--white);
+  border:1.5px solid var(--border);
+  box-shadow:0 1px 3px rgba(0,0,0,.06);
+}
+.p-item:hover{
+  border-color:var(--brand);
+  background:var(--brand-xlight);
+  box-shadow:0 2px 8px rgba(52,116,99,.12);
+}
+/* active / selected batch button */
+.p-item.p-on{
+  background:var(--brand-xlight);
+  border-color:var(--brand);
+  border-width:2px;
+  box-shadow:0 0 0 3px rgba(52,116,99,.12),0 2px 8px rgba(52,116,99,.1);
+}
+.p-item.p-on .pi-name{color:var(--brand);font-weight:700;}
+.p-item.p-on .pi-num{color:var(--brand);}
+.p-item.p-on .pi-amt{color:var(--brand-mid);}
+
+/* new apps — solid filled teal button */
+.p-new{
+  background:var(--brand) !important;
+  border-color:var(--brand) !important;
+  border-width:2px !important;
+  box-shadow:0 2px 8px rgba(52,116,99,.28) !important;
+}
+.p-new:hover{background:var(--brand-dark) !important;border-color:var(--brand-dark) !important;}
+.p-new .pi-name{color:#fff !important;font-weight:700 !important;}
+.p-new .pi-num{color:#fff !important;}
+.p-new .pi-amt{color:rgba(255,255,255,.8) !important;}
+.p-new .pi-dot{background:rgba(255,255,255,.8) !important;}
+.p-new .pi-slbl{color:rgba(255,255,255,.75) !important;}
+/* left side of pill */
+.pi-left{display:flex;flex-direction:column;gap:1px;}
+.pi-name{font-size:12px;font-weight:600;color:var(--slate-mid);line-height:1.2;}
+.pi-status{display:flex;align-items:center;gap:3px;margin-top:2px;}
+.pi-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.pi-slbl{font-size:9.5px;font-weight:600;color:var(--slate-muted);}
+/* right side — large number + amount */
+.pi-right{display:flex;flex-direction:column;align-items:flex-end;gap:1px;}
+.pi-num{font-size:19px;font-weight:800;color:var(--slate);line-height:1;font-variant-numeric:tabular-nums;}
+.pi-amt{font-size:9.5px;font-weight:600;color:var(--slate-mid);font-family:var(--mono);white-space:nowrap;}
+.scroll-hint{font-size:11px;color:var(--slate-muted);flex-shrink:0;padding:0 4px;user-select:none;}
+
+/* ─── CREATE BATCH BAR ─── */
+.create-bar{padding:10px 18px;border-bottom:1.5px solid #C1DDD7;background:var(--brand-xlight);display:flex;align-items:center;gap:14px;}
+.btn-create{display:flex;align-items:center;gap:7px;background:var(--brand);color:#fff;border:none;height:34px;padding:0 18px;border-radius:7px;font-size:12.5px;font-weight:700;box-shadow:0 2px 6px rgba(52,116,99,.25);transition:background .15s;white-space:nowrap;}
+.btn-create:hover{background:var(--brand-dark);}
+.create-hint{font-size:12px;color:var(--slate-mid);}
+.create-hint strong{color:var(--brand);font-weight:600;}
+
+/* ─── SELECTION BAR ─── */
+.sel-bar{padding:8px 18px;border-bottom:1.5px solid #BDD8D2;background:#EAF4F0;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.sel-info{font-size:12.5px;font-weight:700;color:var(--brand-dark);}
+.sel-div{width:1px;height:18px;background:#B0CECA;flex-shrink:0;}
+.sel-select{height:30px;border-radius:6px;border:1.5px solid var(--border);background:var(--white);padding:0 10px;font-size:12px;color:var(--slate);outline:none;min-width:170px;}
+.btn-act{display:flex;align-items:center;gap:5px;height:30px;padding:0 12px;border-radius:6px;background:var(--white);border:1.5px solid var(--border);color:var(--slate-mid);font-size:12px;font-weight:600;transition:all .15s;}
+.btn-act:hover{background:var(--brand-light);border-color:var(--brand);color:var(--brand);}
+.btn-clear{margin-left:auto;background:none;border:none;color:var(--slate-muted);font-size:12px;text-decoration:underline;}
+
+/* ─── REBATCH PANEL ─── */
+.rebatch-panel{background:#FFFBEB;border:1.5px solid #FCD34D;border-radius:9px;padding:10px 16px;margin:10px 18px 0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.rebatch-info{font-size:12.5px;color:#78350F;font-weight:500;flex:1;}
+.rebatch-sel{height:32px;border-radius:6px;border:1.5px solid #FCD34D;background:#FFFEF0;padding:0 10px;font-size:12px;font-family:inherit;outline:none;min-width:180px;}
+.btn-rebatch{display:flex;align-items:center;gap:5px;height:32px;padding:0 16px;border-radius:6px;background:var(--brand);color:#fff;border:none;font-size:12px;font-weight:600;}
+
+/* ═══ TABLE ═══ */
+.tbl-scroll{overflow-x:auto;position:relative;}
+table{width:100%;border-collapse:collapse;min-width:1050px;}
+thead .grp-row th{background:var(--brand-dark);font-size:9px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.09em;padding:4px 13px;border-right:1px solid rgba(255,255,255,.1);}
+thead .grp-row th:last-child{border-right:none;}
+thead .hd-row th{background:var(--brand);padding:10px 13px;text-align:left;font-size:11px;font-weight:600;color:#fff;white-space:nowrap;border-right:1px solid rgba(255,255,255,.12);position:relative;}
+thead .hd-row th:last-child{border-right:none;}
+.bank-th{background:#286055 !important;}
+/* NO checkbox th — removed */
+td.sel-col{width:40px;text-align:center;}
+.th-inner{display:flex;align-items:center;justify-content:space-between;gap:4px;}
+/* sort button in header */
+.sort-btn{width:18px;height:16px;border-radius:3px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:8px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;position:relative;flex-shrink:0;}
+.sort-btn.sorted{background:#fff;color:var(--brand);}
+
+/* Sort dropdown */
+.sort-menu{position:fixed;background:#fff;border:1.5px solid var(--border);border-radius:8px;box-shadow:0 4px 18px rgba(0,0,0,.14);z-index:500;display:none;min-width:160px;overflow:hidden;}
+.sort-menu.open{display:block;}
+.sort-menu button{display:block;width:100%;text-align:left;background:none;border:none;padding:9px 14px;font-size:13px;color:var(--slate);cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;}
+.sort-menu button:hover{background:var(--brand-xlight);color:var(--brand);}
+.sort-menu .sm-active{background:var(--brand-light);color:var(--brand);font-weight:600;}
+
+/* rows */
+tbody tr{border-bottom:1px solid #E5EEEB;transition:background .1s;}
+tbody tr:nth-child(even){background:#F7FBFA;}
+tbody tr:nth-child(odd){background:var(--white);}
+tbody tr:hover{background:var(--brand-xlight);}
+tbody tr.row-sel{background:#DFF0EA !important;box-shadow:inset 3px 0 0 var(--brand);}
+tbody tr:last-child{border-bottom:none;}
+tbody td{padding:10px 13px;font-size:12.5px;color:var(--slate-mid);border-right:1px solid #EAF0EE;}
+tbody td:last-child{border-right:none;}
+.bank-cell{background:rgba(52,116,99,.04);}
+.cb{width:14px;height:14px;accent-color:var(--brand);cursor:pointer;}
+.td-sno{color:var(--slate-muted);font-size:11.5px;}
+.td-appid{color:var(--brand);font-weight:700;font-size:12px;}
+.td-name{color:var(--slate);font-weight:600;}
+.td-mono{font-family:var(--mono);font-size:11px;background:var(--brand-light);color:var(--brand-dark);padding:2px 7px;border-radius:4px;display:inline-block;}
+.td-amt-g{font-family:var(--mono);font-size:12.5px;font-weight:700;color:var(--green);}
+.td-amt-r{font-family:var(--mono);font-size:12.5px;font-weight:700;color:var(--red);}
+.td-empty{color:#BDD0CC;}
+
+/* STATUS PILLS */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;white-space:nowrap;}
+.pill-nb{background:var(--brand-light);color:var(--brand);}        /* Not Batched – visible on New Apps tab */
+.pill-nb-hidden{background:#F1F5F9;color:#94A3B8;}                   /* Not Batched – invisible style on batch tab */
+.pill-up{background:#EDE9FE;color:#5B21B6;}
+.pill-dis{background:var(--green-light);color:var(--green-dark);}
+.pill-ret{background:var(--red-light);color:var(--red);}
+.pill-notup{background:#F1F5F9;color:#64748B;}
+.pill-ip{background:var(--orange-light);color:var(--orange-dark);}
+
+/* ═══ PAGINATION ═══ */
+.pagination{padding:10px 18px;border-top:1.5px solid var(--border);display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.pag-btn{height:30px;padding:0 14px;border-radius:6px;border:1.5px solid var(--border);background:var(--white);color:var(--slate-mid);font-size:12px;font-weight:500;transition:background .15s;}
+.pag-btn:disabled{color:#BDD0CC;cursor:default;}
+.pag-btn:not(:disabled):hover{background:var(--brand-light);}
+.pag-num{width:30px;height:30px;border-radius:6px;border:1.5px solid transparent;background:none;color:var(--slate-mid);font-size:12.5px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+.pag-num:hover:not(.pag-on){background:var(--brand-light);}
+.pag-on{background:var(--brand) !important;color:#fff !important;border-color:var(--brand) !important;}
+.pag-sp{flex:1;}
+
+/* ═══ CHOOSE COLUMNS MODAL ═══ */
+.overlay{position:fixed;inset:0;background:rgba(20,40,35,.4);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px;opacity:0;pointer-events:none;transition:opacity .18s;}
+.overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--white);border-radius:14px;width:min(620px,100%);max-height:88vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.2);transform:translateY(12px);transition:transform .18s;}
+.overlay.open .modal{transform:translateY(0);}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--white);z-index:2;}
+.modal-head h2{font-size:15px;font-weight:700;color:var(--slate);}
+.modal-close{background:none;border:none;font-size:20px;color:var(--slate-muted);line-height:1;cursor:pointer;}
+.modal-body{padding:18px 22px;}
+.col-sec-lbl{font-size:10px;font-weight:700;color:var(--slate-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.col-sec-lbl:not(:first-child){margin-top:16px;}
+.cols-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:2px 10px;}
+.col-chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--slate);cursor:pointer;padding:6px 8px;border-radius:6px;user-select:none;transition:background .12s;}
+.col-chk:hover{background:var(--brand-xlight);}
+.col-chk input{width:15px;height:15px;accent-color:var(--brand);cursor:pointer;flex-shrink:0;}
+.modal-foot{padding:0 22px 18px;display:flex;justify-content:flex-end;gap:10px;}
+.btn-cancel{background:var(--white);border:1.5px solid var(--border);color:var(--slate-mid);padding:8px 20px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;}
+.btn-apply{background:var(--brand);color:#fff;border:none;padding:8px 20px;border-radius:7px;font-size:13px;font-weight:600;transition:background .15s;cursor:pointer;}
+.btn-apply:hover{background:var(--brand-dark);}
+
+/* ═══ TOAST ═══ */
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(14px);background:#1E293B;color:#fff;padding:11px 22px;border-radius:8px;font-size:13.5px;box-shadow:0 4px 16px rgba(0,0,0,.25);opacity:0;transition:all .25s;pointer-events:none;z-index:9999;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ═══ UPLOAD PAGE ═══ */
+#pg-upload .main{max-width:1400px;}
+.back-bar{display:flex;align-items:center;gap:14px;margin-bottom:28px;}
+.back-btn{display:flex;align-items:center;gap:6px;background:var(--white);border:1.5px solid var(--border);border-radius:7px;padding:7px 14px;font-size:12.5px;font-weight:600;color:var(--brand);box-shadow:var(--shadow);cursor:pointer;}
+.back-btn:hover{background:var(--brand-light);}
+
+/* Upload card — fixed width, centered */
+.up-card{
+  width:720px;
+  margin:0 auto 32px auto;
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:14px;overflow:hidden;box-shadow:var(--shadow);
+}
+.up-card-head{background:var(--brand);padding:15px 22px;display:flex;align-items:center;gap:13px;}
+.up-card-icon{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;flex-shrink:0;}
+.up-card-title{font-size:14.5px;font-weight:700;color:#fff;}
+.up-card-sub{font-size:11.5px;color:rgba(255,255,255,.65);margin-top:2px;}
+.up-card-body{padding:24px 26px;}
+.up-field-lbl{font-size:10.5px;font-weight:700;color:var(--slate-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.up-select{width:100%;height:44px;border-radius:9px;border:1.5px solid var(--border);background:var(--brand-xlight);padding:0 14px;font-size:13.5px;font-weight:600;color:var(--slate);outline:none;transition:border-color .15s,box-shadow .15s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23347463' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;cursor:pointer;}
+.up-select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(52,116,99,.1);}
+
+/* batch info strip */
+.batch-info-strip{
+  background:var(--brand-xlight);border:1.5px solid #B5D5CE;
+  border-radius:9px;padding:12px 16px;margin-top:11px;
+  display:flex;align-items:center;gap:0;
+  position:relative;overflow:hidden;
+}
+.batch-info-strip::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--brand);}
+.bis-inner{padding-left:14px;display:flex;align-items:center;gap:0;width:100%;flex-wrap:wrap;}
+.bis-id{font-family:var(--mono);font-size:13px;font-weight:800;color:var(--brand);margin-right:14px;}
+.bis-vd{width:1px;height:20px;background:#B5D5CE;margin:0 14px;flex-shrink:0;}
+.bis-item{font-size:12px;color:var(--slate-mid);}
+.bis-item strong{color:var(--slate);font-weight:700;}
+.bis-sp{flex:1;}
+.bis-amt{font-family:var(--mono);font-size:14px;font-weight:800;color:var(--green);}
+
+/* divider */
+.sec-div{display:flex;align-items:center;gap:10px;margin:22px 0 18px;}
+.sd-line{flex:1;height:1px;background:var(--border);}
+.sd-lbl{font-size:9.5px;font-weight:700;color:var(--slate-muted);text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;}
+
+/* dropzone */
+.dropzone{border:2px dashed #B5D5CE;border-radius:12px;padding:36px 24px;text-align:center;background:var(--brand-xlight);cursor:pointer;transition:all .15s;}
+.dropzone:hover{border-color:var(--brand);background:var(--brand-light);}
+.dropzone.has-file{border-color:var(--green);background:var(--green-light);}
+.dz-ico{font-size:40px;margin-bottom:11px;}
+.dz-title{font-size:15px;font-weight:800;color:var(--slate);margin-bottom:4px;}
+.dz-sub{font-size:12.5px;color:var(--slate-muted);margin-bottom:14px;}
+.dz-fmts{display:flex;justify-content:center;gap:6px;margin-bottom:12px;}
+.dz-fmt{background:var(--brand-light);color:var(--brand);border-radius:5px;padding:3px 11px;font-size:11px;font-weight:700;}
+.dz-cols{font-size:11.5px;color:var(--slate-muted);margin-bottom:20px;}
+.dz-cols code{font-family:var(--mono);background:#DFF0EB;color:var(--brand-dark);padding:2px 7px;border-radius:4px;font-size:10.5px;}
+.dz-filename{font-size:13px;font-weight:600;color:var(--green);margin-bottom:14px;}
+.dz-btn{display:inline-flex;align-items:center;gap:8px;background:var(--brand);color:#fff;border:none;height:42px;padding:0 32px;border-radius:9px;font-size:14px;font-weight:700;box-shadow:0 3px 10px rgba(52,116,99,.3);transition:background .15s;cursor:pointer;}
+.dz-btn:hover{background:var(--brand-dark);}
+.dz-btn:disabled{background:var(--slate-muted);cursor:not-allowed;box-shadow:none;}
+
+/* History — full width */
+.hist-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.hist-head h2{font-size:17px;font-weight:800;color:var(--slate);}
+.hist-cnt{background:var(--brand-light);color:var(--brand);border-radius:20px;padding:3px 13px;font-size:12px;font-weight:700;}
+.hist-list{display:flex;flex-direction:column;gap:10px;}
+
+/* history row — wide, horizontal */
+.h-row{
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:12px;padding:16px 24px;
+  display:flex;align-items:center;gap:0;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow);width:100%;
+}
+.h-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;border-radius:12px 0 0 12px;}
+.h-row.h-done::before{background:var(--green);}
+.h-row.h-wait::before{background:var(--orange);}
+.h-left{padding-left:10px;display:flex;flex-direction:column;gap:3px;min-width:200px;}
+.h-bid{font-family:var(--mono);font-size:14px;font-weight:800;color:var(--brand);}
+.h-date{font-size:11.5px;color:var(--slate-muted);}
+.h-vd{width:1px;background:var(--border);align-self:stretch;margin:0 24px;flex-shrink:0;}
+.h-stat{display:flex;flex-direction:column;align-items:center;min-width:90px;padding:0 6px;}
+.h-stat-n{font-size:22px;font-weight:800;line-height:1;margin-bottom:3px;}
+.h-stat-l{font-size:9.5px;font-weight:700;color:var(--slate-muted);text-transform:uppercase;letter-spacing:.07em;}
+.hs-tot .h-stat-n{color:var(--slate);}
+.hs-amt .h-stat-n{color:var(--green);font-size:15px;font-family:var(--mono);}
+.hs-ok  .h-stat-n{color:var(--green);}
+.hs-fail .h-stat-n{color:var(--red);}
+.hs-wait .h-stat-n{color:var(--slate-muted);}
+.h-sp{flex:1;}
+.h-right{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.h-pill-done{background:var(--green-light);color:var(--green-dark);padding:5px 14px;border-radius:9px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px;}
+.h-pill-wait{background:var(--orange-light);color:var(--orange-dark);padding:5px 14px;border-radius:9px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px;}
+.h-dl{display:flex;align-items:center;gap:6px;height:34px;padding:0 14px;border-radius:8px;border:1.5px solid var(--border);background:var(--white);font-size:12px;font-weight:600;color:var(--slate-mid);cursor:pointer;transition:all .15s;}
+.h-dl:hover{background:var(--brand-light);border-color:var(--brand);color:var(--brand);}
+
+@media(max-width:1100px){.tab-row{grid-template-columns:repeat(3,1fr);}.sp-grid{grid-template-columns:1fr 1fr 1fr;}}
+@media(max-width:700px){.tab-row{grid-template-columns:repeat(2,1fr);}.sp-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<!-- ═══════ PAGE: MAIN ═══════ -->
+<div id="pg-main" class="page active">
+<div class="hdr">
+  <div class="hdr-logo">NSF</div>
+  <div><div class="hdr-t">National Scholarship Foundation</div><div class="hdr-s">Disbursement · Accounts Section</div></div>
+  <div class="hdr-sp"></div>
+  <div class="hdr-role">Role: NC &nbsp;·&nbsp; Hyderabad</div>
+</div>
+<div class="main">
+  <div class="pg-head"><h1>Disbursement List</h1><p>Manage scholarship payments, bank details and transaction tracking</p></div>
+
+  <!-- SEARCH -->
+  <div class="search-panel">
+    <div class="sp-lbl">Search &amp; Filter</div>
+    <div class="sp-grid">
+      <div class="fg"><label>Chapter</label><select><option>All Chapters</option><option>Hyderabad, TS</option><option>Vijayawada, AP</option><option>Warangal, TS</option><option>Vizag, AP</option></select></div>
+      <div class="fg"><label>Course</label><select><option>All Courses</option><option>B.Tech</option><option>B.Sc</option><option>B.Com</option><option>BA</option></select></div>
+      <div class="fg"><label>Bank <span class="multi-tag">MULTI-SELECT</span></label><select><option>All Banks</option><option>State Bank of India</option><option>HDFC Bank</option><option>Canara Bank</option><option>Axis Bank</option><option>Punjab National Bank</option></select></div>
+      <div class="fg"><label>From Date</label><input type="date"/></div>
+      <div class="fg"><label>To Date</label><input type="date"/></div>
+      <button class="btn-search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Search</button>
+    </div>
+  </div>
+
+  <!-- UPLOAD CARD -->
+  <div class="upload-card">
+    <div class="uc-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></div>
+    <div><div class="uc-t">Upload Bank Details</div><div class="uc-s"></div></div>
+    <div class="uc-div"></div>
+    <div class="uc-tip"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+    <div class="uc-sp"></div>
+    <button class="btn-upload-main" onclick="goUpload()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>Upload Transactions</button>
+  </div>
+
+  <!-- 5 TABS -->
+  <div class="tab-row">
+    <button class="tab-btn" data-tab="total"><div class="tb-ico">Σ</div><div class="tb-num" id="cnt-total">320</div><div class="tb-lbl">Total Students</div></button>
+    <button class="tab-btn" data-tab="notup"><div class="tb-ico">⚠</div><div class="tb-num" id="cnt-notup">148</div><div class="tb-lbl">Bank Details Not Uploaded</div></button>
+    <button class="tab-btn active" data-tab="uploaded"><div class="tb-ico">✓</div><div class="tb-num" id="cnt-uploaded">112</div><div class="tb-lbl">Bank Details Uploaded</div></button>
+    <button class="tab-btn" data-tab="disbursed"><div class="tb-ico">₹</div><div class="tb-num" id="cnt-disbursed">47</div><div class="tb-lbl">Money Disbursed</div></button>
+    <button class="tab-btn" data-tab="returned"><div class="tb-ico">↩</div><div class="tb-num" id="cnt-returned">13</div><div class="tb-lbl">Money Returned</div></button>
+  </div>
+
+  <!-- ══ TOTAL ══ -->
+  <div class="sec-view" id="sec-total">
+    <div class="tbl-card">
+      <div class="tbl-row1"><div class="tbl-count">Showing <strong id="tot-showing">–</strong> of <strong id="cnt-tot">320</strong> students</div><div class="tbl-tools"><button class="btn-tool" onclick="openCols('total')">⚙ Choose Columns</button><button class="btn-tool" onclick="doExport('total')">⬇ Export to Excel</button></div></div>
+      <div class="sel-bar" id="sel-total" style="display:none;"><input type="checkbox" class="cb" onchange="togAll('total',this)"/><span style="font-size:12px;color:var(--slate-mid);">Select all</span><div class="sel-div"></div><span class="sel-info" id="sinf-total">0 selected</span><button class="btn-clear" onclick="clrSel('total')">Clear</button></div>
+      <div class="tbl-scroll"><table><thead><tr class="grp-row" id="grp-total"></tr><tr class="hd-row" id="hd-total"></tr></thead><tbody id="tb-total"></tbody></table></div>
+      <div class="pagination" id="pag-total"></div>
+    </div>
+  </div>
+
+  <!-- ══ NOT UPLOADED ══ -->
+  <div class="sec-view" id="sec-notup">
+    <div class="tbl-card">
+      <div class="tbl-row1"><div class="tbl-count">Showing <strong id="notup-showing">–</strong> of <strong id="cnt-notup2">148</strong> students</div><div class="tbl-tools"><button class="btn-tool" onclick="sendReminder()">✉ Send Reminder</button><button class="btn-tool" onclick="openCols('notup')">⚙ Choose Columns</button><button class="btn-tool" onclick="doExport('notup')">⬇ Export to Excel</button></div></div>
+      <div class="sel-bar" id="sel-notup" style="display:none;"><input type="checkbox" class="cb" onchange="togAll('notup',this)"/><span style="font-size:12px;color:var(--slate-mid);">Select all</span><div class="sel-div"></div><span class="sel-info" id="sinf-notup">0 selected</span><div class="sel-div"></div><button class="btn-act" onclick="sendReminder()">✉ Send Reminder</button><button class="btn-clear" onclick="clrSel('notup')">Clear</button></div>
+      <div class="tbl-scroll"><table><thead><tr class="grp-row" id="grp-notup"></tr><tr class="hd-row" id="hd-notup"></tr></thead><tbody id="tb-notup"></tbody></table></div>
+      <div class="pagination" id="pag-notup"></div>
+    </div>
+  </div>
+
+  <!-- ══ UPLOADED ══ -->
+  <div class="sec-view active" id="sec-uploaded">
+    <div class="tbl-card">
+      <!-- Row 1 -->
+      <div class="tbl-row1"><div class="tbl-count">Showing <strong id="up-showing">–</strong> of <strong id="up-total-cnt">112</strong> students</div><div class="tbl-tools"><button class="btn-tool" onclick="openCols('uploaded')">⚙ Choose Columns</button><button class="btn-tool" onclick="doExport('uploaded')">⬇ Export to Excel</button></div></div>
+      <!-- Row 2: pill toggle -->
+      <div class="tbl-row2">
+        <div class="pill-scroll" id="up-pill-scroll">
+          <div class="pill-wrap" id="up-pill-wrap"></div>
+          <span class="scroll-hint" id="up-scroll-hint" style="display:none;">scroll ›</span>
+        </div>
+      </div>
+      <!-- Create batch bar -->
+      
+      <!-- Sel bar -->
+      <div class="sel-bar" id="sel-uploaded" style="display:none;"><input type="checkbox" class="cb" onchange="togAll('uploaded',this)"/><span style="font-size:12px;color:var(--slate-mid);">Select all</span><div class="sel-div"></div><span class="sel-info" id="sinf-uploaded">0 selected</span><div class="sel-div"></div><span style="font-size:11.5px;color:var(--slate-mid);">Move to batch:</span><select class="sel-select" id="up-move-sel"></select><button class="btn-act" onclick="moveBatch()">Move →</button><button class="btn-clear" onclick="clrSel('uploaded')">Clear</button></div>
+      <div class="create-bar" id="create-bar"><button class="btn-create" onclick="createBatch()">＋ Create Batch</button><span class="create-hint"><strong id="new-hint">0</strong></span></div>
+      <div class="tbl-scroll"><table><thead><tr class="grp-row" id="grp-uploaded"></tr><tr class="hd-row" id="hd-uploaded"></tr></thead><tbody id="tb-uploaded"></tbody></table></div>
+      <div class="pagination" id="pag-uploaded"></div>
+    </div>
+  </div>
+
+  <!-- ══ DISBURSED ══ -->
+  <div class="sec-view" id="sec-disbursed">
+    <div class="tbl-card">
+      <div class="tbl-row1"><div class="tbl-count">Showing <strong id="dis-showing">–</strong> of <strong id="dis-total-cnt">47</strong> students</div><div class="tbl-tools"><button class="btn-tool" onclick="openCols('disbursed')">⚙ Choose Columns</button><button class="btn-tool" onclick="doExport('disbursed')">⬇ Export to Excel</button></div></div>
+      <div class="tbl-row2"><div class="pill-scroll"><div class="pill-wrap" id="dis-pill-wrap"></div></div></div>
+      <div class="sel-bar" id="sel-disbursed" style="display:none;"><input type="checkbox" class="cb" onchange="togAll('disbursed',this)"/><span style="font-size:12px;color:var(--slate-mid);">Select all</span><div class="sel-div"></div><span class="sel-info" id="sinf-disbursed">0 selected</span><button class="btn-clear" onclick="clrSel('disbursed')">Clear</button></div>
+      <div class="tbl-scroll"><table><thead><tr class="grp-row" id="grp-disbursed"></tr><tr class="hd-row" id="hd-disbursed"></tr></thead><tbody id="tb-disbursed"></tbody></table></div>
+      <div class="pagination" id="pag-disbursed"></div>
+    </div>
+  </div>
+
+  <!-- ══ RETURNED ══ -->
+  <div class="sec-view" id="sec-returned">
+    <div class="tbl-card">
+      <div class="tbl-row1"><div class="tbl-count">Showing <strong id="ret-showing">–</strong> of <strong id="ret-total-cnt">13</strong> students</div><div class="tbl-tools"><button class="btn-tool" onclick="openCols('returned')">⚙ Choose Columns</button><button class="btn-tool" onclick="doExport('returned')">⬇ Export to Excel</button></div></div>
+      <div class="tbl-row2"><div class="pill-scroll"><div class="pill-wrap" id="ret-pill-wrap"></div></div></div>
+      <div class="rebatch-panel" id="rebatch-panel" style="display:none;"><span style="font-size:14px;">↩</span><span class="rebatch-info"><strong id="ret-sel-cnt">0</strong> students selected — add to a batch to retry</span><select class="rebatch-sel" id="ret-move-sel"><option value="">Choose batch…</option><option value="new">＋ Create New Batch</option></select><button class="btn-rebatch" onclick="doRetry()">Add to Batch →</button></div>
+      <div class="sel-bar" id="sel-returned" style="display:none;"><input type="checkbox" class="cb" onchange="togAll('returned',this)"/><span style="font-size:12px;color:var(--slate-mid);">Select all</span><div class="sel-div"></div><span class="sel-info" id="sinf-returned">0 selected</span><div class="sel-div"></div><button class="btn-act" style="background:var(--orange-light);border-color:#FCD34D;color:var(--orange-dark);" onclick="document.getElementById('rebatch-panel').style.display='flex'">↩ Retry in Batch</button><button class="btn-clear" onclick="clrSel('returned')">Clear</button></div>
+      <div class="tbl-scroll"><table><thead><tr class="grp-row" id="grp-returned"></tr><tr class="hd-row" id="hd-returned"></tr></thead><tbody id="tb-returned"></tbody></table></div>
+      <div class="pagination" id="pag-returned"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════ PAGE: UPLOAD ═══════ -->
+<div id="pg-upload" class="page">
+<div class="hdr">
+  <div class="hdr-logo">NSF</div>
+  <div><div class="hdr-t">National Scholarship Foundation</div><div class="hdr-s">Disbursement · Accounts Section</div></div>
+  <div class="hdr-sp"></div>
+  <div class="hdr-role">Role: NC &nbsp;·&nbsp; Hyderabad</div>
+</div>
+<div class="main">
+  <div class="back-bar"><button class="back-btn" onclick="goMain()">← Back to Disbursement</button><div><div style="font-size:20px;font-weight:800;color:var(--slate);">Upload Transactions</div><div style="font-size:12.5px;color:var(--slate-muted);margin-top:2px;">Select a batch and upload the bank transaction Excel file</div></div></div>
+
+  <!-- Upload card — fixed width, centered -->
+  <div class="up-card">
+    <div class="up-card-head">
+      <div class="up-card-icon">⬆</div>
+      <div><div class="up-card-title">Upload Transaction File</div><div class="up-card-sub">Required columns: App ID · Transaction ID · Status · Amount</div></div>
+    </div>
+    <div class="up-card-body">
+      <div class="up-field-lbl">Select Batch</div>
+      <select class="up-select" id="up-batch-sel" onchange="onBatchSel()"><option value="">— Choose a batch —</option></select>
+      <!-- batch strip redesigned -->
+      <div class="batch-info-strip" id="batch-strip" style="display:none;">
+        <div class="bis-inner">
+          <span class="bis-id" id="bis-id">—</span>
+          <div class="bis-vd"></div>
+          <span class="bis-item">Students: <strong id="bis-students">—</strong></span>
+          <div class="bis-vd"></div>
+          <span class="bis-item">Total Amount:</span>
+          <div class="bis-sp"></div>
+          <span class="bis-amt" id="bis-amt">—</span>
+        </div>
+      </div>
+      <div class="sec-div"><div class="sd-line"></div><div class="sd-lbl">Upload Excel File</div><div class="sd-line"></div></div>
+      <div class="dropzone" id="dropzone" onclick="document.getElementById('file-inp').click()">
+        <div class="dz-ico" id="dz-ico">📂</div>
+        <div class="dz-title" id="dz-title">Drop your Excel file here</div>
+        <div class="dz-sub" id="dz-sub">or click to browse from your computer</div>
+        <div class="dz-fmts"><span class="dz-fmt">.xlsx</span><span class="dz-fmt">.xls</span><span class="dz-fmt">.csv</span></div>
+        <div class="dz-cols">Required: <code>App ID</code>&nbsp;&nbsp;<code>Transaction ID</code>&nbsp;&nbsp;<code>Status</code>&nbsp;&nbsp;<code>Amount</code></div>
+        <div class="dz-filename" id="dz-fn" style="display:none;"></div>
+        <button class="dz-btn" id="dz-btn" onclick="event.stopPropagation();processUpload()" disabled>⬆ Upload &amp; Process</button>
+        <input type="file" id="file-inp" accept=".xlsx,.xls,.csv" style="display:none;" onchange="onFileSelect(this)"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- History — full width -->
+  <div class="hist-head"><h2>Upload History</h2><span class="hist-cnt" id="hist-cnt">0 uploads</span></div>
+  <div class="hist-list" id="hist-list"><div style="text-align:center;padding:40px;color:var(--slate-muted);font-size:13px;">No uploads yet. Upload a transaction file to see history here.</div></div>
+</div>
+</div>
+
+<!-- COLUMNS MODAL -->
+<div class="overlay" id="cols-overlay">
+  <div class="modal">
+    <div class="modal-head"><h2>Choose Columns</h2><button class="modal-close" onclick="closeModal()">&times;</button></div>
+    <div class="modal-body" id="cols-body"></div>
+    <div class="modal-foot"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-apply" onclick="applyColumns()">Apply</button></div>
+  </div>
+</div>
+
+<!-- SORT MENU -->
+<div class="sort-menu" id="sort-menu">
+  <button onclick="doSort('asc')"><span>↑</span> Sort Ascending</button>
+  <button onclick="doSort('desc')"><span>↓</span> Sort Descending</button>
+  <button onclick="doSort('clear')"><span>✕</span> Clear Filter</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ── COLUMN DEFS ── */
+const CD = {
+  sno:    {l:"S.No",       grp:"app",  sort:false},
+  appId:  {l:"App ID",     grp:"app",  sort:true},
+  name:   {l:"Name",       grp:"app",  sort:true},
+  chapter:{l:"Chapter",    grp:"app",  sort:true},
+  course: {l:"Course",     grp:"app",  sort:true},
+  gender: {l:"Gender",     grp:"app",  sort:true},
+  ssc:    {l:"SSC %",      grp:"app",  sort:true},
+  diploma:{l:"Diploma %",  grp:"app",  sort:true},
+  income: {l:"Annual Income",grp:"app",sort:true},
+  status: {l:"Status",     grp:"app",  sort:true},
+  bank:   {l:"Bank Name",  grp:"bank", sort:true},
+  ifsc:   {l:"IFSC Code",  grp:"bank", sort:false},
+  acct:   {l:"Account No.",grp:"bank", sort:false},
+  
+  amount: {l:"Amount",     grp:"bank", sort:true},
+  txnId:  {l:"Transaction ID",grp:"bank",sort:false},
+  reason: {l:"Failure Reason",grp:"bank",sort:false},
+  batchId:{l:"Batch",      grp:"bank", sort:true},
+   d:   {l:"Date",grp:"bank", sort:false},
+};
+const DEF_COLS = {
+  total:    ["sno","appId","name","chapter","course","ssc","income","status","bank","ifsc","acct","amount","d"],
+  notup:    ["sno","appId","name","chapter","course","ssc","income","status"],
+  uploaded: ["sno","appId","name","chapter","course","ssc","income","status","bank","ifsc","acct","amount"],
+  disbursed:["sno","appId","name","chapter","course","income","bank","ifsc","acct","amount","txnId","d"],
+  returned: ["sno","appId","name","chapter","course","income","bank","acct","amount","reason","batchId","d"],
+};
+const NAMES=["Ravi Kumar","Sita Devi","Arjun Reddy","Priya Sharma","Kiran Babu","Lakshmi Rao","Suresh Nair","Anitha Varma","Mohan Das","Deepa Iyer","Rajesh Verma","Meena Pillai","Arun Nair","Kavitha Reddy","Sanjay Gupta"];
+const CHAPTERS=["Hyderabad, TS","Vijayawada, AP","Warangal, TS","Vizag, AP"];
+const COURSES=["B.Tech","B.Sc","B.Com","BA"];
+const BANKS=["State Bank of India","HDFC Bank","Canara Bank","Axis Bank","Punjab National Bank","Union Bank"];
+const IFSC_P={"State Bank of India":"SBIN","HDFC Bank":"HDFC","Canara Bank":"CNRB","Axis Bank":"UTIB","Punjab National Bank":"PUNB","Union Bank":"UBIN"};
+const FAIL_R=["Invalid account no.","IFSC mismatch","A/c frozen","Beneficiary limit","Name mismatch"];
+const RPP=10;
+const fI=v=>"₹"+Number(v).toLocaleString("en-IN");
+const fA=v=>v?"₹"+Number(v).toLocaleString("en-IN"):"";
+const rI=b=>(IFSC_P[b]||"SBIN")+"0"+Math.floor(100000+Math.random()*900000);
+const rAc=i=>"XXXX"+String(1000+i*37).slice(-4);
+const $=id=>document.getElementById(id);
+
+/* ── GENERATE DATA ── */
+function genRows(n,offset,statusFn,extraFn){
+  return Array.from({length:n},(_,i)=>{
+    const bank=BANKS[i%BANKS.length];
+    const base={id:i+1,appId:"APP"+String(i+offset).padStart(3,"0"),name:NAMES[i%NAMES.length],chapter:CHAPTERS[i%CHAPTERS.length],course:COURSES[i%COURSES.length],gender:i%2?"Female":"Male",ssc:(72+i*.4%22).toFixed(1),diploma:(68+i*.5%20).toFixed(1),income:80000+i*2800,bank,ifsc:rI(bank),acct:rAc(i),amount:45000+(i%4)*5000,txnId:"",reason:"",batchId:null};
+    return {...base,...statusFn(i,base),...(extraFn?extraFn(i,base):{})};
+  });
+}
+
+const ST={
+  batches:[{id:"B-2024-001",status:"In Process"},{id:"B-2024-002",status:"Completed"},{id:"B-2024-003",status:"In Process"}],
+  history:[],
+  tab:"uploaded",
+  upChip:"new", disChip:"all", retChip:"all",
+  sel:{total:new Set(),notup:new Set(),uploaded:new Set(),disbursed:new Set(),returned:new Set()},
+  page:{total:1,notup:1,uploaded:1,disbursed:1,returned:1},
+  cols:{...DEF_COLS},
+  pendCols:null, colsTab:null,
+  sort:{total:{k:null,d:"asc"},notup:{k:null,d:"asc"},uploaded:{k:null,d:"asc"},disbursed:{k:null,d:"asc"},returned:{k:null,d:"asc"}},
+  sortMenuCol:null, sortMenuTab:null,
+};
+
+/* assign batches to uploaded */
+function mkUploaded(n){
+  const rows=genRows(n,401,()=>({status:"Bank Details Uploaded"}));
+  rows.forEach((r,i)=>{
+    if(i>=48) r.batchId=ST.batches[Math.min(Math.floor((i-48)/22),ST.batches.length-1)].id;
+  });
+  return rows;
+}
+ST.data={
+  total:    genRows(320,1,(i)=>({status:["Not Uploaded","Bank Details Uploaded","Money Disbursed","Returned","In Process"][i%5]})),
+  notup:    genRows(148,201,()=>({status:"Not Uploaded",bank:"",ifsc:"",acct:"",amount:0})),
+  uploaded: mkUploaded(112),
+  disbursed:genRows(47,601,(_,b)=>({status:"Money Disbursed",txnId:"TXN2024"+String(Math.floor(Math.random()*9000)+1000),batchId:ST.batches[Math.floor(Math.random()*ST.batches.length)].id,d:`${String((Math.random()*28|0)+1).padStart(2,'0')}-06-2026`})),
+  returned: genRows(13,801,(_,b)=>({status:"Returned",reason:FAIL_R[Math.floor(Math.random()*FAIL_R.length)],batchId:ST.batches[Math.floor(Math.random()*2)].id,d:`${String((Math.random()*28|0)+1).padStart(2,'0')}-06-2026`})),
+};
+
+/* ── TOAST ── */
+const toast=msg=>{const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),2800);};
+
+/* ── PAGE NAV ── */
+function goUpload(){$("pg-main").classList.remove("active");$("pg-upload").classList.add("active");refreshUploadPage();}
+function goMain(){$("pg-upload").classList.remove("active");$("pg-main").classList.add("active");}
+window.goUpload=goUpload;window.goMain=goMain;
+
+/* ── TABS ── */
+document.querySelectorAll(".tab-btn").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll(".tab-btn").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    ST.tab=b.dataset.tab;
+    document.querySelectorAll(".sec-view").forEach(s=>s.classList.remove("active"));
+    $("sec-"+ST.tab)?.classList.add("active");
+    renderSection(ST.tab);
+  });
+});
+
+/* ── COUNTS ── */
+function updateCounts(){
+  $("cnt-total").textContent=ST.data.total.length;
+  $("cnt-notup").textContent=ST.data.notup.length;
+  $("cnt-uploaded").textContent=ST.data.uploaded.length;
+  $("cnt-disbursed").textContent=ST.data.disbursed.length;
+  $("cnt-returned").textContent=ST.data.returned.length;
+  const newCnt=ST.data.uploaded.filter(r=>!r.batchId).length;
+  $("new-hint").textContent=newCnt;
+}
+
+/* ── FILTER ROWS ── */
+function getRows(tab){
+  let d=[...ST.data[tab]];
+  const s=ST.sort[tab];
+  if(s.k){
+    d.sort((a,b)=>{
+      let av=a[s.k],bv=b[s.k];
+      if(!isNaN(parseFloat(av))&&!isNaN(parseFloat(bv))){av=+av;bv=+bv;}
+      else{av=String(av||"").toLowerCase();bv=String(bv||"").toLowerCase();}
+      return s.d==="asc"?(av>bv?1:av<bv?-1:0):(av<bv?1:av>bv?-1:0);
+    });
+  }
+  if(tab==="uploaded"){
+    if(ST.upChip==="new") d=d.filter(r=>!r.batchId);
+    else d=d.filter(r=>r.batchId===ST.upChip);
+  }
+  if(tab==="disbursed"&&ST.disChip!=="all") d=d.filter(r=>r.batchId===ST.disChip);
+  if(tab==="returned"&&ST.retChip!=="all") d=d.filter(r=>r.batchId===ST.retChip);
+  return d;
+}
+
+/* ── RENDER SECTION ── */
+function renderSection(tab){
+  if(tab==="uploaded")  renderUploaded();
+  else if(tab==="disbursed") renderDisbursed();
+  else if(tab==="returned")  renderReturned();
+  else renderSimple(tab);
+}
+
+/* ── STATUS PILL ── */
+function sPill(s,isNewTab){
+  if(s==="Not Uploaded") return `<span class="pill pill-notup">Not Uploaded</span>`;
+  if(s==="Bank Details Uploaded"){
+    // "Not Batched" is shown only on new apps tab, hidden on batch tabs
+    return isNewTab===true
+      ? `<span class="pill pill-nb">Not Batched</span>`
+      : isNewTab===false
+        ? `<span class="pill" style="background:#F1F5F9;color:#94A3B8;">Uploaded</span>`
+        : `<span class="pill pill-up">Uploaded</span>`;
+  }
+  if(s==="Money Disbursed") return `<span class="pill pill-dis">Disbursed</span>`;
+  if(s==="Returned")        return `<span class="pill pill-ret">Returned</span>`;
+  if(s==="In Process")      return `<span class="pill pill-ip">In Process</span>`;
+  return `<span class="pill">${s}</span>`;
+}
+
+/* ── BUILD TABLE ── */
+function buildTable(tab, rows, grpId, hdId, tbId, pagId, showId, totId, isNewTab){
+  const cols=ST.cols[tab];
+  const s=ST.sort[tab];
+
+  /* group row */
+  const grp=$(grpId); grp.innerHTML="";
+  const appCols=cols.filter(c=>CD[c]?.grp==="app");
+  const bankCols=cols.filter(c=>CD[c]?.grp==="bank");
+  if(appCols.length){const th=document.createElement("th");th.colSpan=appCols.length+1;th.textContent="";grp.appendChild(th);}
+  if(bankCols.length){const th=document.createElement("th");th.colSpan=bankCols.length;th.style.background="#286055";th.style.textAlign="center";th.textContent="Banking & Disbursement";grp.appendChild(th);}
+
+  /* header row — NO checkbox in header */
+  const hd=$(hdId); hd.innerHTML="";
+  /* first empty th for checkbox column */
+  const cbTh=document.createElement("th");cbTh.style.width="40px";hd.appendChild(cbTh);
+  cols.forEach(ck=>{
+    const cd=CD[ck];if(!cd)return;
+    const th=document.createElement("th");
+    if(cd.grp==="bank")th.classList.add("bank-th");
+    if(cd.sort){
+      const active=s.k===ck;
+      th.innerHTML=`<div class="th-inner"><span>${cd.l}</span><button class="sort-btn${active?" sorted":""}" data-col="${ck}" data-tab="${tab}" onclick="openSortMenu(event,this,'${tab}','${ck}')">${active?(s.d==="asc"?"▲":"▼"):"▽"}</button></div>`;
+    } else {
+      th.textContent=cd.l;
+    }
+    hd.appendChild(th);
+  });
+
+  /* body */
+  const total=rows.length;
+  const start=(ST.page[tab]-1)*RPP;
+  const end=Math.min(start+RPP,total);
+  const pg=rows.slice(start,end);
+  const tb=$(tbId);tb.innerHTML="";
+  if(!total){
+    const tr=document.createElement("tr");const td=document.createElement("td");td.colSpan=cols.length+1;td.style.cssText="text-align:center;padding:40px;color:var(--slate-muted);";td.textContent="No records found";tr.appendChild(td);tb.appendChild(tr);
+  }
+  pg.forEach((row,i)=>{
+    const sel=ST.sel[tab].has(row.id);
+    const tr=document.createElement("tr");tr.className=sel?"row-sel":"";
+    /* checkbox td */
+    const ctd=document.createElement("td");ctd.className="sel-col";
+    const cb=document.createElement("input");cb.type="checkbox";cb.className="cb";cb.checked=sel;
+    cb.addEventListener("change",()=>{cb.checked?ST.sel[tab].add(row.id):ST.sel[tab].delete(row.id);tr.className=cb.checked?"row-sel":"";updSelBar(tab);});
+    ctd.appendChild(cb);tr.appendChild(ctd);
+    cols.forEach(ck=>{
+      const cd=CD[ck];if(!cd)return;
+      const td=document.createElement("td");
+      if(cd.grp==="bank")td.classList.add("bank-cell");
+      if(ck==="sno")td.innerHTML=`<span class="td-sno">${start+i+1}</span>`;
+      else if(ck==="appId")td.innerHTML=`<span class="td-appid">${row.appId}</span>`;
+      else if(ck==="name")td.innerHTML=`<span class="td-name">${row.name}</span>`;
+      else if(ck==="income")td.textContent=fI(row.income);
+      else if(ck==="amount")td.innerHTML=row.amount?`<span class="${tab==="returned"?"td-amt-r":"td-amt-g"}">${fA(row.amount)}</span>`:`<span class="td-empty">—</span>`;
+      else if(ck==="ifsc"||ck==="acct"||ck==="txnId"||ck==="batchId")td.innerHTML=row[ck]?`<span class="td-mono">${row[ck]}</span>`:`<span class="td-empty">—</span>`;
+      else if(ck==="status")td.innerHTML=sPill(row.status, isNewTab);
+      else if(ck==="d")
+    td.innerHTML=row.d || '<span class="td-empty">—</span>';
+      else if(ck==="reason")td.innerHTML=row.reason?`<span style="color:var(--red);font-size:12px;">${row.reason}</span>`:`<span class="td-empty">—</span>`;
+      else td.innerHTML=(row[ck]===null||row[ck]===undefined||row[ck]==="")?`<span class="td-empty">—</span>`:row[ck];
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+  if(showId)$(showId).textContent=`${total?start+1:0}–${end}`;
+  if(totId)$(totId).textContent=total;
+  buildPag(pagId,total,tab);
+}
+
+/* ── PAGINATION ── */
+function buildPag(pagId,total,tab){
+  const tp=Math.max(1,Math.ceil(total/RPP));
+  if(ST.page[tab]>tp)ST.page[tab]=tp;
+  const cur=ST.page[tab];
+  const pag=$(pagId);pag.innerHTML="";
+  const prev=document.createElement("button");prev.className="pag-btn";prev.textContent="← Previous";prev.disabled=cur===1;prev.addEventListener("click",()=>{ST.page[tab]--;renderSection(tab);});pag.appendChild(prev);
+  const range=[];for(let p=1;p<=tp;p++){if(p===1||p===tp||Math.abs(p-cur)<=1)range.push(p);else if(range[range.length-1]!=="…")range.push("…");}
+  range.forEach(p=>{const b=document.createElement("button");if(p==="…"){b.className="pag-num";b.textContent="…";b.disabled=true;}else{b.className="pag-num"+(p===cur?" pag-on":"");b.textContent=p;b.addEventListener("click",()=>{ST.page[tab]=p;renderSection(tab);});}pag.appendChild(b);});
+  const sp=document.createElement("div");sp.className="pag-sp";pag.appendChild(sp);
+  const next=document.createElement("button");next.className="pag-btn";next.textContent="Next →";next.disabled=cur===tp;next.addEventListener("click",()=>{ST.page[tab]++;renderSection(tab);});pag.appendChild(next);
+}
+
+/* ── SIMPLE (total / notup) ── */
+function renderSimple(tab){
+  const rows=getRows(tab);
+  const pfx=tab==="total"?"tot":tab;
+  buildTable(tab,rows,`grp-${tab}`,`hd-${tab}`,`tb-${tab}`,`pag-${tab}`,`${pfx}-showing`,`cnt-${pfx==="tot"?"tot":pfx+"2"}`,null);
+  updSelBar(tab);
+}
+
+/* ── PILL BUILD ── */
+function batchAmt(data, batchId){
+  return data.filter(r=>r.batchId===batchId).reduce((s,r)=>s+r.amount,0);
+}
+function buildPillWrap(wrapId, chips){
+  const wrap=$(wrapId);wrap.innerHTML="";
+  chips.forEach(c=>{
+    const el=document.createElement("div");
+    el.className="p-item"+(c.isNew?" p-new":"")+(c.active?" p-on":"");
+    el.innerHTML=`<div class="pi-left"><div class="pi-name">${c.name}</div><div class="pi-status"><span class="pi-dot" style="background:${c.dotColor};"></span><span class="pi-slbl" style="color:${c.sColor};">${c.sLabel}</span></div></div><div class="pi-right"><div class="pi-num">${c.count}</div><div class="pi-amt">${c.amt}</div></div>`;
+    el.addEventListener("click",c.onClick);
+    wrap.appendChild(el);
+  });
+  /* show scroll hint if overflow */
+  const hint=$("up-scroll-hint");
+  if(hint) setTimeout(()=>{const sc=$("up-pill-scroll");hint.style.display=sc&&sc.scrollWidth>sc.clientWidth?"inline":"none";},50);
+}
+
+/* ── UPLOADED ── */
+function renderUploaded(){
+  const newCnt=ST.data.uploaded.filter(r=>!r.batchId).length;
+  const newAmt=ST.data.uploaded.filter(r=>!r.batchId).reduce((s,r)=>s+r.amount,0);
+  const chips=[{
+    name:"New Applications",isNew:true,active:ST.upChip==="new",
+    count:newCnt,amt:fA(newAmt)||"₹0",
+    dotColor:"rgba(255,255,255,.8)",sColor:"rgba(255,255,255,.75)",sLabel:"Not Batched",
+    onClick:()=>{ST.upChip="new";ST.page.uploaded=1;ST.sel.uploaded.clear();renderUploaded();updSelBar("uploaded");}
+  }];
+  ST.batches.forEach(b=>{
+    const cnt=ST.data.uploaded.filter(r=>r.batchId===b.id).length;
+    const amt=batchAmt(ST.data.uploaded,b.id);
+    const isIp=b.status==="In Process";
+    chips.push({
+      name:b.id,isNew:false,active:ST.upChip===b.id,
+      count:cnt,amt:fA(amt)||"₹0",
+      dotColor:isIp?"var(--orange)":"var(--green)",
+      sColor:isIp?"var(--orange-dark)":"var(--green-dark)",
+      sLabel:b.status,
+      onClick:()=>{ST.upChip=b.id;ST.page.uploaded=1;ST.sel.uploaded.clear();renderUploaded();updSelBar("uploaded");}
+    });
+  });
+  buildPillWrap("up-pill-wrap",chips);
+  /* create bar only on new tab */
+  $("create-bar").style.display=ST.upChip==="new"?"flex":"none";
+  const rows=getRows("uploaded");
+  const isNewTab=ST.upChip==="new";
+  buildTable("uploaded",rows,"grp-uploaded","hd-uploaded","tb-uploaded","pag-uploaded","up-showing","up-total-cnt",isNewTab);
+  updSelBar("uploaded");
+  updMoveSelect();
+}
+
+/* ── DISBURSED ── */
+function renderDisbursed(){
+  const chips=[{name:"All Batches",isNew:false,active:ST.disChip==="all",count:ST.data.disbursed.length,amt:fA(ST.data.disbursed.reduce((s,r)=>s+r.amount,0)),dotColor:"var(--green)",sColor:"var(--green-dark)",sLabel:"All",onClick:()=>{ST.disChip="all";ST.page.disbursed=1;renderDisbursed();}}];
+  ST.batches.forEach(b=>{
+    const cnt=ST.data.disbursed.filter(r=>r.batchId===b.id).length;
+    if(!cnt)return;
+    chips.push({name:b.id,isNew:false,active:ST.disChip===b.id,count:cnt,amt:fA(batchAmt(ST.data.disbursed,b.id)),dotColor:"var(--green)",sColor:"var(--green-dark)",sLabel:"Completed",onClick:()=>{ST.disChip=b.id;ST.page.disbursed=1;renderDisbursed();}});
+  });
+  buildPillWrap("dis-pill-wrap",chips);
+  const rows=getRows("disbursed");
+  buildTable("disbursed",rows,"grp-disbursed","hd-disbursed","tb-disbursed","pag-disbursed","dis-showing","dis-total-cnt",false);
+  updSelBar("disbursed");
+}
+
+/* ── RETURNED ── */
+function renderReturned(){
+  const chips=[{name:"All Batches",isNew:false,active:ST.retChip==="all",count:ST.data.returned.length,amt:fA(ST.data.returned.reduce((s,r)=>s+r.amount,0)),dotColor:"var(--red)",sColor:"var(--red)",sLabel:"All",onClick:()=>{ST.retChip="all";ST.page.returned=1;renderReturned();}}];
+  ST.batches.forEach(b=>{
+    const cnt=ST.data.returned.filter(r=>r.batchId===b.id).length;
+    if(!cnt)return;
+    chips.push({name:b.id,isNew:false,active:ST.retChip===b.id,count:cnt,amt:fA(batchAmt(ST.data.returned,b.id)),dotColor:"var(--orange)",sColor:"var(--orange-dark)",sLabel:"In Process",onClick:()=>{ST.retChip=b.id;ST.page.returned=1;renderReturned();}});
+  });
+  buildPillWrap("ret-pill-wrap",chips);
+  const rows=getRows("returned");
+  buildTable("returned",rows,"grp-returned","hd-returned","tb-returned","pag-returned","ret-showing","ret-total-cnt",false);
+  updSelBar("returned");
+}
+
+/* ── SEL BAR ── */
+function updSelBar(tab){
+  const n=ST.sel[tab].size;
+  const bar=$("sel-"+tab);if(bar)bar.style.display=n>0?"flex":"none";
+  const inf=$("sinf-"+tab);if(inf)inf.textContent=`${n} selected`;
+  if(tab==="returned"){const rc=$("ret-sel-cnt");if(rc)rc.textContent=n;}
+}
+function togAll(tab,cb){const rows=getRows(tab);if(cb.checked)rows.forEach(r=>ST.sel[tab].add(r.id));else ST.sel[tab].clear();renderSection(tab);updSelBar(tab);}
+function clrSel(tab){ST.sel[tab].clear();if(tab==="returned")$("rebatch-panel").style.display="none";renderSection(tab);updSelBar(tab);}
+window.togAll=togAll;window.clrSel=clrSel;
+
+/* ── SORT MENU ── */
+let _sortBtn=null;
+function openSortMenu(e,btn,tab,col){
+  e.stopPropagation();
+  const menu=$("sort-menu");
+  ST.sortMenuCol=col;ST.sortMenuTab=tab;_sortBtn=btn;
+  const r=btn.getBoundingClientRect();
+  menu.style.left=Math.min(r.left,window.innerWidth-170)+"px";
+  menu.style.top=(r.bottom+4)+"px";
+  menu.classList.add("open");
+  /* highlight active */
+  const s=ST.sort[tab];
+  menu.querySelectorAll("button").forEach((b,i)=>{
+    b.classList.remove("sm-active");
+    if(i===0&&s.k===col&&s.d==="asc")b.classList.add("sm-active");
+    if(i===1&&s.k===col&&s.d==="desc")b.classList.add("sm-active");
+  });
+}
+function doSort(dir){
+  const tab=ST.sortMenuTab,col=ST.sortMenuCol;
+  if(dir==="clear"){ST.sort[tab]={k:null,d:"asc"};}
+  else{ST.sort[tab]={k:col,d:dir};}
+  ST.page[tab]=1;
+  $("sort-menu").classList.remove("open");
+  renderSection(tab);
+}
+function closeSortMenu(){$("sort-menu").classList.remove("open");}
+document.addEventListener("click",e=>{if(!$("sort-menu").contains(e.target))closeSortMenu();});
+window.openSortMenu=openSortMenu;window.doSort=doSort;
+
+/* ── CREATE BATCH ── */
+function createBatch(){
+  const sel=[...ST.sel.uploaded];
+  const eligible=ST.data.uploaded.filter(r=>!r.batchId&&sel.includes(r.id));
+  if(!eligible.length){toast("Select students first");return;}
+  if(eligible.length>249){toast("Max 249 per batch");return;}
+  const bId=`B-2024-00${ST.batches.length+1}`;
+  ST.batches.push({id:bId,status:"In Process"});
+  eligible.forEach(r=>r.batchId=bId);
+  ST.sel.uploaded.clear();
+  toast(`✓ ${bId} created with ${eligible.length} students`);
+  updateCounts();renderUploaded();refreshUploadPage();
+}
+window.createBatch=createBatch;
+
+/* ── MOVE BATCH ── */
+function updMoveSelect(){
+  const sel=$("up-move-sel");if(!sel)return;
+  sel.innerHTML='<option value="">Select batch…</option>';
+  ST.batches.forEach(b=>{const o=document.createElement("option");o.value=b.id;o.textContent=`${b.id} (${b.status})`;sel.appendChild(o);});
+  const rs=$("ret-move-sel");if(!rs)return;
+  rs.innerHTML='<option value="">Choose batch…</option><option value="new">＋ Create New Batch</option>';
+  ST.batches.forEach(b=>{const o=document.createElement("option");o.value=b.id;o.textContent=`${b.id} — ${b.status}`;rs.appendChild(o);});
+}
+function moveBatch(){const bId=$("up-move-sel")?.value;if(!bId){toast("Select a batch first");return;}let n=0;ST.data.uploaded.forEach(r=>{if(ST.sel.uploaded.has(r.id)){r.batchId=bId;n++;}});ST.sel.uploaded.clear();toast(`✓ ${n} student${n>1?"s":""} moved to ${bId}`);updateCounts();renderUploaded();}
+window.moveBatch=moveBatch;
+
+/* ── RETRY ── */
+function doRetry(){const bId=$("ret-move-sel")?.value;if(!bId){toast("Select a batch first");return;}const tgt=bId==="new"?`B-2024-00${ST.batches.length+1}`:bId;if(bId==="new")ST.batches.push({id:tgt,status:"In Process"});const mv=ST.data.returned.filter(r=>ST.sel.returned.has(r.id));mv.forEach(r=>{ST.data.uploaded.push({...r,batchId:tgt,status:"Bank Details Uploaded",reason:""});});ST.data.returned=ST.data.returned.filter(r=>!ST.sel.returned.has(r.id));const n=mv.length;ST.sel.returned.clear();$("rebatch-panel").style.display="none";toast(`✓ ${n} student${n>1?"s":""} added to ${tgt}`);updateCounts();renderReturned();}
+window.doRetry=doRetry;
+window.sendReminder=()=>{const n=ST.sel.notup.size||ST.data.notup.length;toast(`✉ Reminder sent to ${n} student${n>1?"s":""}`);}
+
+/* ── EXPORT ── */
+function doExport(tab){
+  const cols=ST.cols[tab].filter(c=>c!=="sno");
+  const rows=getRows(tab);
+  const hdr=cols.map(c=>CD[c]?.l||c).join("\t");
+  const body=rows.map(r=>cols.map(c=>{if(c==="income")return r.income;if(c==="amount")return r.amount||"";return r[c]===null||r[c]===undefined?"":r[c];}).join("\t")).join("\n");
+  const blob=new Blob([hdr+"\n"+body],{type:"application/vnd.ms-excel;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=`${tab}.xls`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  toast(`Exported ${rows.length} rows`);
+}
+window.doExport=doExport;
+
+/* ── CHOOSE COLUMNS ── */
+let _colTab=null,_pendCols=null;
+function openCols(tab){
+  _colTab=tab;_pendCols=new Set(ST.cols[tab]);
+  const body=$("cols-body");body.innerHTML="";
+  ["app","bank"].forEach(grp=>{
+    const entries=Object.entries(CD).filter(([,d])=>d.grp===grp);
+    if(!entries.length)return;
+    const lbl=document.createElement("div");lbl.className="col-sec-lbl";lbl.textContent=grp==="app"?"Applicant Details":"Banking & Disbursement";body.appendChild(lbl);
+    const grid=document.createElement("div");grid.className="cols-grid";
+    entries.forEach(([key,def])=>{
+      const lbl2=document.createElement("label");lbl2.className="col-chk";
+      const cb=document.createElement("input");cb.type="checkbox";cb.checked=_pendCols.has(key);
+      cb.addEventListener("change",()=>cb.checked?_pendCols.add(key):_pendCols.delete(key));
+      lbl2.appendChild(cb);lbl2.appendChild(document.createTextNode(def.l));grid.appendChild(lbl2);
+    });
+    body.appendChild(grid);
+  });
+  $("cols-overlay").classList.add("open");
+}
+function applyColumns(){if(_colTab&&_pendCols){ST.cols[_colTab]=[...Object.keys(CD)].filter(k=>_pendCols.has(k));renderSection(_colTab);toast("Columns updated");}closeModal();}
+function closeModal(){$("cols-overlay").classList.remove("open");}
+$("cols-overlay").addEventListener("click",e=>{if(e.target===$("cols-overlay"))closeModal();});
+window.openCols=openCols;window.applyColumns=applyColumns;window.closeModal=closeModal;
+
+/* ── UPLOAD PAGE ── */
+let _file=null;
+function refreshUploadPage(){
+  const sel=$("up-batch-sel");if(!sel)return;
+  sel.innerHTML='<option value="">— Choose a batch —</option>';
+  ST.batches.forEach(b=>{const cnt=ST.data.uploaded.filter(r=>r.batchId===b.id).length;const o=document.createElement("option");o.value=b.id;o.textContent=`${b.id}  —  ${cnt} students  (${b.status})`;sel.appendChild(o);});
+  renderHistory();
+}
+function onBatchSel(){
+  const bId=$("up-batch-sel").value;const strip=$("batch-strip");
+  if(!bId){strip.style.display="none";return;}
+  const cnt=ST.data.uploaded.filter(r=>r.batchId===bId).length;
+  const amt=ST.data.uploaded.filter(r=>r.batchId===bId).reduce((s,r)=>s+r.amount,0);
+  $("bis-id").textContent=bId;$("bis-students").textContent=cnt;$("bis-amt").textContent=fA(amt)||"—";
+  strip.style.display="flex";
+}
+window.onBatchSel=onBatchSel;
+function onFileSelect(inp){const f=inp.files[0];if(!f)return;_file=f;$("dropzone").classList.add("has-file");$("dz-ico").textContent="✅";$("dz-title").textContent="File ready";$("dz-sub").textContent="";$("dz-fn").style.display="block";$("dz-fn").textContent=f.name;$("dz-btn").disabled=false;}
+window.onFileSelect=onFileSelect;
+function processUpload(){
+  const bId=$("up-batch-sel").value;if(!bId){toast("Select a batch first");return;}if(!_file){toast("Select a file first");return;}
+  const cnt=ST.data.uploaded.filter(r=>r.batchId===bId).length;
+  const amt=ST.data.uploaded.filter(r=>r.batchId===bId).reduce((s,r)=>s+r.amount,0);
+  const ok=Math.floor(cnt*.85),fail=cnt-ok;
+  const batch=ST.batches.find(b=>b.id===bId);if(batch)batch.status="Completed";
+  const bRows=ST.data.uploaded.filter(r=>r.batchId===bId);
+  bRows.slice(0,ok).forEach(r=>{r.status="Money Disbursed";r.txnId="TXN"+Date.now().toString().slice(-6);ST.data.disbursed.push({...r});});
+  bRows.slice(ok).forEach(r=>{r.status="Returned";r.reason=FAIL_R[Math.floor(Math.random()*FAIL_R.length)];ST.data.returned.push({...r});});
+  ST.data.uploaded=ST.data.uploaded.filter(r=>r.batchId!==bId);
+  ST.history.unshift({batchId:bId,date:new Date().toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}),total:cnt,amount:amt,ok,fail,status:"Completed"});
+  _file=null;$("file-inp").value="";$("dropzone").classList.remove("has-file");$("dz-ico").textContent="📂";$("dz-title").textContent="Drop your Excel file here";$("dz-sub").textContent="or click to browse";$("dz-fn").style.display="none";$("dz-btn").disabled=true;$("up-batch-sel").value="";$("batch-strip").style.display="none";
+  updateCounts();renderHistory();toast(`✓ ${ok} disbursed, ${fail} returned`);
+}
+window.processUpload=processUpload;
+function renderHistory(){
+  const list=$("hist-list");$("hist-cnt").textContent=`${ST.history.length} upload${ST.history.length!==1?"s":""}`;
+  if(!ST.history.length){list.innerHTML=`<div style="text-align:center;padding:40px;color:var(--slate-muted);font-size:13px;">No uploads yet. Upload a transaction file to see history here.</div>`;return;}
+  list.innerHTML="";
+  ST.history.forEach(h=>{
+    const cls=h.status==="Completed"?"h-done":"h-wait";
+    const pill=h.status==="Completed"
+      ?`<span class="h-pill-done">✓ Completed</span>`
+      :`<span class="h-pill-wait">⏳ Awaiting Result</span>`;
+    const okVal=h.status==="Completed"?h.ok:`<span style="color:#94A3B8">—</span>`;
+    const failVal=h.status==="Completed"?h.fail:`<span style="color:#94A3B8">—</span>`;
+    const row=document.createElement("div");
+    row.className=`h-row ${cls}`;
+    row.innerHTML=`
+      <div class="h-left">
+        <div class="h-bid">${h.batchId}</div>
+        <div class="h-date">${h.date}</div>
+      </div>
+      <div class="h-vd"></div>
+      <div class="h-stat hs-tot"><div class="h-stat-n">${h.total}</div><div class="h-stat-l">Total</div></div>
+      <div class="h-vd"></div>
+      <div class="h-stat hs-amt"><div class="h-stat-n">${fA(h.amount)}</div><div class="h-stat-l">Amount</div></div>
+      <div class="h-vd"></div>
+      <div class="h-stat hs-ok"><div class="h-stat-n">${okVal}</div><div class="h-stat-l">Successful</div></div>
+      <div class="h-vd"></div>
+      <div class="h-stat hs-fail"><div class="h-stat-n">${failVal}</div><div class="h-stat-l">Returned</div></div>
+      <div class="h-sp"></div>
+      <div class="h-right">
+        ${pill}
+        <button class="h-dl" onclick="toast('Downloading ${h.batchId}…')">⬇ Download</button>
+      </div>`;
+    list.appendChild(row);
+  });
+}
+
+/* ── INIT ── */
+function init(){updateCounts();renderUploaded();updMoveSelect();}
+document.addEventListener("DOMContentLoaded",init);
+</script>
+</body>
+</html>

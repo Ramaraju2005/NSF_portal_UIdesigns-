@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NSF – Application Review Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary:       #347463;
+    --primary-dark:  #2A5F51;
+    --primary-light: #E8F1EE;
+    --mint-bg:       #F0F4F8;
+    --mint-border:   #C9DDD6;
+    --row-selected:  #DCECE6;
+    --text-dark:     #1F2D29;
+    --text-mid:      #4A5C56;
+    --text-muted:    #7A8B85;
+    --white:         #FFFFFF;
+    --header-h:      60px;
+  }
+
+  body {
+    font-family: 'Roboto', system-ui, sans-serif;
+    background: var(--mint-bg);
+    color: var(--text-dark);
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  button { font-family: inherit; cursor: pointer; }
+
+  /* ═══════════ HEADER ═══════════ */
+  #header {
+    background: var(--primary);
+    height: var(--header-h);
+    display: flex; align-items: center;
+    padding: 0 28px; gap: 14px;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+  }
+  #header .logo {
+    width: 38px; height: 38px;
+    background: var(--white); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; color: var(--primary);
+  }
+  #header .hd-title  { color: var(--white); font-size: 17px; font-weight: 500; }
+  #header .hd-sub    { color: rgba(255,255,255,0.72); font-size: 12.5px; }
+  #header .hd-role   {
+    margin-left: auto;
+    background: rgba(255,255,255,0.15);
+    border-radius: 16px; padding: 5px 14px;
+    color: var(--white); font-size: 13px;
+  }
+
+  /* ═══════════ MAIN ═══════════ */
+  #main { max-width: 1400px; margin: 0 auto; padding: 24px 20px 80px; }
+  .page-heading { margin-bottom: 20px; }
+  .page-heading h1 { font-size: 22px; font-weight: 500; color: var(--text-dark); }
+  .page-heading p  { color: var(--text-muted); font-size: 14px; margin-top: 3px; }
+
+  /* ═══════════ SEARCH MODE TOGGLE — Segmented Pill ═══════════ */
+  #search-mode-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 16px;
+  }
+  /* The pill container */
+  .seg-pill {
+    display: inline-flex;
+    background: var(--white);
+    border: 1.5px solid var(--mint-border);
+    border-radius: 12px;
+    padding: 4px;
+    gap: 2px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+  }
+  .mode-btn {
+    display: flex; align-items: center; gap: 9px;
+    padding: 9px 22px;
+    border-radius: 9px;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13.5px; font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color .15s, background .15s, box-shadow .15s;
+    white-space: nowrap;
+    position: relative;
+  }
+  .mode-btn svg {
+    flex-shrink: 0;
+    transition: opacity .15s;
+    opacity: .55;
+  }
+  .mode-btn:hover:not(.active) {
+    color: var(--text-dark);
+    background: #F2F7F4;
+  }
+  .mode-btn:hover:not(.active) svg { opacity: .8; }
+
+  /* Active pill segment */
+  .mode-btn.active {
+    background: var(--primary);
+    color: var(--white);
+    box-shadow: 0 2px 8px rgba(52,116,99,.28), 0 1px 2px rgba(0,0,0,.08);
+  }
+  .mode-btn.active svg { opacity: 1; }
+
+  /* Subtle divider between the two segments */
+  .seg-divider {
+    width: 1px; align-self: stretch;
+    background: var(--mint-border);
+    margin: 6px 0;
+    flex-shrink: 0;
+    transition: opacity .15s;
+  }
+  /* hide divider when either neighbour is active */
+  .mode-btn.active + .seg-divider,
+  .seg-divider + .mode-btn.active ~ .seg-divider { opacity: 0; }
+
+  /* helper label to the right of the pill */
+  .seg-hint {
+    font-size: 12.5px;
+    color: var(--text-muted);
+  }
+
+  /* ═══════════ NSF ID PANEL ═══════════ */
+  #id-search-panel {
+    display: none;
+    background: var(--white);
+    border: 1px solid var(--mint-border);
+    border-radius: 12px; padding: 28px 28px 24px;
+    margin-bottom: 20px;
+  }
+  #id-search-panel.active { display: block; }
+  .id-panel-title {
+    font-size: 13px; font-weight: 600;
+    color: var(--text-mid); margin-bottom: 14px;
+    text-transform: uppercase; letter-spacing: .04em;
+  }
+  .id-input-row {
+    display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+  }
+  /* Radio pill row */
+  .qs-radio-row {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 16px;
+  }
+  .qs-radio-label {
+    font-size: 12px; font-weight: 600;
+    color: var(--text-muted); text-transform: uppercase;
+    letter-spacing: .05em; margin-bottom: 10px;
+    display: block;
+  }
+  .qs-radio-pill {
+    display: flex; align-items: center; gap: 7px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1.5px solid var(--mint-border);
+    background: var(--white);
+    font-size: 13.5px; font-weight: 500;
+    color: var(--text-mid);
+    cursor: pointer;
+    transition: all .15s;
+    user-select: none;
+  }
+  .qs-radio-pill:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-light);
+  }
+  .qs-radio-pill input[type="radio"] {
+    appearance: none; -webkit-appearance: none;
+    width: 15px; height: 15px;
+    border: 2px solid #B0BEC5;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: all .15s;
+    position: relative;
+    cursor: pointer;
+  }
+  .qs-radio-pill input[type="radio"]::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: 50%;
+    background: transparent;
+    transition: background .15s;
+  }
+  .qs-radio-pill input[type="radio"]:checked {
+    border-color: var(--primary);
+  }
+  .qs-radio-pill input[type="radio"]:checked::after {
+    background: var(--primary);
+  }
+  .qs-radio-pill.checked {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary-dark);
+  }
+  .id-input-wrap {
+    position: relative; flex: 1; max-width: 440px; min-width: 220px;
+  }
+  .id-input-wrap .id-icon {
+    position: absolute; left: 13px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted); pointer-events: none;
+    display: flex; align-items: center;
+  }
+  #nsf-id-input {
+    width: 100%; height: 44px;
+    padding: 0 40px 0 40px;
+    border: 1.5px solid var(--mint-border);
+    border-radius: 9px;
+    font-size: 14.5px; font-family: inherit;
+    color: var(--text-dark); background: var(--white);
+    outline: none; transition: border-color .15s, box-shadow .15s;
+    letter-spacing: 0.03em;
+  }
+  #nsf-id-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(52,116,99,.13);
+  }
+  #nsf-id-input::placeholder { color: #B0BEC5; }
+  #nsf-id-clear {
+    position: absolute; right: 11px; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none;
+    color: var(--text-muted); font-size: 20px;
+    line-height: 1; padding: 2px 4px;
+    display: none; cursor: pointer;
+  }
+  #nsf-id-clear:hover { color: var(--text-dark); }
+  #btn-id-search {
+    background: var(--primary); color: var(--white);
+    border: none; height: 44px; padding: 0 26px;
+    border-radius: 9px; font-size: 14px; font-weight: 500;
+    transition: background .15s; white-space: nowrap;
+    display: flex; align-items: center; gap: 7px;
+  }
+  #btn-id-search:hover { background: var(--primary-dark); }
+  .id-hint {
+    font-size: 12.5px; color: var(--text-muted);
+    margin-top: 10px;
+  }
+  #id-result-badge {
+    display: none;
+    align-items: center; gap: 8px;
+    background: var(--primary-light);
+    border: 1px solid var(--mint-border);
+    border-radius: 8px; padding: 7px 14px;
+    font-size: 13px; color: var(--primary-dark); font-weight: 500;
+    margin-top: 12px; width: fit-content;
+  }
+  #id-result-badge.show { display: flex; }
+  #id-result-badge .badge-clear {
+    background: none; border: none;
+    color: var(--text-muted); font-size: 17px;
+    line-height: 1; cursor: pointer; padding: 0 2px;
+  }
+  #id-result-badge .badge-clear:hover { color: var(--text-dark); }
+
+  /* ═══════════ SEARCH PANEL ═══════════ */
+  #search-panel {
+    display: none;
+    background: var(--white);
+    border: 1px solid var(--mint-border);
+    border-radius: 12px; padding: 22px 24px;
+    margin-bottom: 20px;
+  }
+  #search-panel.active { display: block; }
+  .fields-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+    gap: 16px; align-items: end;
+  }
+  .field-group label {
+    display: block; font-size: 12.5px; font-weight: 500;
+    color: var(--text-mid); margin-bottom: 5px;
+  }
+
+  /* Standard selects & inputs */
+  .field-group select,
+  .field-group input[type="date"] {
+    width: 100%; height: 42px;
+    padding: 0 12px; border-radius: 8px;
+    border: 1px solid var(--mint-border);
+    font-size: 14px; color: var(--text-dark);
+    background: var(--white); font-family: inherit;
+    outline: none; transition: border-color .15s, box-shadow .15s;
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A8B85' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+  }
+  .field-group select:focus,
+  .field-group input[type="date"]:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(52,116,99,.15);
+  }
+
+  /* ── Multi-select dropdown ── */
+  .ms-wrap { position: relative; }
+  .ms-trigger {
+    width: 100%; height: 42px;
+    padding: 0 32px 0 12px; border-radius: 8px;
+    border: 1px solid var(--mint-border);
+    font-size: 14px; color: var(--text-dark);
+    background: var(--white);
+    text-align: left; font-family: inherit;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    transition: border-color .15s, box-shadow .15s;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A8B85' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    cursor: pointer;
+  }
+  .ms-trigger:focus, .ms-trigger.open {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(52,116,99,.15);
+    outline: none;
+  }
+  .ms-trigger .placeholder { color: var(--text-muted); }
+  .ms-trigger .count-badge {
+    display: inline-block;
+    background: var(--primary); color: var(--white);
+    border-radius: 10px; padding: 1px 7px;
+    font-size: 11.5px; font-weight: 500; margin-left: 6px;
+  }
+
+  .ms-dropdown {
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+    background: var(--white);
+    border: 1px solid var(--mint-border);
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.13);
+    z-index: 300;
+    display: none; max-height: 230px;
+    overflow-y: auto;
+  }
+  .ms-dropdown.open { display: block; }
+  .ms-search {
+    padding: 8px 10px;
+    border-bottom: 1px solid #EBF2EF;
+  }
+  .ms-search input {
+    width: 100%; height: 32px; padding: 0 10px;
+    border: 1px solid var(--mint-border); border-radius: 6px;
+    font-size: 13px; font-family: inherit; outline: none;
+  }
+  .ms-search input:focus { border-color: var(--primary); }
+  .ms-option {
+    display: flex; align-items: center; gap: 9px;
+    padding: 9px 12px; font-size: 13.5px;
+    color: var(--text-dark); cursor: pointer;
+    transition: background .1s;
+  }
+  .ms-option:hover { background: var(--primary-light); }
+  .ms-option input[type="checkbox"] {
+    width: 15px; height: 15px;
+    accent-color: var(--primary); flex-shrink: 0;
+  }
+  .ms-empty { padding: 10px 12px; font-size: 13px; color: var(--text-muted); }
+
+  .btn-primary {
+    background: var(--primary); color: var(--white);
+    border: none; height: 42px; padding: 0 28px;
+    border-radius: 8px; font-size: 14.5px; font-weight: 500;
+    transition: background .15s; white-space: nowrap;
+  }
+  .btn-primary:hover { background: var(--primary-dark); }
+
+  /* Search actions row */
+  .search-actions {
+    display: flex; gap: 10px; align-items: center;
+    justify-content: flex-end;
+    margin-top: 16px; padding-top: 16px;
+    border-top: 1px solid #EBF2EF;
+  }
+  .btn-reset {
+    background: none; border: 1px solid var(--mint-border);
+    color: var(--text-mid); height: 42px; padding: 0 22px;
+    border-radius: 8px; font-size: 14px; font-weight: 500;
+    transition: background .15s;
+  }
+  .btn-reset:hover { background: #F2F5F7; }
+
+  /* ═══════════ RESULTS ═══════════ */
+  #results { display: none; }
+
+  /* ═══════════ STICKY ZONE ═══════════ */
+  #sticky-zone {
+    position: sticky;
+    top: var(--header-h);
+    z-index: 60;
+    background: var(--mint-bg);
+    padding-top: 4px;
+    padding-bottom: 2px;
+  }
+
+  /* Actions Bar — print/export only */
+  #actions-bar {
+    display: none; align-items: center;
+    gap: 12px; flex-wrap: wrap;
+    background: #F7F9FC;
+    border: 1px solid #D5E0EC;
+    border-radius: 10px; padding: 10px 20px;
+    margin-bottom: 10px;
+  }
+  #actions-bar .sel-info { font-size: 14px; font-weight: 500; color: var(--primary-dark); }
+  #select-all-label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14px; color: var(--text-mid);
+    cursor: pointer; user-select: none;
+  }
+  #select-all-label input {
+    width: 17px; height: 17px;
+    accent-color: var(--primary); cursor: pointer;
+  }
+  .act-divider { width: 1px; height: 22px; background: #D0DCE8; }
+
+  /* Print button */
+  .btn-print {
+    display: flex; align-items: center; gap: 7px;
+    background: #EEF5FB;
+    border: 1px solid #B8D4EA;
+    color: #0D47A1;
+    padding: 8px 18px; border-radius: 8px;
+    font-size: 14px; font-weight: 500;
+    transition: background .15s;
+  }
+  .btn-print:hover { background: #DDEDF8; }
+
+  /* Export selected button */
+  .btn-export-sel {
+    display: flex; align-items: center; gap: 7px;
+    background: #F3EEF8;
+    border: 1px solid #D0BEE8;
+    color: #6A1B9A;
+    padding: 8px 18px; border-radius: 8px;
+    font-size: 14px; font-weight: 500;
+    transition: background .15s;
+  }
+  .btn-export-sel:hover { background: #E8DCF4; }
+
+  #clear-sel-btn {
+    margin-left: auto; background: none; border: none;
+    color: var(--text-muted); font-size: 13px;
+    text-decoration: underline;
+  }
+  #clear-sel-btn:hover { color: var(--text-dark); }
+
+  /* ═══════════ TABLE CARD ═══════════ */
+  #table-card {
+    background: var(--white);
+    border: 1px solid var(--mint-border);
+    border-radius: 12px; overflow: hidden;
+  }
+  #table-topbar {
+    padding: 11px 18px;
+    border-bottom: 1px solid #E4EDF0;
+    display: flex; align-items: center; gap: 10px;
+  }
+  #tbl-count { color: var(--text-muted); font-size: 13.5px; }
+  #tbl-count strong { color: var(--text-dark); font-weight: 500; }
+  #table-topbar .spacer { flex: 1; }
+
+  /* Choose columns button */
+  #btn-choose-cols {
+    display: flex; align-items: center; gap: 7px;
+    background: #EEF0FB;
+    border: 1px solid #C5CAF0;
+    color: #3949AB;
+    padding: 8px 16px; border-radius: 8px;
+    font-size: 13.5px; font-weight: 500;
+    transition: background .15s; white-space: nowrap;
+  }
+  #btn-choose-cols:hover { background: #DDE0F7; }
+  #btn-choose-cols svg { flex-shrink: 0; }
+
+  /* Export button */
+  #btn-export {
+    display: flex; align-items: center; gap: 7px;
+    background: #F3EEF8;
+    border: 1px solid #D0BEE8;
+    color: #6A1B9A;
+    padding: 8px 16px; border-radius: 8px;
+    font-size: 13.5px; font-weight: 500;
+    transition: background .15s; white-space: nowrap;
+  }
+  #btn-export:hover { background: #E8DCF4; }
+  #btn-export svg { flex-shrink: 0; }
+
+  /* ═══════════ TABLE ═══════════ */
+  #table-scroll { overflow-x: auto; }
+  #app-table {
+    width: 100%; border-collapse: collapse;
+    min-width: 1100px;
+  }
+
+  #app-table thead tr { background: var(--primary); }
+  #app-table thead th {
+    background: var(--primary);
+    color: var(--white);
+    padding: 11px 12px;
+    text-align: left;
+    font-size: 12.5px; font-weight: 500;
+    white-space: nowrap;
+    user-select: none;
+    border-right: 1px solid rgba(255,255,255,0.18);
+    position: sticky; top: 0; z-index: 5;
+  }
+  #app-table thead th:last-child { border-right: none; }
+  th.sel-col, td.sel-col { width: 44px; text-align: center; }
+
+  .th-inner {
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 6px;
+  }
+  .th-label { flex: 1; }
+
+  .filter-btn {
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.30);
+    border-radius: 4px;
+    width: 22px; height: 20px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--white);
+    font-size: 9px; line-height: 1;
+    transition: background .15s;
+  }
+  .filter-btn:hover { background: rgba(255,255,255,0.38); }
+  .filter-btn.sorted {
+    background: var(--white);
+    color: var(--primary);
+    border-color: var(--white);
+  }
+
+  /* Filter dropdown */
+  #filter-menu {
+    position: fixed;
+    background: var(--white);
+    border: 1px solid var(--mint-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.14);
+    z-index: 500; display: none;
+    min-width: 168px; overflow: hidden;
+  }
+  #filter-menu button {
+    display: block; width: 100%; text-align: left;
+    background: none; border: none;
+    padding: 10px 16px;
+    font-size: 13.5px; color: var(--text-dark);
+  }
+  #filter-menu button:hover { background: var(--primary-light); }
+
+  #app-table tbody tr { border-bottom: 1px solid #EBF2EF; transition: background .1s; }
+  #app-table tbody td {
+    border-right: 1px solid #E4EDF0;
+    padding: 11px 12px;
+    font-size: 13.5px; color: var(--text-mid);
+    max-width: 190px; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }
+  #app-table tbody td:last-child { border-right: none; }
+
+  #app-table tbody tr.even { background: #FAFCFB; }
+  #app-table tbody tr.odd  { background: var(--white); }
+  #app-table tbody tr:hover { background: #F0F7F4; }
+  #app-table tbody tr.selected {
+    background: var(--row-selected) !important;
+    box-shadow: inset 3px 0 0 var(--primary);
+  }
+
+  .row-check {
+    width: 16px; height: 16px;
+    accent-color: var(--primary); cursor: pointer;
+  }
+  .cell-sno   { color: var(--text-muted); font-size: 13px; }
+  .cell-appid { color: var(--primary); font-weight: 500; }
+  .cell-name  { color: var(--text-dark); font-weight: 500; }
+  .cell-empty { color: #CBD5D0; }
+
+  .status-pill {
+    display: inline-block;
+    padding: 3px 10px; border-radius: 12px;
+    font-size: 12px; font-weight: 500; white-space: nowrap;
+  }
+  .pill-ccsub      { background: #E3F2FD; color: #1565C0; }
+  .pill-ccinterview{ background: #E8EAF6; color: #3949AB; }
+  .pill-cchousevisit{ background: #F3E5F5; color: #7B1FA2; }
+  .pill-nc         { background: #E0F2F1; color: #00695C; }
+  .pill-usa        { background: #E1F5FE; color: #0277BD; }
+  .pill-accounts   { background: #FFF8E1; color: #F57F17; }
+  .pill-decline    { background: #FFEBEE; color: #C62828; }
+
+  /* ═══════════ PAGINATION ═══════════ */
+  #pagination {
+    padding: 12px 18px;
+    border-top: 1px solid #E4EDF0;
+    display: flex; align-items: center;
+    justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  }
+  .pag-btn {
+    padding: 9px 20px; border-radius: 8px;
+    border: 1px solid #D0DCE8;
+    background: var(--white); color: var(--text-dark);
+    font-size: 14px; font-weight: 500; transition: background .15s;
+  }
+  .pag-btn:hover:not(:disabled) { background: #EEF2F5; }
+  .pag-btn:disabled { color: #B0BEC5; cursor: default; }
+  #page-nums { display: flex; gap: 5px; flex-wrap: wrap; }
+  .pag-num {
+    width: 34px; height: 34px; border-radius: 8px;
+    border: 1px solid transparent;
+    background: none; color: var(--text-mid);
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .pag-num:hover:not(.active) { background: #EEF2F5; }
+  .pag-num.active { background: var(--primary); color: var(--white); }
+
+  /* ═══════════ DIALOGS ═══════════ */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(20,40,35,0.42);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; padding: 16px;
+    opacity: 0; pointer-events: none; transition: opacity .18s;
+  }
+  .overlay.open { opacity: 1; pointer-events: all; }
+  .dialog {
+    background: var(--white);
+    border-radius: 14px;
+    width: min(660px, 100%);
+    max-height: 88vh; overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+    transform: translateY(12px); transition: transform .18s;
+  }
+  .overlay.open .dialog { transform: translateY(0); }
+  .dialog-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 24px; border-bottom: 1px solid #EBF2EF;
+    position: sticky; top: 0; background: var(--white); z-index: 2;
+  }
+  .dialog-header h2 { font-size: 17px; font-weight: 500; color: var(--text-dark); }
+  .dialog-close {
+    background: none; border: none;
+    font-size: 24px; color: var(--text-muted); line-height: 1; padding: 0 4px;
+  }
+  .dialog-close:hover { color: var(--text-dark); }
+  .dialog-body { padding: 20px 24px; }
+  .dialog-footer {
+    padding: 0 24px 20px;
+    display: flex; justify-content: flex-end; gap: 10px;
+  }
+
+  /* Choose columns */
+  .cols-section-title {
+    font-size: 12px; font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: .05em;
+    margin: 0 0 12px;
+  }
+  .cols-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 4px 12px;
+  }
+  .col-check {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 13.5px; color: var(--text-dark);
+    cursor: pointer;
+    padding: 7px 8px; border-radius: 6px;
+    user-select: none;
+    transition: background .12s;
+  }
+  .col-check:hover { background: #F2F7F5; }
+  .col-check input {
+    width: 16px; height: 16px;
+    accent-color: var(--primary); cursor: pointer; flex-shrink: 0;
+  }
+  .col-check.wide { grid-column: span 2; }
+
+  .btn-cancel {
+    background: var(--white); border: 1px solid var(--mint-border);
+    color: var(--text-mid); padding: 10px 24px;
+    border-radius: 8px; font-size: 14px; font-weight: 500;
+  }
+  .btn-cancel:hover { background: #F2F5F7; }
+
+  /* Toast */
+  #toast {
+    position: fixed; bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(14px);
+    background: #263238; color: var(--white);
+    padding: 12px 24px; border-radius: 8px;
+    font-size: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.25);
+    opacity: 0; transition: all .25s;
+    pointer-events: none; z-index: 2000; white-space: nowrap;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Print styles */
+  @media print {
+    #header, #search-panel, #sticky-zone, #table-topbar, #pagination { display: none !important; }
+    body { background: white; }
+    #table-card { border: none; box-shadow: none; }
+    #app-table thead th { background: #347463 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    #app-table tbody tr.selected { background: #DCECE6 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  @media (max-width: 900px) {
+    .col-check.wide { grid-column: span 1; }
+  }
+  @media (max-width: 600px) {
+    #main { padding: 14px 10px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════ HEADER ═══════ -->
+<div id="header">
+  <div class="logo">NSF</div>
+  <div>
+    <div class="hd-title">National Scholarship Foundation</div>
+    <div class="hd-sub">Application Review Portal</div>
+  </div>
+  <div class="hd-role">Role: <span id="role-display">NC</span></div>
+</div>
+
+<div id="main">
+  <div class="page-heading">
+    <h1>Application List</h1>
+    <p>Search and review scholarship applications</p>
+  </div>
+
+  <!-- ═══════ SEARCH MODE TOGGLE ═══════ -->
+  <div id="search-mode-bar">
+    <div class="seg-pill">
+      <!-- Custom Search is FIRST and default -->
+      <button class="mode-btn active" id="mode-btn-custom" data-mode="custom">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+        </svg>
+        Custom Search
+      </button>
+      <div class="seg-divider"></div>
+      <button class="mode-btn" id="mode-btn-id" data-mode="id">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        Quick Search
+      </button>
+    </div>
+    <span class="seg-hint" id="seg-hint-text">Filtering by multiple fields</span>
+  </div>
+
+  <!-- ═══════ QUICK SEARCH PANEL ═══════ -->
+  <div id="id-search-panel">
+    <div class="id-panel-title">Quick Search</div>
+
+    <!-- Radio pill options — all visible -->
+    <span class="qs-radio-label">Search by</span>
+    <div class="qs-radio-row" id="qs-radio-row">
+      <label class="qs-radio-pill checked">
+        <input type="radio" name="qs-type" value="appId" checked /> NSF ID
+      </label>
+      <label class="qs-radio-pill">
+        <input type="radio" name="qs-type" value="aadhar" /> Aadhar Number
+      </label>
+      <label class="qs-radio-pill">
+        <input type="radio" name="qs-type" value="email" /> Email
+      </label>
+      <label class="qs-radio-pill">
+        <input type="radio" name="qs-type" value="name" /> Student Name
+      </label>
+      <label class="qs-radio-pill">
+        <input type="radio" name="qs-type" value="mobile" /> Mobile Number
+      </label>
+    </div>
+
+    <!-- Input + Search button -->
+    <div class="id-input-row">
+      <div class="id-input-wrap">
+        <span class="id-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </span>
+        <input type="text" id="nsf-id-input" placeholder="Enter NSF ID — e.g. APP001" autocomplete="off" spellcheck="false" />
+        <button id="nsf-id-clear" title="Clear">&times;</button>
+      </div>
+      <button id="btn-id-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        Search
+      </button>
+    </div>
+    <div class="id-hint" id="id-hint-text">Enter a full or partial NSF ID to find matching applications.</div>
+    <div id="id-result-badge">
+      <span id="id-result-text"></span>
+      <button class="badge-clear" id="id-badge-clear" title="Clear">&times;</button>
+    </div>
+  </div>
+
+  <!-- ═══════ CUSTOM SEARCH PANEL ═══════ -->
+  <div id="search-panel">
+    <div class="fields-grid">
+
+      <!-- 1. Year (multi-select) -->
+      <div class="field-group">
+        <label>Joining Year</label>
+        <div class="ms-wrap" id="ms-year-wrap">
+          <button class="ms-trigger" id="ms-year-trigger" type="button">
+            <span class="placeholder">Select year</span>
+          </button>
+          <div class="ms-dropdown" id="ms-year-dropdown">
+            <div class="ms-search"><input type="text" placeholder="Search…" id="ms-year-search" /></div>
+            <div id="ms-year-options"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Application Type -->
+      <div class="field-group">
+        <label>Application Type</label>
+        <select id="sel-apptype">
+          <option value="">All types</option>
+          <option value="Fresh">Fresh</option>
+          <option value="Renewal">Renewal</option>
+        </select>
+      </div>
+
+      <!-- 3. State (multi-select) -->
+      <div class="field-group">
+        <label>State</label>
+        <div class="ms-wrap" id="ms-state-wrap">
+          <button class="ms-trigger" id="ms-state-trigger" type="button">
+            <span class="placeholder">Select state</span>
+          </button>
+          <div class="ms-dropdown" id="ms-state-dropdown">
+            <div class="ms-search"><input type="text" placeholder="Search…" id="ms-state-search" /></div>
+            <div id="ms-state-options"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Chapter (multi-select, filtered by state) -->
+      <div class="field-group">
+        <label>Chapter</label>
+        <div class="ms-wrap" id="ms-chapter-wrap">
+          <button class="ms-trigger" id="ms-chapter-trigger" type="button">
+            <span class="placeholder">Select chapter</span>
+          </button>
+          <div class="ms-dropdown" id="ms-chapter-dropdown">
+            <div class="ms-search"><input type="text" placeholder="Search…" id="ms-chapter-search" /></div>
+            <div id="ms-chapter-options"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Course (multi-select) -->
+      <div class="field-group">
+        <label>Course</label>
+        <div class="ms-wrap" id="ms-course-wrap">
+          <button class="ms-trigger" id="ms-course-trigger" type="button">
+            <span class="placeholder">Select course</span>
+          </button>
+          <div class="ms-dropdown" id="ms-course-dropdown">
+            <div class="ms-search"><input type="text" placeholder="Search…" id="ms-course-search" /></div>
+            <div id="ms-course-options"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Gender -->
+      <div class="field-group">
+        <label>Gender</label>
+        <select id="sel-gender">
+          <option value="">All genders</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+
+      <!-- 7. College (multi-select) -->
+      <div class="field-group">
+        <label>College</label>
+        <div class="ms-wrap" id="ms-college-wrap">
+          <button class="ms-trigger" id="ms-college-trigger" type="button">
+            <span class="placeholder">Select college</span>
+          </button>
+          <div class="ms-dropdown" id="ms-college-dropdown">
+            <div class="ms-search"><input type="text" placeholder="Search…" id="ms-college-search" /></div>
+            <div id="ms-college-options"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. Study Year (multi-select) -->
+      <div class="field-group">
+        <label>Study Year (not able to select when year is selected)</label>
+        <div class="ms-wrap" id="ms-studyyear-wrap">
+          <button class="ms-trigger" id="ms-studyyear-trigger" type="button">
+            <span class="placeholder">Select study year</span>
+          </button>
+          <div class="ms-dropdown" id="ms-studyyear-dropdown">
+            <div id="ms-studyyear-options"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. Status (multi-select) -->
+      <div class="field-group">
+        <label>Status</label>
+        <div class="ms-wrap" id="ms-status-wrap">
+          <button class="ms-trigger" id="ms-status-trigger" type="button">
+            <span class="placeholder">Select status</span>
+          </button>
+          <div class="ms-dropdown" id="ms-status-dropdown">
+            <div class="ms-search"><input type="text" placeholder="Search…" id="ms-status-search" /></div>
+            <div id="ms-status-options"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="search-actions">
+      <button class="btn-reset" id="reset-btn">Reset</button>
+      <button class="btn-primary" id="search-btn">Search</button>
+    </div>
+  </div>
+
+  <!-- ═══════ RESULTS ═══════ -->
+  <div id="results">
+
+    <!-- Sticky Zone -->
+    <div id="sticky-zone">
+
+      <!-- Actions Bar — print / export only -->
+      <div id="actions-bar">
+        <label id="select-all-label">
+          <input type="checkbox" id="select-all-cb" />
+          Select all
+        </label>
+        <div class="act-divider"></div>
+        <span class="sel-info" id="sel-info">0 selected</span>
+        <div class="act-divider"></div>
+        <button class="btn-print" id="btn-print-sel">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+          </svg>
+          Print selected
+        </button>
+        <button class="btn-export-sel" id="btn-export-sel">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Export selected
+        </button>
+        <button id="clear-sel-btn">Clear selection</button>
+      </div>
+
+    </div>
+
+    <!-- Table -->
+    <div id="table-card">
+      <div id="table-topbar">
+        <div id="tbl-count">Showing <strong>0–0</strong> of <strong>0</strong></div>
+        <div class="spacer"></div>
+        <button id="btn-choose-cols">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          Choose columns
+        </button>
+        <button id="btn-export">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Export to Excel
+        </button>
+      </div>
+
+      <div id="table-scroll">
+        <table id="app-table">
+          <thead><tr id="tbl-head-row"></tr></thead>
+          <tbody id="tbl-body"></tbody>
+        </table>
+      </div>
+
+      <div id="pagination">
+        <button class="pag-btn" id="prev-btn">&#8592; Previous</button>
+        <div id="page-nums"></div>
+        <button class="pag-btn" id="next-btn">Next &#8594;</button>
+      </div>
+    </div>
+
+  </div><!-- /results -->
+</div><!-- /main -->
+
+<!-- Filter dropdown -->
+<div id="filter-menu">
+  <button data-sort="asc">&#8593; Sort ascending</button>
+  <button data-sort="desc">&#8595; Sort descending</button>
+  <button data-sort="clear">&#215; Clear filter</button>
+</div>
+
+<!-- Choose Columns Dialog -->
+<div class="overlay" id="cols-overlay">
+  <div class="dialog">
+    <div class="dialog-header">
+      <h2>Choose columns</h2>
+      <button class="dialog-close" data-close="cols-overlay">&times;</button>
+    </div>
+    <div class="dialog-body">
+      <div class="cols-section-title">All columns — tick to show, untick to hide</div>
+      <div class="cols-grid" id="all-cols-grid"></div>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn-cancel" data-close="cols-overlay">Cancel</button>
+      <button class="btn-primary" id="apply-cols-btn" style="height:auto;padding:10px 28px;">Apply</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- ═══════════════════ JAVASCRIPT ═══════════════════ -->
+<script>
+"use strict";
+
+/* ── Config ─────────────────────────────────────── */
+const USER_ROLE = "NC";
+
+const STATE_CHAPTER_MAP = {
+  "Telangana":       ["Hyderabad, TS", "Warangal, TS", "Karimnagar, TS"],
+  "Andhra Pradesh":  ["Vijayawada, AP", "Vizag, AP", "Guntur, AP"],
+  "Karnataka":       ["Bangalore, KA", "Mysore, KA"],
+  "Tamil Nadu":      ["Chennai, TN", "Coimbatore, TN"],
+};
+
+const COURSES = ["B.Tech", "B.Tech(LE)", "B.Sc", "B.Com", "BA", "B.Pharmacy", "BCA"];
+
+const STUDY_YEARS = ["1st Year", "2nd Year", "3rd Year", "4th Year"];
+
+const STATUS_LIST = [
+  { key:"CC Sub",        pill:"pill-ccsub"       },
+  { key:"CC Interview",  pill:"pill-ccinterview"  },
+  { key:"CC House Visit",pill:"pill-cchousevisit" },
+  { key:"NC",            pill:"pill-nc"           },
+  { key:"USA",           pill:"pill-usa"          },
+  { key:"Accounts",      pill:"pill-accounts"     },
+  { key:"Decline",       pill:"pill-decline"      },
+];
+
+const COLLEGES = [
+  { code:"JNTU001", name:"JNTU Hyderabad"               },
+  { code:"OU002",   name:"Osmania University"            },
+  { code:"AU003",   name:"Andhra University"             },
+  { code:"KU004",   name:"Kakatiya University"           },
+  { code:"SVU005",  name:"Sri Venkateswara University"   },
+  { code:"BITS006", name:"BITS Pilani Hyderabad"         },
+  { code:"CBIT007", name:"CBIT Hyderabad"                },
+  { code:"VIT008",  name:"VIT-AP University"             },
+];
+
+const YEARS = Array.from({ length: 8 }, (_, i) => 2019 + i);
+
+const NAMES = ["Ravi Kumar","Sita Devi","Arjun Reddy","Priya Sharma","Kiran Babu",
+               "Lakshmi Rao","Suresh Nair","Anitha Varma","Mohan Das","Deepa Iyer",
+               "Vijay Bhaskar","Rani Kumari","Pavan Kalyan","Swathi Reddy","Anil Kumar"];
+
+const ALL_STATES   = Object.keys(STATE_CHAPTER_MAP);
+const ALL_CHAPTERS = Object.values(STATE_CHAPTER_MAP).flat();
+
+function mkApps(n) {
+  const appTypes = ["Fresh","Renewal"];
+  return Array.from({ length: n }, (_, i) => {
+    const st = ALL_STATES[i % ALL_STATES.length];
+    const stChapters = STATE_CHAPTER_MAP[st];
+    const ch = stChapters[i % stChapters.length];
+    return {
+      id:                 i + 1,
+      state:              st,
+      chapter:            ch,
+      appId:              "APP" + String(i+1).padStart(3,"0"),
+      name:               NAMES[i % NAMES.length],
+      gender:             i % 2 === 0 ? "Male" : "Female",
+      aadhar:             String(100000000000 + i * 97653).replace(/(\d{4})(\d{4})(\d{4})/, "$1 $2 $3"),
+      email:              NAMES[i % NAMES.length].toLowerCase().replace(/ /g,".")+"@example.com",
+      mobile:             "9" + String(800000000 + i * 13579),
+      appType:            appTypes[i % 2],
+      college:            COLLEGES[i % COLLEGES.length].code,
+      collegeName:        COLLEGES[i % COLLEGES.length].name,
+      course:             COURSES[i % COURSES.length],
+      year:               YEARS[i % YEARS.length],
+      studyYear:          STUDY_YEARS[i % STUDY_YEARS.length],
+      ssc:                (75 + (i*3) % 20).toFixed(1),
+      diploma:            (72 + (i*4) % 22).toFixed(1),
+      rank:               50 + i * 7,
+      income:             80000 + i * 5000,
+      parentalStatus:     ["Both Parents","Single Parent","Orphan"][i % 3],
+      physicallyDisabled: i % 5 === 0 ? "Yes" : "No",
+      ccComments:         i % 3 === 0 ? "Eligible" : i % 3 === 1 ? "Review needed" : "",
+      ncComments:         i % 4 === 0 ? "Strong candidate" : "",
+      eligibleTuition:    i % 3 !== 2 ? "Yes" : "No",
+      eligiblePrivate:    i % 4 === 0 ? "Yes" : "No",
+      familyNSF:          i % 6 === 0 ? "Yes" : "No",
+      educationGap:       i % 7 === 0 ? "1 year" : "",
+      sscGovt:            i % 2 === 0 ? "Yes" : "No",
+      diplomaGovt:        i % 3 === 0 ? "Yes" : "No",
+      sscPrivate:         i % 2 !== 0 ? "Yes" : "No",
+      diplomaPrivate:     i % 3 !== 0 ? "Yes" : "No",
+      currentStatus:      STATUS_LIST[i % STATUS_LIST.length].key,
+    };
+  });
+}
+
+const ALL_COLS = [
+  { key:"sno",                label:"S.No",                               sortable:false, defaultOn:true  },
+  { key:"state",              label:"State",                              sortable:true,  defaultOn:true  },
+  { key:"chapter",            label:"Chapter",                            sortable:true,  defaultOn:true  },
+  { key:"appId",              label:"Application ID",                     sortable:true,  defaultOn:true  },
+  { key:"name",               label:"Name",                               sortable:true,  defaultOn:true  },
+  { key:"gender",             label:"Gender",                             sortable:true,  defaultOn:true  },
+  { key:"appType",            label:"Application Type",                   sortable:true,  defaultOn:true  },
+  { key:"course",             label:"Course",                             sortable:true,  defaultOn:true  },
+  { key:"year",               label:"Year",                               sortable:true,  defaultOn:true  },
+  { key:"studyYear",          label:"Study Year",                         sortable:true,  defaultOn:true  },
+  { key:"collegeName",        label:"College",                            sortable:true,  defaultOn:true  },
+  { key:"ssc",                label:"SSC %",                              sortable:true,  defaultOn:true  },
+  { key:"diploma",            label:"Diploma/Inter %",                    sortable:true,  defaultOn:true  },
+  { key:"rank",               label:"Rank",                               sortable:true,  defaultOn:true  },
+  { key:"income",             label:"Income",                             sortable:true,  defaultOn:true  },
+  { key:"parentalStatus",     label:"Parental Status",                    sortable:true,  defaultOn:true  },
+  { key:"physicallyDisabled", label:"Physically Disabled",                sortable:true,  defaultOn:true  },
+  { key:"currentStatus",      label:"Current Status",                     sortable:true,  defaultOn:true  },
+  { key:"ccComments",         label:"CC Comments",                        sortable:false, defaultOn:true  },
+  { key:"ncComments",         label:"NC Comments",                        sortable:false, defaultOn:true  },
+  { key:"eligibleTuition",    label:"Eligible – Tuition Reimbursement?",  sortable:true,  defaultOn:false, wide:true },
+  { key:"eligiblePrivate",    label:"Eligible – Private Scholarships?",   sortable:true,  defaultOn:false, wide:true },
+  { key:"familyNSF",          label:"Family Member Receiving NSF?",       sortable:true,  defaultOn:false, wide:true },
+  { key:"educationGap",       label:"Education Gap",                      sortable:true,  defaultOn:false },
+  { key:"sscGovt",            label:"SSC Government",                     sortable:true,  defaultOn:false },
+  { key:"diplomaGovt",        label:"Diploma/Inter Government",           sortable:true,  defaultOn:false },
+  { key:"sscPrivate",         label:"SSC Private",                        sortable:true,  defaultOn:false },
+  { key:"diplomaPrivate",     label:"Diploma/Inter Private",              sortable:true,  defaultOn:false },
+];
+
+/* ── State ────────────────────────────────────── */
+const state = {
+  apps:           mkApps(120),
+  filtered:       [],
+  searched:       false,
+  sortKey:        null,
+  sortDir:        "asc",
+  page:           1,
+  rowsPerPage:    10,
+  selected:       new Set(),
+  visColKeys:     new Set(ALL_COLS.filter(c=>c.defaultOn).map(c=>c.key)),
+  pendingColKeys: new Set(),
+  filterMenuCol:  null,
+
+  // multi-select state
+  ms: {
+    state:     new Set(),
+    chapter:   new Set(),
+    course:    new Set(),
+    status:    new Set(),
+    college:   new Set(),
+    year:      new Set(),
+    studyYear: new Set(),
+  }
+};
+
+/* ── Helpers ──────────────────────────────────── */
+const $ = id => document.getElementById(id);
+const fmtIncome = v => "₹" + Number(v).toLocaleString("en-IN");
+
+function showToast(msg) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove("show"), 2400);
+}
+function openOverlay(id)  { $(id).classList.add("open"); }
+function closeOverlay(id) { $(id).classList.remove("open"); }
+
+/* ── Multi-select component ──────────────────── */
+function buildMultiSelect({ wrapperId, triggerId, dropdownId, searchId, optionsId, msKey, items, labelFn }) {
+  const trigger  = $(triggerId);
+  const dropdown = $(dropdownId);
+  const searchEl = $(searchId);
+  const optEl    = $(optionsId);
+
+  function renderOptions(filter) {
+    optEl.innerHTML = "";
+    const f = (filter || "").toLowerCase();
+    const filtered = items.filter(it => labelFn(it).toLowerCase().includes(f));
+    if (!filtered.length) {
+      optEl.innerHTML = `<div class="ms-empty">No results</div>`;
+      return;
+    }
+    filtered.forEach(it => {
+      // For college objects use .code; for plain strings use the string itself
+      const val = typeof it === "string" ? it : (it.code || it.value || String(it));
+      const lbl = labelFn(it);
+      const div = document.createElement("div");
+      div.className = "ms-option";
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.value = val;
+      cb.checked = state.ms[msKey].has(val);
+      cb.addEventListener("change", () => {
+        cb.checked ? state.ms[msKey].add(val) : state.ms[msKey].delete(val);
+        updateTriggerLabel();
+        if (msKey === "state") refreshChapterOptions();
+      });
+      div.appendChild(cb);
+      div.appendChild(document.createTextNode(lbl));
+      div.addEventListener("click", e => {
+        if (e.target !== cb) { cb.checked = !cb.checked; cb.dispatchEvent(new Event("change")); }
+      });
+      optEl.appendChild(div);
+    });
+  }
+
+  function updateTriggerLabel() {
+    const sel = state.ms[msKey];
+    if (sel.size === 0) {
+      trigger.innerHTML = `<span class="placeholder">Select…</span>`;
+    } else if (sel.size === 1) {
+      const val = [...sel][0];
+      const found = items.find(it => (typeof it === "string" ? it : (it.code || it.value || it)) === val);
+      trigger.textContent = found ? labelFn(found) : val;
+    } else {
+      trigger.innerHTML = `${sel.size} selected <span class="count-badge">${sel.size}</span>`;
+    }
+  }
+
+  trigger.addEventListener("click", e => {
+    e.stopPropagation();
+    const isOpen = dropdown.classList.contains("open");
+    // close all
+    document.querySelectorAll(".ms-dropdown.open").forEach(d => d.classList.remove("open"));
+    document.querySelectorAll(".ms-trigger.open").forEach(t => t.classList.remove("open"));
+    if (!isOpen) {
+      dropdown.classList.add("open");
+      trigger.classList.add("open");
+      renderOptions(searchEl ? searchEl.value : "");
+      if (searchEl) { searchEl.value = ""; searchEl.focus(); }
+    }
+  });
+
+  if (searchEl) {
+    searchEl.addEventListener("input", () => renderOptions(searchEl.value));
+    searchEl.addEventListener("click", e => e.stopPropagation());
+  }
+
+  // expose
+  return { renderOptions, updateTriggerLabel };
+}
+
+/* Chapter options depend on selected states */
+let chapterMS;
+function refreshChapterOptions() {
+  const selStates = state.ms.state;
+  let chapters;
+  if (selStates.size === 0) {
+    chapters = ALL_CHAPTERS;
+  } else {
+    chapters = [];
+    selStates.forEach(st => { if (STATE_CHAPTER_MAP[st]) chapters.push(...STATE_CHAPTER_MAP[st]); });
+  }
+  // prune invalid selections
+  state.ms.chapter.forEach(ch => { if (!chapters.includes(ch)) state.ms.chapter.delete(ch); });
+
+  // rebuild chapter MS items
+  chapterMS._items = chapters;
+  chapterMS.renderOptions("");
+  chapterMS.updateTriggerLabel();
+}
+
+/* ── Init multi-selects ──────────────────────── */
+function initMultiSelects() {
+  // State
+  buildMultiSelect({
+    wrapperId: "ms-state-wrap", triggerId: "ms-state-trigger",
+    dropdownId: "ms-state-dropdown", searchId: "ms-state-search",
+    optionsId: "ms-state-options", msKey: "state",
+    items: ALL_STATES, labelFn: x => x,
+  });
+
+  // Chapter — dynamic items
+  chapterMS = buildMultiSelect({
+    wrapperId: "ms-chapter-wrap", triggerId: "ms-chapter-trigger",
+    dropdownId: "ms-chapter-dropdown", searchId: "ms-chapter-search",
+    optionsId: "ms-chapter-options", msKey: "chapter",
+    items: ALL_CHAPTERS, labelFn: x => x,
+  });
+  chapterMS._items = ALL_CHAPTERS;
+  // patch renderOptions to use dynamic items
+  const origRender = chapterMS.renderOptions;
+  chapterMS.renderOptions = function(filter) {
+    const optEl = $("ms-chapter-options");
+    optEl.innerHTML = "";
+    const f = (filter || "").toLowerCase();
+    const filtered = chapterMS._items.filter(it => it.toLowerCase().includes(f));
+    if (!filtered.length) { optEl.innerHTML = `<div class="ms-empty">No results</div>`; return; }
+    filtered.forEach(ch => {
+      const div = document.createElement("div");
+      div.className = "ms-option";
+      const cb = document.createElement("input");
+      cb.type = "checkbox"; cb.value = ch; cb.checked = state.ms.chapter.has(ch);
+      cb.addEventListener("change", () => {
+        cb.checked ? state.ms.chapter.add(ch) : state.ms.chapter.delete(ch);
+        chapterMS.updateTriggerLabel();
+      });
+      div.appendChild(cb);
+      div.appendChild(document.createTextNode(ch));
+      div.addEventListener("click", e => { if (e.target!==cb){cb.checked=!cb.checked;cb.dispatchEvent(new Event("change"));} });
+      optEl.appendChild(div);
+    });
+  };
+
+  // Course
+  buildMultiSelect({
+    wrapperId: "ms-course-wrap", triggerId: "ms-course-trigger",
+    dropdownId: "ms-course-dropdown", searchId: "ms-course-search",
+    optionsId: "ms-course-options", msKey: "course",
+    items: COURSES, labelFn: x => x,
+  });
+
+  // Status
+  buildMultiSelect({
+    wrapperId: "ms-status-wrap", triggerId: "ms-status-trigger",
+    dropdownId: "ms-status-dropdown", searchId: "ms-status-search",
+    optionsId: "ms-status-options", msKey: "status",
+    items: STATUS_LIST.map(s=>s.key), labelFn: x => x,
+  });
+
+  // College
+  buildMultiSelect({
+    wrapperId: "ms-college-wrap", triggerId: "ms-college-trigger",
+    dropdownId: "ms-college-dropdown", searchId: "ms-college-search",
+    optionsId: "ms-college-options", msKey: "college",
+    items: COLLEGES, labelFn: c => `${c.code} – ${c.name}`,
+  });
+
+  // Year (academic year e.g. 2019–2026)
+  buildMultiSelect({
+    wrapperId: "ms-year-wrap", triggerId: "ms-year-trigger",
+    dropdownId: "ms-year-dropdown", searchId: "ms-year-search",
+    optionsId: "ms-year-options", msKey: "year",
+    items: YEARS.map(y => String(y)), labelFn: x => x,
+  });
+
+  // Study Year (1st / 2nd / 3rd / 4th)
+  buildMultiSelect({
+    wrapperId: "ms-studyyear-wrap", triggerId: "ms-studyyear-trigger",
+    dropdownId: "ms-studyyear-dropdown", searchId: null,
+    optionsId: "ms-studyyear-options", msKey: "studyYear",
+    items: STUDY_YEARS, labelFn: x => x,
+  });
+}
+
+/* ── Populate simple dropdowns ───────────────── */
+function initSimpleDropdowns() {
+  // (College and Year are now multi-selects — handled in initMultiSelects)
+}
+
+/* ── Filter / Search ─────────────────────────── */
+function applySearch() {
+  let d = [...state.apps];
+
+  if (state.ms.state.size)     d = d.filter(a => state.ms.state.has(a.state));
+  if (state.ms.chapter.size)   d = d.filter(a => state.ms.chapter.has(a.chapter));
+  if (state.ms.course.size)    d = d.filter(a => state.ms.course.has(a.course));
+  if (state.ms.status.size)    d = d.filter(a => state.ms.status.has(a.currentStatus));
+  if (state.ms.college.size)   d = d.filter(a => state.ms.college.has(a.college));
+  if (state.ms.year.size)      d = d.filter(a => state.ms.year.has(String(a.year)));
+  if (state.ms.studyYear.size) d = d.filter(a => state.ms.studyYear.has(a.studyYear));
+
+  const appType = $("sel-apptype").value;
+  if (appType) d = d.filter(a => a.appType === appType);
+
+  const gender = $("sel-gender").value;
+  if (gender) d = d.filter(a => a.gender === gender);
+
+  state.filtered = d;
+  state.searched  = true;
+  state.page      = 1;
+  state.selected.clear();
+}
+
+function getSorted() {
+  let d = [...state.filtered];
+  if (state.sortKey) {
+    d.sort((a,b) => {
+      let av = a[state.sortKey], bv = b[state.sortKey];
+      if (!isNaN(parseFloat(av)) && !isNaN(parseFloat(bv))) { av=parseFloat(av); bv=parseFloat(bv); }
+      else { av=String(av).toLowerCase(); bv=String(bv).toLowerCase(); }
+      return state.sortDir==="asc" ? (av>bv?1:-1) : (av<bv?1:-1);
+    });
+  }
+  return d;
+}
+function getVisCols() { return ALL_COLS.filter(c => state.visColKeys.has(c.key)); }
+
+/* ── Table Header ─────────────────────────────── */
+function renderHeader() {
+  const row = $("tbl-head-row");
+  row.innerHTML = "";
+
+  const selTh = document.createElement("th");
+  selTh.className = "sel-col";
+  row.appendChild(selTh);
+
+  getVisCols().forEach(col => {
+    const th    = document.createElement("th");
+    const inner = document.createElement("div");
+    inner.className = "th-inner";
+    const lbl = document.createElement("span");
+    lbl.className = "th-label"; lbl.textContent = col.label;
+    inner.appendChild(lbl);
+    if (col.sortable) {
+      const btn = document.createElement("button");
+      const active = state.sortKey === col.key;
+      btn.className = "filter-btn" + (active ? " sorted" : "");
+      btn.innerHTML = active ? (state.sortDir==="asc"?"&#9650;":"&#9660;") : "&#9663;";
+      btn.title = "Sort";
+      btn.addEventListener("click", e => { e.stopPropagation(); openFilterMenu(btn, col.key); });
+      inner.appendChild(btn);
+    }
+    th.appendChild(inner);
+    row.appendChild(th);
+  });
+}
+
+/* ── Table Body ───────────────────────────────── */
+function renderTable() {
+  renderHeader();
+  const sorted   = getSorted();
+  const total    = sorted.length;
+  const start    = (state.page - 1) * state.rowsPerPage;
+  const end      = Math.min(start + state.rowsPerPage, total);
+  const pageRows = sorted.slice(start, end);
+  const cols     = getVisCols();
+  const tbody    = $("tbl-body");
+  tbody.innerHTML = "";
+
+  pageRows.forEach((row, i) => {
+    const tr  = document.createElement("tr");
+    const sel = state.selected.has(row.id);
+    tr.className = (i%2===0?"even":"odd") + (sel?" selected":"");
+
+    const selTd = document.createElement("td");
+    selTd.className = "sel-col";
+    const cb = document.createElement("input");
+    cb.type = "checkbox"; cb.className = "row-check"; cb.checked = sel;
+    cb.addEventListener("change", () => {
+      cb.checked ? state.selected.add(row.id) : state.selected.delete(row.id);
+      renderTable(); updateActions();
+    });
+    selTd.appendChild(cb);
+    tr.appendChild(selTd);
+
+    cols.forEach(col => {
+      const td = document.createElement("td");
+      if (col.key==="sno")          td.innerHTML = `<span class="cell-sno">${start+i+1}</span>`;
+      else if (col.key==="appId")   td.innerHTML = `<span class="cell-appid">${row.appId}</span>`;
+      else if (col.key==="name")    td.innerHTML = `<span class="cell-name">${row.name}</span>`;
+      else if (col.key==="income")  td.textContent = fmtIncome(row.income);
+      else if (col.key==="currentStatus") {
+        const stage = STATUS_LIST.find(s => s.key===row.currentStatus);
+        td.innerHTML = `<span class="status-pill ${stage?stage.pill:""}">${row.currentStatus}</span>`;
+      } else {
+        const v = row[col.key];
+        td.innerHTML = (v===""||v==null) ? `<span class="cell-empty">—</span>` : v;
+      }
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+
+  $("tbl-count").innerHTML =
+    `Showing <strong>${total===0?0:start+1}–${end}</strong> of <strong>${total}</strong>`;
+  renderPagination(total);
+}
+
+/* ── Pagination ───────────────────────────────── */
+function renderPagination(total) {
+  const totalPages = Math.max(1, Math.ceil(total / state.rowsPerPage));
+  if (state.page > totalPages) state.page = totalPages;
+  const nums = $("page-nums");
+  nums.innerHTML = "";
+
+  // Show up to 7 page numbers with ellipsis
+  const range = [];
+  if (totalPages <= 7) {
+    for (let p=1;p<=totalPages;p++) range.push(p);
+  } else {
+    range.push(1);
+    if (state.page > 3) range.push("…");
+    for (let p=Math.max(2,state.page-1);p<=Math.min(totalPages-1,state.page+1);p++) range.push(p);
+    if (state.page < totalPages-2) range.push("…");
+    range.push(totalPages);
+  }
+
+  range.forEach(p => {
+    if (p === "…") {
+      const sp = document.createElement("span");
+      sp.className = "pag-num"; sp.textContent = "…"; sp.style.cursor="default";
+      nums.appendChild(sp);
+      return;
+    }
+    const b = document.createElement("button");
+    b.className = "pag-num" + (p===state.page?" active":"");
+    b.textContent = p;
+    b.addEventListener("click", () => { state.page=p; renderTable(); });
+    nums.appendChild(b);
+  });
+  $("prev-btn").disabled = state.page === 1;
+  $("next-btn").disabled = state.page === totalPages;
+}
+
+/* ── Actions Bar ──────────────────────────────── */
+function updateActions() {
+  const n = state.selected.size;
+  if (n > 0) {
+    $("actions-bar").style.display = "flex";
+    $("sel-info").textContent = `${n} selected`;
+    const ids = state.filtered.map(a=>a.id);
+    $("select-all-cb").checked = ids.length>0 && ids.every(id=>state.selected.has(id));
+  } else {
+    $("actions-bar").style.display = "none";
+    $("select-all-cb").checked = false;
+  }
+}
+
+/* ── Filter Menu ──────────────────────────────── */
+function openFilterMenu(anchorEl, colKey) {
+  state.filterMenuCol = colKey;
+  const menu = $("filter-menu");
+  const r    = anchorEl.getBoundingClientRect();
+  menu.style.display = "block";
+  let left = r.left;
+  if (left + 172 > window.innerWidth) left = window.innerWidth - 180;
+  menu.style.left = left + "px";
+  menu.style.top  = (r.bottom + 4) + "px";
+}
+function closeFilterMenu() {
+  $("filter-menu").style.display = "none";
+  state.filterMenuCol = null;
+}
+
+/* ── Choose Columns Dialog ────────────────────── */
+function renderColsDialog() {
+  state.pendingColKeys = new Set(state.visColKeys);
+  const grid = $("all-cols-grid");
+  grid.innerHTML = "";
+  ALL_COLS.forEach(col => {
+    const lbl = document.createElement("label");
+    lbl.className = "col-check" + (col.wide ? " wide" : "");
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = state.pendingColKeys.has(col.key);
+    cb.addEventListener("change", () => {
+      cb.checked ? state.pendingColKeys.add(col.key) : state.pendingColKeys.delete(col.key);
+    });
+    lbl.appendChild(cb);
+    lbl.appendChild(document.createTextNode(col.label));
+    grid.appendChild(lbl);
+  });
+}
+
+/* ── Export ───────────────────────────────────── */
+function exportToExcel(rows) {
+  const cols = getVisCols().filter(c => c.key !== "sno");
+  const header = cols.map(c => c.label).join("\t");
+  const body   = rows.map(r =>
+    cols.map(c => {
+      if (c.key==="income") return r.income;
+      const v = r[c.key];
+      return (v===""||v==null) ? "" : v;
+    }).join("\t")
+  ).join("\n");
+  const blob = new Blob([header+"\n"+body],{type:"application/vnd.ms-excel;charset=utf-8;"});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href=url; a.download="applications.xls";
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast("Exported to Excel");
+}
+
+/* ── Reset search ─────────────────────────────── */
+function resetSearch() {
+  state.ms.state.clear();
+  state.ms.chapter.clear();
+  state.ms.course.clear();
+  state.ms.status.clear();
+  state.ms.college.clear();
+  state.ms.year.clear();
+  state.ms.studyYear.clear();
+  // reset trigger labels
+  ["ms-state-trigger","ms-chapter-trigger","ms-course-trigger","ms-status-trigger",
+   "ms-college-trigger","ms-year-trigger","ms-studyyear-trigger"].forEach(id => {
+    $(id).innerHTML = `<span class="placeholder">Select…</span>`;
+    $(id).classList.remove("open");
+  });
+  ["ms-state-dropdown","ms-chapter-dropdown","ms-course-dropdown","ms-status-dropdown",
+   "ms-college-dropdown","ms-year-dropdown","ms-studyyear-dropdown"].forEach(id => {
+    $(id).classList.remove("open");
+  });
+  $("sel-apptype").value = "";
+  $("sel-gender").value  = "";
+  state.filtered = [];
+  state.searched  = false;
+  state.selected.clear();
+  $("results").style.display = "none";
+}
+
+/* ── Init ─────────────────────────────────────── */
+function init() {
+  $("role-display").textContent = USER_ROLE;
+
+  initMultiSelects();
+  initSimpleDropdowns();
+
+  // ── Search mode toggle ──────────────────────────
+  let activeMode = "custom"; // custom is default
+
+  const hintTexts = {
+    custom: "Filtering by multiple fields",
+    id:     "Find a student by NSF ID, Aadhar, email, name or mobile",
+  };
+
+  function setMode(mode) {
+    if (activeMode === mode) return; // no collapse — always one active
+    activeMode = mode;
+    $("mode-btn-id").classList.toggle("active", mode === "id");
+    $("mode-btn-custom").classList.toggle("active", mode === "custom");
+    $("id-search-panel").classList.toggle("active", mode === "id");
+    $("search-panel").classList.toggle("active", mode === "custom");
+    $("seg-hint-text").textContent = hintTexts[mode];
+    if (mode === "id") {
+      setTimeout(() => $("nsf-id-input").focus(), 80);
+    }
+  }
+
+  // Boot into custom mode
+  $("search-panel").classList.add("active");
+  $("id-search-panel").classList.remove("active");
+
+  $("mode-btn-id").addEventListener("click", () => setMode("id"));
+  $("mode-btn-custom").addEventListener("click", () => setMode("custom"));
+
+  // ── Quick search ──────────────────────────────
+  const nsfInput    = $("nsf-id-input");
+  const nsfClear    = $("nsf-id-clear");
+  const nsfBadge    = $("id-result-badge");
+  const nsfBadgeTxt = $("id-result-text");
+
+  const placeholders = {
+    appId:  "Enter NSF ID — e.g. APP001",
+    aadhar: "Enter Aadhar number — e.g. 1234 5678 9012",
+    email:  "Enter email address",
+    name:   "Enter student name or partial name",
+    mobile: "Enter mobile number",
+  };
+  const hintMessages = {
+    appId:  "Enter a full or partial NSF ID to find matching applications.",
+    aadhar: "Enter a full or partial Aadhar number to find matching applications.",
+    email:  "Enter a full or partial email address to find matching applications.",
+    name:   "Enter a student name or partial name to find matching applications.",
+    mobile: "Enter a full or partial mobile number to find matching applications.",
+  };
+  const typeLabels = {
+    appId:  "NSF ID",
+    aadhar: "Aadhar Number",
+    email:  "Email",
+    name:   "Student Name",
+    mobile: "Mobile Number",
+  };
+
+  function getSelectedType() {
+    const checked = document.querySelector('input[name="qs-type"]:checked');
+    return checked ? checked.value : "appId";
+  }
+
+  function updateQuickSearchUI(type) {
+    nsfInput.placeholder = placeholders[type] || "Enter value…";
+    $("id-hint-text").textContent = hintMessages[type] || "";
+    nsfInput.value = "";
+    nsfClear.style.display = "none";
+    nsfBadge.classList.remove("show");
+    // update pill highlight
+    document.querySelectorAll(".qs-radio-pill").forEach(pill => {
+      const rb = pill.querySelector("input[type='radio']");
+      pill.classList.toggle("checked", rb && rb.checked);
+    });
+  }
+
+  // Wire radio buttons
+  document.querySelectorAll('input[name="qs-type"]').forEach(rb => {
+    rb.addEventListener("change", () => updateQuickSearchUI(rb.value));
+  });
+
+  function applyNsfIdFilter() {
+    const raw  = nsfInput.value.trim();
+    const type = getSelectedType();
+    if (!raw) { showToast(`Please enter a ${typeLabels[type]}`); return; }
+
+    const fieldMap = {
+      appId:  a => a.appId,
+      aadhar: a => a.aadhar  || "",
+      email:  a => a.email   || "",
+      name:   a => a.name,
+      mobile: a => a.mobile  || "",
+    };
+    const getter = fieldMap[type] || (a => a.appId);
+    const matches = state.apps.filter(a =>
+      getter(a).toLowerCase().includes(raw.toLowerCase())
+    );
+
+    state.filtered = matches;
+    state.searched  = true;
+    state.page      = 1;
+    state.selected.clear();
+
+    nsfBadge.classList.add("show");
+    nsfBadgeTxt.textContent =
+      `${typeLabels[type]}: "${raw}" — ${matches.length} result${matches.length !== 1 ? "s" : ""}`;
+
+    $("results").style.display = "block";
+    renderTable();
+    updateActions();
+  }
+
+  function clearNsfId() {
+    nsfInput.value         = "";
+    nsfClear.style.display = "none";
+    nsfBadge.classList.remove("show");
+    state.filtered = [];
+    state.searched  = false;
+    state.selected.clear();
+    $("results").style.display = "none";
+  }
+
+  nsfInput.addEventListener("input", () => {
+    nsfClear.style.display = nsfInput.value ? "block" : "none";
+  });
+  nsfInput.addEventListener("keydown", e => { if (e.key === "Enter") applyNsfIdFilter(); });
+  nsfClear.addEventListener("click", clearNsfId);
+  $("id-badge-clear").addEventListener("click", clearNsfId);
+  $("btn-id-search").addEventListener("click", applyNsfIdFilter);
+
+  // ── Custom search ──────────────────────────────
+  $("search-btn").addEventListener("click", () => {
+    applySearch();
+    $("results").style.display = "block";
+    renderTable();
+    updateActions();
+  });
+
+  $("reset-btn").addEventListener("click", () => {
+    resetSearch();
+  });
+
+  // ── Close multi-select dropdowns on outside click
+  document.addEventListener("click", e => {
+    const isInsideAny = e.target.closest(".ms-wrap");
+    if (!isInsideAny) {
+      document.querySelectorAll(".ms-dropdown.open").forEach(d => d.classList.remove("open"));
+      document.querySelectorAll(".ms-trigger.open").forEach(t => t.classList.remove("open"));
+    }
+  });
+
+  // ── Prev / Next ────────────────────────────────
+  $("prev-btn").addEventListener("click", () => {
+    if (state.page > 1) { state.page--; renderTable(); }
+  });
+  $("next-btn").addEventListener("click", () => {
+    const tp = Math.ceil(getSorted().length / state.rowsPerPage);
+    if (state.page < tp) { state.page++; renderTable(); }
+  });
+
+  // ── Select all ─────────────────────────────────
+  $("select-all-cb").addEventListener("change", e => {
+    const ids = state.filtered.map(a => a.id);
+    e.target.checked
+      ? ids.forEach(id => state.selected.add(id))
+      : ids.forEach(id => state.selected.delete(id));
+    renderTable(); updateActions();
+  });
+
+  // ── Clear selection ────────────────────────────
+  $("clear-sel-btn").addEventListener("click", () => {
+    state.selected.clear(); renderTable(); updateActions();
+  });
+
+  // ── Print selected ─────────────────────────────
+  $("btn-print-sel").addEventListener("click", () => { window.print(); });
+
+  // ── Export selected ────────────────────────────
+  $("btn-export-sel").addEventListener("click", () => {
+    const selRows = getSorted().filter(r => state.selected.has(r.id));
+    if (!selRows.length) { showToast("No rows selected"); return; }
+    exportToExcel(selRows);
+  });
+
+  // ── Export all ─────────────────────────────────
+  $("btn-export").addEventListener("click", () => { exportToExcel(getSorted()); });
+
+  // ── Choose columns ─────────────────────────────
+  $("btn-choose-cols").addEventListener("click", () => {
+    renderColsDialog(); openOverlay("cols-overlay");
+  });
+  $("apply-cols-btn").addEventListener("click", () => {
+    state.visColKeys = new Set(state.pendingColKeys);
+    closeOverlay("cols-overlay");
+    renderTable();
+    showToast("Columns updated");
+  });
+
+  // ── Filter / sort menu ─────────────────────────
+  $("filter-menu").querySelectorAll("button").forEach(b => {
+    b.addEventListener("click", () => {
+      const mode = b.dataset.sort;
+      if (mode === "clear") { state.sortKey = null; }
+      else { state.sortKey = state.filterMenuCol; state.sortDir = mode; }
+      state.page = 1; closeFilterMenu(); renderTable();
+    });
+  });
+  document.addEventListener("click", e => {
+    if (!$("filter-menu").contains(e.target)) closeFilterMenu();
+  });
+  window.addEventListener("scroll", closeFilterMenu, true);
+  window.addEventListener("resize", closeFilterMenu);
+
+  // ── Dialog close ───────────────────────────────
+  document.querySelectorAll("[data-close]").forEach(btn => {
+    btn.addEventListener("click", () => closeOverlay(btn.dataset.close));
+  });
+  ["cols-overlay"].forEach(id => {
+    $(id).addEventListener("click", e => { if (e.target === $(id)) closeOverlay(id); });
+  });
+}
+
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
